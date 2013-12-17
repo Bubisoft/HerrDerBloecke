@@ -9,11 +9,15 @@ ref class Renderer {
 public:
     Renderer(Control^ target);
     void Resize(const int& w, const int& h);
-    void RenderFrame();
+    void Draw();
+
     MainLoop^ loop;
 
 private:
+    void ResetDevice();
+
+    PresentParameters^ mParams;
     Direct3D^ m3D;
     Device^ mDevice;
-    Mesh ^meme;
+    Mesh^ meme;
 };

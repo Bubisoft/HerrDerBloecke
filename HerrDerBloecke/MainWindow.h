@@ -4,58 +4,45 @@
 
 namespace HerrDerBloecke {
 
-	using namespace System;
-	using namespace System::ComponentModel;
-	using namespace System::Collections;
-	using namespace System::Windows::Forms;
-	using namespace System::Data;
-	using namespace System::Drawing;
+    using namespace System;
+    using namespace System::ComponentModel;
+    using namespace System::Collections;
+    using namespace System::Windows::Forms;
+    using namespace System::Data;
+    using namespace System::Drawing;
 
-	/// <summary>
-	/// Summary for MyForm
-	/// </summary>
-	public ref class MainWindow : public System::Windows::Forms::Form
-	{
-	public:
-		MainWindow(void)
-		{
-			InitializeComponent();
+    public ref class MainWindow : public Form
+    {
+    public:
+        MainWindow()
+        {
+            InitializeComponent();
             mRenderer = gcnew Renderer(mRenderFrame);
-            Loop = gcnew MainLoop(mRenderer, &Renderer::RenderFrame);
-		}
-        MainLoop^ Loop;
+            MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
+            MessagePump::Run(this, drawloop);
+        }
 
-	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		~MainWindow()
-		{
-			if (components)
-			{
-				delete components;
-			}
-		}
-    private: System::Windows::Forms::PictureBox^  mRenderFrame;
-    protected: 
+    protected:
+        ~MainWindow()
+        {
+            if (components)
+            {
+                delete components;
+            }
+        }
 
-    protected: 
-    protected: 
-
-	private:
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		System::ComponentModel::Container ^components;
+    private:
+        System::Windows::Forms::PictureBox^  mRenderFrame;
+        System::ComponentModel::Container^ components;
         Renderer^ mRenderer;
 
 #pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		void InitializeComponent(void)
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        void InitializeComponent(void)
+        {
             this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
             this->SuspendLayout();
@@ -88,7 +75,7 @@ namespace HerrDerBloecke {
 #pragma endregion
     private: System::Void mRenderFrame_Resize(System::Object^  sender, System::EventArgs^  e) {
             mRenderer->Resize(mRenderFrame->ClientRectangle.Width, mRenderFrame->ClientRectangle.Height);
-            mRenderer->RenderFrame();
+            mRenderer->Draw();
         }
     };
 }
