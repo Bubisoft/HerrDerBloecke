@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 using namespace HerrDerBloecke;
+using namespace SlimDX;
 
 [STAThreadAttribute]
 int main(array<System::String^> ^args)
@@ -8,6 +9,7 @@ int main(array<System::String^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	Application::Run(gcnew MainWindow());
+    MainWindow^ mainWindow = gcnew MainWindow();
+    MessagePump::Run(mainWindow, mainWindow->Loop);
 	return 0;
 }

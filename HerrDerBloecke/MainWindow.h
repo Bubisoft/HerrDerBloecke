@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Renderer.h"
+
 namespace HerrDerBloecke {
 
 	using namespace System;
@@ -8,8 +10,6 @@ namespace HerrDerBloecke {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-    using namespace SlimDX;
-    using namespace SlimDX::Direct3D9;
 
 	/// <summary>
 	/// Summary for MyForm
@@ -20,11 +20,10 @@ namespace HerrDerBloecke {
 		MainWindow(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
-            fViewport = gcnew Viewport(100, 100, 100, 100);
+            mRenderer = gcnew Renderer(mRenderFrame);
+            Loop = gcnew MainLoop(mRenderer, &Renderer::RenderFrame);
 		}
+        MainLoop^ Loop;
 
 	protected:
 		/// <summary>
@@ -37,9 +36,10 @@ namespace HerrDerBloecke {
 				delete components;
 			}
 		}
-    private: System::Windows::Forms::PictureBox^  pictureBox1;
-    // F**KING C++/CLI GENERATED BULLSHIT FIX IT PLZ
-    private: Viewport^ fViewport;
+    private: System::Windows::Forms::PictureBox^  mRenderFrame;
+    protected: 
+
+    protected: 
     protected: 
 
 	private:
@@ -47,6 +47,7 @@ namespace HerrDerBloecke {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+        Renderer^ mRenderer;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -55,30 +56,39 @@ namespace HerrDerBloecke {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-            this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
+            this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
             this->SuspendLayout();
             // 
-            // pictureBox1
+            // mRenderFrame
             // 
-            this->pictureBox1->Location = System::Drawing::Point(300, 246);
-            this->pictureBox1->Name = L"pictureBox1";
-            this->pictureBox1->Size = System::Drawing::Size(100, 50);
-            this->pictureBox1->TabIndex = 0;
-            this->pictureBox1->TabStop = false;
+            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+                | System::Windows::Forms::AnchorStyles::Left) 
+                | System::Windows::Forms::AnchorStyles::Right));
+            this->mRenderFrame->Location = System::Drawing::Point(12, 12);
+            this->mRenderFrame->Name = L"mRenderFrame";
+            this->mRenderFrame->Size = System::Drawing::Size(1080, 464);
+            this->mRenderFrame->TabIndex = 0;
+            this->mRenderFrame->TabStop = false;
+            this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
             // 
-            // MyForm
+            // MainWindow
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-            this->ClientSize = System::Drawing::Size(645, 396);
-            this->Controls->Add(this->pictureBox1);
+            this->ClientSize = System::Drawing::Size(1104, 488);
+            this->Controls->Add(this->mRenderFrame);
+            this->DoubleBuffered = true;
             this->Name = L"MainWindow";
             this->Text = L"MainWindow";
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
             this->ResumeLayout(false);
 
         }
 #pragma endregion
-	};
+    private: System::Void mRenderFrame_Resize(System::Object^  sender, System::EventArgs^  e) {
+            mRenderer->Resize(mRenderFrame->ClientRectangle.Width, mRenderFrame->ClientRectangle.Height);
+            mRenderer->RenderFrame();
+        }
+    };
 }
