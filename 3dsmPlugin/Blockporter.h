@@ -10,13 +10,15 @@ public:
 	Blockporter() { };
 	~Blockporter() { };
 
-	int ExtCount() { return 1; } //we only need to export into one format
+	/*we currently only need to export into one format
+	Maybe we have to add another format for animations a bit later...*/
+	int ExtCount() { return 1; }
 	const TCHAR* Ext(int n);
 
 	//Read the following 3 from Stringtable (TODO)
-	const TCHAR* LongDesc() { return _T(""); }
-	const TCHAR* ShortDesc() { return _T(""); }
-	const TCHAR* AuthorName() { return _T(""); }
+	const TCHAR* LongDesc();
+	const TCHAR* ShortDesc();
+	const TCHAR* AuthorName();
 	const TCHAR* CopyrightMessage() { return _T(""); }
 	const TCHAR* OtherMessage1() { return _T(""); }
 	const TCHAR* OtherMessage2() { return _T(""); }
@@ -28,7 +30,7 @@ public:
 	-write the export function
 	*/
 
-	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
+	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0) { return 1; }
 };
 
 //ClassDesc

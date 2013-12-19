@@ -13,7 +13,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 	return(TRUE);
 }
 
-_declspec(dllexport) const TCHAR* LibDescription()
+__declspec(dllexport) const TCHAR* LibDescription()
 {
 	static TCHAR buf[256];
 	if (hInstance)
@@ -22,12 +22,12 @@ _declspec(dllexport) const TCHAR* LibDescription()
 	return NULL;
 }
 
-_declspec(dllexport) int LibNumberClasses()
+__declspec(dllexport) int LibNumberClasses()
 {
 	return 1;
 }
 
-_declspec(dllexport) ClassDesc* LibClassDesc(int i)
+__declspec(dllexport) ClassDesc* LibClassDesc(int i)
 {
 	switch(i)
 	{
@@ -38,12 +38,12 @@ _declspec(dllexport) ClassDesc* LibClassDesc(int i)
 	}
 }
 
-_declspec(dllexport) ULONG LibVersion()
+__declspec(dllexport) ULONG LibVersion()
 {
-	return Get3DSMAXVersion();
+	return VERSION_3DSMAX;
 }
 
-_declspec(dllexport) ULONG CanAutoDefer()
+__declspec(dllexport) ULONG CanAutoDefer()
 {
 	return 1;
 }
