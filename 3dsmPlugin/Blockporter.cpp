@@ -11,29 +11,11 @@ const TCHAR* Blockporter::Ext(int n)
 	}
 }
 
-const TCHAR* Blockporter::LongDesc()
+const TCHAR* Blockporter::GetString(UINT id)
 {
 	static TCHAR buf[512];
 	if (hInstance)
-		return LoadString(hInstance, IDS_LONGDESC, buf, sizeof(buf)) ? buf : NULL;
-
-	return NULL;
-}
-
-const TCHAR* Blockporter::ShortDesc()
-{
-	static TCHAR buf[256];
-	if (hInstance)
-		return LoadString(hInstance, IDS_SHORTDESC, buf, sizeof(buf)) ? buf : NULL;
-
-	return NULL;
-}
-
-const TCHAR* Blockporter::AuthorName()
-{
-	static TCHAR buf[64];
-	if (hInstance)
-		return LoadString(hInstance, IDS_AUTHORNAME, buf, sizeof(buf)) ? buf : NULL;
+		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
 
 	return NULL;
 }
@@ -41,7 +23,8 @@ const TCHAR* Blockporter::AuthorName()
 int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts, DWORD options)
 {
 	//first we need the Interface pointer
-	mInterface = i;
+	Interface* mInterface = i;
+	INode* mRoot;
 
 	//setup the file stream
 	Interface14* iface = GetCOREInterface14();
@@ -67,6 +50,7 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
 	//the node of our object should be a groupnode, which contains every object
 	//we want to export
+	bool found = false;
 	for(int idx = 0; idx < mRoot->NumberOfChildren(); idx++)
 	{
 		if(mRoot->GetChildNode(idx)->IsGroupHead())
@@ -75,13 +59,20 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 			//next step is to make the group node our new root, because every object
 			//we want is part of this group
 
+			found = true;
 			mRoot = mRoot->GetChildNode(idx);
 			break;
 		}
 	}
 
+	if(!found)
+	{
+		MessageBox(NULL, GetString(IDS_ERROR_NO_GROUP), GetString(IDS_GENERAL_ERROR), MB_OK);
+		fclose(mStream);
+		return 0;
+	}
 	//we have our object, so let's write the header
-	WriteHeader();
+	WriteHeader(mRoot->GetName());
 
 	//now that we have the header written, let's iterate through the objects in the
 	//group and export the meshes and lights
@@ -92,7 +83,10 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	{
 		child = mRoot->GetChildNode(idx);
 		if(child->IsGroupHead())
-			continue; //we don't want a group in a group TODO: throw a message here
+		{
+			MessageBox(NULL, GetString(IDS_ERROR_TO_MANY_GROUPS), GetString(IDS_GENERAL_ERROR), MB_OK);
+			continue;
+		}
 
 		ObjectState os = child->EvalWorldState(0);
 

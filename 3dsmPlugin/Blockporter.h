@@ -16,12 +16,12 @@ public:
 	int ExtCount() { return 1; }
 	const TCHAR* Ext(int n);
 
-	const TCHAR* LongDesc();
-	const TCHAR* ShortDesc();
-	const TCHAR* AuthorName();
-	const TCHAR* CopyrightMessage() { return _T(""); }
-	const TCHAR* OtherMessage1() { return _T(""); }
-	const TCHAR* OtherMessage2() { return _T(""); }
+	const TCHAR* LongDesc() { return GetString(IDS_LONGDESC); }
+	const TCHAR* ShortDesc() { return GetString(IDS_SHORTDESC); }
+	const TCHAR* AuthorName() { return GetString(IDS_AUTHORNAME); }
+	const TCHAR* CopyrightMessage() { return GetString(IDS_COPYRIGHT); }
+	const TCHAR* OtherMessage1() { return GetString(IDS_OTHERMESSAGE_1); }
+	const TCHAR* OtherMessage2() { return GetString(IDS_OTHERMESSAGE_2); }
 	unsigned int Version() { return 1; }
 	void ShowAbout(HWND hWnd) { }
 
@@ -35,13 +35,12 @@ public:
 	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
 
 private:
-	void WriteHeader();
+	const TCHAR* GetString(UINT id);
+	void WriteHeader(const TCHAR* grpname);
 	void WriteMeshData(INode* objNode, int id);
 	//void WriteLightData(INode* objNode, int id);
 
 	FILE* mStream;
-	Interface* mInterface;
-	INode* mRoot;
 };
 
 //ClassDesc

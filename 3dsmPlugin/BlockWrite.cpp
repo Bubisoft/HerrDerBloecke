@@ -1,10 +1,8 @@
 #include <mesh.h>
 #include "Blockporter.h"
 
-void Blockporter::WriteHeader()
+void Blockporter::WriteHeader(const TCHAR* grpname)
 {
-	const TCHAR* grpname = mRoot->GetName();
-
 	_ftprintf(mStream, _T("<Header>\n"));
 	_ftprintf(mStream, _T("\t<Modelname=%s>\n"), grpname);
 	_ftprintf(mStream, _T("\t<Version=%i>\n"), 1);
