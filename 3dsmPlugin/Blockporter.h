@@ -1,6 +1,7 @@
 #pragma once
 #include <max.h>
 #include <iparamb2.h>
+#include <maxtextfile.h>
 #include "resource.h"
 
 //if you change the class name you also have to change it in the ClassDesc below
@@ -28,9 +29,17 @@ public:
 	//the actual export function
 	/* TODO:
 	-write the export function
+	-parse a version from the groupname
 	*/
 
-	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0) { return 1; }
+	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
+
+private:
+	void WriteHeader();
+
+	FILE* fStream;
+	Interface* ip;
+	INode* root;
 };
 
 //ClassDesc

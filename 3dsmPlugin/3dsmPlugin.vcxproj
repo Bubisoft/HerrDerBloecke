@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Blockporter.cpp" />
+    <ClCompile Include="BlockWrite.cpp" />
     <ClCompile Include="DllEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
