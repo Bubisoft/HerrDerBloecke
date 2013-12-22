@@ -16,7 +16,6 @@ public:
 	int ExtCount() { return 1; }
 	const TCHAR* Ext(int n);
 
-	//Read the following 3 from Stringtable (TODO)
 	const TCHAR* LongDesc();
 	const TCHAR* ShortDesc();
 	const TCHAR* AuthorName();
@@ -30,16 +29,19 @@ public:
 	/* TODO:
 	-write the export function
 	-parse a version from the groupname
+	-export lights
 	*/
 
 	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
 
 private:
 	void WriteHeader();
+	void WriteMeshData(INode* objNode, int id);
+	//void WriteLightData(INode* objNode, int id);
 
-	FILE* fStream;
-	Interface* ip;
-	INode* root;
+	FILE* mStream;
+	Interface* mInterface;
+	INode* mRoot;
 };
 
 //ClassDesc
