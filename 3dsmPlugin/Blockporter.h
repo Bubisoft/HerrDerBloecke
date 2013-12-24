@@ -11,7 +11,12 @@ public:
 	Blockporter() { };
 	~Blockporter() { };
 
-	/*we currently only need to export into one format
+	//use this function to get Strings required for the plugin (as ShortDesc, Authorname, ...)
+	static const TCHAR* GetString(UINT id);
+	//use this function to get strings for Messageboxes or if you need to get more than one string per function
+	static const TCHAR* GetString(UINT id, TCHAR* buf);
+
+    /*we currently only need to export into one format
 	Maybe we have to add another format for animations a bit later...*/
 	int ExtCount() { return 1; }
 	const TCHAR* Ext(int n);
@@ -35,7 +40,6 @@ public:
 	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
 
 private:
-	const TCHAR* GetString(UINT id);
 	void WriteHeader(const TCHAR* grpname);
 	void WriteMeshData(INode* objNode, int id);
 	//void WriteLightData(INode* objNode, int id);

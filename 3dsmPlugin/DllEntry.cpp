@@ -15,11 +15,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 
 __declspec(dllexport) const TCHAR* LibDescription()
 {
-	static TCHAR buf[256];
-	if (hInstance)
-		return LoadString(hInstance, IDS_SHORTDESC, buf, sizeof(buf)) ? buf : NULL;
-
-	return NULL;
+	return Blockporter::GetString(IDS_SHORTDESC);
 }
 
 __declspec(dllexport) int LibNumberClasses()

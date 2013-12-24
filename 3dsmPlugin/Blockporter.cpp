@@ -1,30 +1,43 @@
 #include "Blockporter.h"
 
+const TCHAR* Blockporter::GetString(UINT id)
+{
+	static TCHAR buf[512];
+	if (hInstance)
+		return LoadString(hInstance, id, buf, _countof(buf)) ? buf : nullptr;
+
+	return nullptr;
+}
+
+const TCHAR* Blockporter::GetString(UINT id, TCHAR* buf)
+{
+	if (hInstance)
+		return LoadString(hInstance, id, buf, 512) ? buf : nullptr;
+	/* I know you absolutly hate hardcoded numbers, but this is only temporay. If I use sizeof(buf) I only get
+	the first 7 characters and if I use sizeof(buf)/sizeof(TCHAR) I only get the first 3 characters. I can't use 
+	_countof(buf), because it requires an array and not a pointer. So I use the hardcoded number to get it work 
+	for now. I hope you know where the problem is...*/
+
+	return nullptr;
+}
+
 const TCHAR* Blockporter::Ext(int n)
 {
 	switch(n)
 	{
 	case 0:
-		return _T("HBM"); //HBM Herr der Blöcke Modell
+		return _T("hbm"); //HBM Herr der Blöcke Modell
 	default:
 		return _T("");
 	}
 }
 
-const TCHAR* Blockporter::GetString(UINT id)
-{
-	static TCHAR buf[512];
-	if (hInstance)
-		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-
-	return NULL;
-}
-
 int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts, DWORD options)
 {
-	//first we need the Interface pointer
-	Interface* mInterface = i;
-	INode* mRoot;
+	INode* root;
+	//caption and message for MessagesBoxes
+	TCHAR msg[512];
+	TCHAR cap[512];
 
 	//setup the file stream
 	Interface14* iface = GetCOREInterface14();
@@ -46,45 +59,45 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		return 0;
 
 	//now we have our file stream, so let's get the root node
-	mRoot = mInterface->GetRootNode();
+	root = i->GetRootNode();
 
 	//the node of our object should be a groupnode, which contains every object
 	//we want to export
 	bool found = false;
-	for(int idx = 0; idx < mRoot->NumberOfChildren(); idx++)
+	for(int idx = 0; idx < root->NumberOfChildren(); idx++)
 	{
-		if(mRoot->GetChildNode(idx)->IsGroupHead())
+		if(root->GetChildNode(idx)->IsGroupHead())
 		{
 			//we found our group
 			//next step is to make the group node our new root, because every object
 			//we want is part of this group
 
 			found = true;
-			mRoot = mRoot->GetChildNode(idx);
+			root = root->GetChildNode(idx);
 			break;
 		}
 	}
 
 	if(!found)
 	{
-		MessageBox(NULL, GetString(IDS_ERROR_NO_GROUP), GetString(IDS_GENERAL_ERROR), MB_OK);
+		MessageBox(nullptr, GetString(IDS_ERROR_NO_GROUP, msg), GetString(IDS_GENERAL_ERROR, cap), MB_OK | MB_ICONERROR);
 		fclose(mStream);
 		return 0;
 	}
 	//we have our object, so let's write the header
-	WriteHeader(mRoot->GetName());
+	WriteHeader(root->GetName());
 
 	//now that we have the header written, let's iterate through the objects in the
 	//group and export the meshes and lights
 
 	INode* child;
 
-	for(int idx = 0; idx < mRoot->NumberOfChildren(); idx++)
+	for(int idx = 0; idx < root->NumberOfChildren(); idx++)
 	{
-		child = mRoot->GetChildNode(idx);
+		child = root->GetChildNode(idx);
 		if(child->IsGroupHead())
 		{
-			MessageBox(NULL, GetString(IDS_ERROR_TO_MANY_GROUPS), GetString(IDS_GENERAL_ERROR), MB_OK);
+			MessageBox(nullptr, GetString(IDS_ERROR_TO_MANY_GROUPS, msg), GetString(IDS_GENERAL_ERROR, cap), MB_OK | MB_ICONERROR);
 			continue;
 		}
 
@@ -108,6 +121,8 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
 	//we are done exporting, so close the stream
 	fclose(mStream);
+
+	MessageBox(nullptr, GetString(IDS_FINISH_MSG, msg), GetString(IDS_FINISH_CAP, cap), MB_OK | MB_ICONINFORMATION);
 
 	return 1;
 }
