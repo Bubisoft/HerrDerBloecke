@@ -1,8 +1,11 @@
 #pragma once
+#include <string.h>
 #include <max.h>
 #include <iparamb2.h>
 #include <maxtextfile.h>
 #include "resource.h"
+
+#define MB_BUFFER_LENGTH 512
 
 //if you change the class name you also have to change it in the ClassDesc below
 class Blockporter : public SceneExport
@@ -32,16 +35,19 @@ public:
 
 	//the actual export function
 	/* TODO:
-	-write the export function
-	-parse a version from the groupname
 	-export lights
+	-export materials
+	-export texturename
+	-export animation
 	*/
 
 	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
 
 private:
-	void WriteHeader(const TCHAR* grpname);
+	bool CheckCurrentModelVersion(const TCHAR* file, TCHAR* model);
+	void WriteHeader(TCHAR* grpname);
 	void WriteMeshData(INode* objNode, int id);
+	//void WriteMaterialData(INode* objNode);
 	//void WriteLightData(INode* objNode, int id);
 
 	FILE* mStream;

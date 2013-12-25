@@ -12,11 +12,7 @@ const TCHAR* Blockporter::GetString(UINT id)
 const TCHAR* Blockporter::GetString(UINT id, TCHAR* buf)
 {
 	if (hInstance)
-		return LoadString(hInstance, id, buf, 512) ? buf : nullptr;
-	/* I know you absolutly hate hardcoded numbers, but this is only temporay. If I use sizeof(buf) I only get
-	the first 7 characters and if I use sizeof(buf)/sizeof(TCHAR) I only get the first 3 characters. I can't use 
-	_countof(buf), because it requires an array and not a pointer. So I use the hardcoded number to get it work 
-	for now. I hope you know where the problem is...*/
+		return LoadString(hInstance, id, buf, MB_BUFFER_LENGTH) ? buf : nullptr;
 
 	return nullptr;
 }
@@ -36,33 +32,16 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 {
 	INode* root;
 	//caption and message for MessagesBoxes
-	TCHAR msg[512];
-	TCHAR cap[512];
+	TCHAR msg[MB_BUFFER_LENGTH];
+	TCHAR cap[MB_BUFFER_LENGTH];
+	TCHAR grpname[256];
 
-	//setup the file stream
-	Interface14* iface = GetCOREInterface14();
-	UINT code = iface->DefaultTextSaveCodePage(true);
-	MaxSDK::Util::Path storageNamePath(name);
-	storageNamePath.SaveBaseFile();
-	switch (code & MaxSDK::Util::MaxStringDataEncoding::MSDE_CP_MASK)
-	{
-	case CP_UTF8:
-		mStream = _tfopen(name, _T("wt, ccs=UFT-8"));
-		break;
-	case MaxSDK::Util::MaxStringDataEncoding::MSDE_CP_UTF16:
-		mStream = _tfopen(name, _T("wt, ccs=UTF-16BE"));
-		break;
-	default:
-		mStream = _tfopen(name, _T("wt"));
-	}
-	if(!mStream)
-		return 0;
-
-	//now we have our file stream, so let's get the root node
+	//Get the root node
 	root = i->GetRootNode();
 
 	//the node of our object should be a groupnode, which contains every object
 	//we want to export
+	i->PushPrompt(_T("Searching for Group..."));
 	bool found = false;
 	for(int idx = 0; idx < root->NumberOfChildren(); idx++)
 	{
@@ -81,11 +60,44 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	if(!found)
 	{
 		MessageBox(nullptr, GetString(IDS_ERROR_NO_GROUP, msg), GetString(IDS_GENERAL_ERROR, cap), MB_OK | MB_ICONERROR);
-		fclose(mStream);
 		return 0;
 	}
-	//we have our object, so let's write the header
-	WriteHeader(root->GetName());
+
+	//we copy the groupname, so we don't modify it in the following function(s). Better ideas welcome ;)
+	wcscpy(grpname, root->GetName());
+
+	//Now that we have the groupnode let's compare the fileversions
+	if(!CheckCurrentModelVersion(name, grpname))
+	{
+		if(MessageBox(nullptr, GetString(IDS_VER_TO_LOW_MSG, msg), GetString(IDS_VER_TO_LOW_CAP, cap), MB_YESNO | MB_ICONEXCLAMATION) == IDNO)
+			return 1;
+	}
+
+	i->PushPrompt(_T("Opening File"));
+	Interface14* iface = GetCOREInterface14();
+	UINT code = iface->DefaultTextSaveCodePage(true);
+	MaxSDK::Util::Path storageNamePath(name);
+	storageNamePath.SaveBaseFile();
+	switch (code & MaxSDK::Util::MaxStringDataEncoding::MSDE_CP_MASK)
+	{
+	case CP_UTF8:
+		mStream = _tfopen(name, _T("wt, ccs=UFT-8"));
+		break;
+	case MaxSDK::Util::MaxStringDataEncoding::MSDE_CP_UTF16:
+		mStream = _tfopen(name, _T("wt, ccs=UTF-16BE"));
+		break;
+	default:
+		mStream = _tfopen(name, _T("wt"));
+	}
+	if(!mStream)
+		return 0;
+
+	//now we have our file stream, so let's write the header
+	i->PushPrompt(_T("Writing Header"));
+
+	//same as above.
+	wcscpy(grpname, root->GetName());
+	WriteHeader(grpname);
 
 	//now that we have the header written, let's iterate through the objects in the
 	//group and export the meshes and lights
@@ -95,6 +107,7 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	for(int idx = 0; idx < root->NumberOfChildren(); idx++)
 	{
 		child = root->GetChildNode(idx);
+		i->PushPrompt(_T("Processing Object %s", child->GetName()));
 		if(child->IsGroupHead())
 		{
 			MessageBox(nullptr, GetString(IDS_ERROR_TO_MANY_GROUPS, msg), GetString(IDS_GENERAL_ERROR, cap), MB_OK | MB_ICONERROR);
@@ -111,7 +124,9 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		switch(os.obj->SuperClassID())
 		{
 		case GEOMOBJECT_CLASS_ID:
+			i->PushPrompt(_T("Writing MeshData for Object %s", child->GetName()));
 			WriteMeshData(child, idx);
+			//WriteMaterialData(child);
 			break;
 		//case LIGHT_CLASS_ID:
 		//	WriteLightData(child, idx);
@@ -120,9 +135,44 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	}
 
 	//we are done exporting, so close the stream
+	i->PushPrompt(_T("Closing file..."));
 	fclose(mStream);
 
 	MessageBox(nullptr, GetString(IDS_FINISH_MSG, msg), GetString(IDS_FINISH_CAP, cap), MB_OK | MB_ICONINFORMATION);
 
 	return 1;
+}
+
+bool Blockporter::CheckCurrentModelVersion(const TCHAR* file, TCHAR* model)
+{
+	mStream = _tfopen(file, _T("r"));
+	if(!mStream)
+		return true; //the file doesn't exist, so the current modelversion is greater
+
+	//Version is in the third line of the file, so let's get it
+	TCHAR line[256];
+	fgetws(line, _countof(line), mStream);
+	//first check if this is´the proper file
+	if(wcscmp(line, L"<Header>\n")) //The first line isn't <Header> so it's not the right file
+	{
+		fclose(mStream);
+		return true;
+	}
+
+	fgetws(line, _countof(line), mStream);
+	fgetws(line, _countof(line), mStream);
+
+	TCHAR* oVer = wcstok(line, L"=");
+	oVer = wcstok(nullptr, L"=");
+	TCHAR* nVer = wcstok(model, L"=");
+	nVer = wcstok(nullptr, L"=");
+
+	if(_wtoi(oVer) <= _wtoi(nVer))
+	{
+		fclose(mStream);
+		return true; //The old version is below the new one
+	}
+
+	fclose(mStream);
+	return false; //The old version is above the new one. Better ask if we really want to export.
 }

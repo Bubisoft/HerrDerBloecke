@@ -1,11 +1,18 @@
 #include <mesh.h>
 #include "Blockporter.h"
 
-void Blockporter::WriteHeader(const TCHAR* grpname)
+void Blockporter::WriteHeader(TCHAR* grpname)
 {
 	_ftprintf(mStream, _T("<Header>\n"));
-	_ftprintf(mStream, _T("\t<Modelname=%s>\n"), grpname);
-	_ftprintf(mStream, _T("\t<Version=%i>\n"), 1);
+	//split the groupname into the name and the version. Syntax vor the groupname is Name=Version
+	TCHAR* sVer = wcstok(grpname, L"=");
+	_ftprintf(mStream, _T("\t<Modelname=%s>\n"), sVer);
+	//we assume there is only one "=" in the groupname, so we are going right to the second part
+	//of the string
+	sVer = wcstok(nullptr, L"=");
+	int ver = _wtoi(sVer);
+
+	_ftprintf(mStream, _T("\t<Version=%i>\n"), ver);
 	_ftprintf(mStream, _T("</Header>\n"));
 }
 
