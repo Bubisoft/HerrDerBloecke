@@ -21,7 +21,7 @@ const TCHAR* Blockporter::Ext(int n)
 {
 	switch(n)
 	{
-	case 0:
+	case ENDING_HBM:
 		return _T("hbm"); //HBM Herr der Blöcke Modell
 	default:
 		return _T("");
@@ -34,7 +34,6 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	//caption and message for MessagesBoxes
 	TCHAR msg[MB_BUFFER_LENGTH];
 	TCHAR cap[MB_BUFFER_LENGTH];
-	TCHAR grpname[256];
 
 	//Get the root node
 	root = i->GetRootNode();
@@ -63,11 +62,8 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		return 0;
 	}
 
-	//we copy the groupname, so we don't modify it in the following function(s). Better ideas welcome ;)
-	wcscpy(grpname, root->GetName());
-
 	//Now that we have the groupnode let's compare the fileversions
-	if(!CheckCurrentModelVersion(name, grpname))
+	if(!IsNewModelVersion(name, root->GetName()))
 	{
 		if(MessageBox(nullptr, GetString(IDS_VER_TO_LOW_MSG, msg), GetString(IDS_VER_TO_LOW_CAP, cap), MB_YESNO | MB_ICONEXCLAMATION) == IDNO)
 			return 1;
@@ -94,10 +90,7 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
 	//now we have our file stream, so let's write the header
 	i->PushPrompt(_T("Writing Header"));
-
-	//same as above.
-	wcscpy(grpname, root->GetName());
-	WriteHeader(grpname);
+	WriteHeader(root->GetName());
 
 	//now that we have the header written, let's iterate through the objects in the
 	//group and export the meshes and lights
@@ -126,7 +119,8 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		case GEOMOBJECT_CLASS_ID:
 			i->PushPrompt(_T("Writing MeshData for Object %s", child->GetName()));
 			WriteMeshData(child, idx);
-			//WriteMaterialData(child);
+			i->PushPrompt(_T("Writing MaterialData for Object %s", child->GetName()));
+			WriteMaterialData(child);
 			break;
 		//case LIGHT_CLASS_ID:
 		//	WriteLightData(child, idx);
@@ -143,14 +137,16 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	return 1;
 }
 
-bool Blockporter::CheckCurrentModelVersion(const TCHAR* file, TCHAR* model)
+bool Blockporter::IsNewModelVersion(const TCHAR* file, const TCHAR* nodeName)
 {
 	mStream = _tfopen(file, _T("r"));
 	if(!mStream)
 		return true; //the file doesn't exist, so the current modelversion is greater
 
 	//Version is in the third line of the file, so let's get it
-	TCHAR line[256];
+	TCHAR line[128];
+	TCHAR model[64];
+	wcscpy(model, nodeName);
 	fgetws(line, _countof(line), mStream);
 	//first check if this is´the proper file
 	if(wcscmp(line, L"<Header>\n")) //The first line isn't <Header> so it's not the right file

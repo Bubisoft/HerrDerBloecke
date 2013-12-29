@@ -1,8 +1,11 @@
 #include <mesh.h>
+#include <stdmat.h>
 #include "Blockporter.h"
 
-void Blockporter::WriteHeader(TCHAR* grpname)
+void Blockporter::WriteHeader(const TCHAR* nodeName)
 {
+	TCHAR grpname[64];
+	wcscpy(grpname, nodeName);
 	_ftprintf(mStream, _T("<Header>\n"));
 	//split the groupname into the name and the version. Syntax vor the groupname is Name=Version
 	TCHAR* sVer = wcstok(grpname, L"=");
@@ -79,4 +82,39 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	}
 	_ftprintf(mStream, _T("\t\t</Normals>\n")); //close the normallist
 	_ftprintf(mStream, _T("\t</Mesh>\n")); //we are done with the Mesh so close it.
+}
+
+void Blockporter::WriteMaterialData(INode* objNode)
+{
+	Mtl* mtl = objNode->GetMtl();
+	if(!mtl || mtl->ClassID() != Class_ID(DMTL_CLASS_ID, 0))
+	{
+		_ftprintf(mStream, _T("\t<Material=FALSE>\n")); //We haven't defined a Material, so we just export the wire color
+		DWORD c = objNode->GetWireColor();
+		_ftprintf(mStream, _T("\t\t<Wirecolor=%f,%f,%f>\n"), GetRValue(c) / 255.0f, GetGValue(c) / 255.0f, GetBValue(c) / 255.0f);
+	}
+	else
+	{
+		_ftprintf(mStream, _T("\t<Material=TRUE>\n"));
+		StdMat* stdmat = (StdMat*)mtl;
+		Color c;
+		c = stdmat->GetAmbient(0);
+		_ftprintf(mStream, _T("\t\t<Ambient=%f,%f,%f>\n"), c.r, c.g, c.b);
+		c = stdmat->GetDiffuse(0);
+		_ftprintf(mStream, _T("\t\t<Diffuse=%f,%f,%f>\n"), c.r, c.g, c.b);
+		c = stdmat->GetSpecular(0);
+		_ftprintf(mStream, _T("\t\t<Specular=%f,%f,%f>\n"), c.r, c.g, c.b);
+		_ftprintf(mStream, _T("\t\t<Transperancy=%f>\n"), stdmat->GetXParency(0));
+
+		for (int i = 0; i < mtl->NumSubTexmaps(); i++)
+		{
+			Texmap* tex = mtl->GetSubTexmap(i);
+			if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0x00) && mtl->SubTexmapOn(i))
+			{
+				const TCHAR* mapName = ((BitmapTex *)tex)->GetMapName();
+				_ftprintf(mStream, _T("\t\t<TextureName=%s>\n"), mapName);
+			}
+		}
+	}
+	_ftprintf(mStream, _T("\t</Material>\n"));
 }
