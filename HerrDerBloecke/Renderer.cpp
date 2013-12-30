@@ -20,7 +20,7 @@ Renderer::Renderer(Control^ target)
     mDevice = gcnew Device(m3D, 0, DeviceType::Hardware, target->Handle, CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    mCamera = gcnew Camera(Vector3(-1.f, 20.f, -2.f), Vector3::Zero);
+    mCamera = gcnew Camera(Vector3(0.f, 10.f, 9.f), Vector3::Zero);
     meme = Mesh::CreateTeapot(mDevice);
 }
 
@@ -64,4 +64,16 @@ void Renderer::ResetDevice() {
     Material mat;
     mat.Diffuse = Color4(.75f, .75f, .75f);
     mDevice->Material = mat;
+
 }
+
+void Renderer::MoveCamera(Vector3& change)
+{
+		mCamera->MoveCamera(change);
+}
+
+void Renderer::SetCameraSpeed(float _speed)
+{
+	mCamera->mCameraSpeed=_speed;
+}
+

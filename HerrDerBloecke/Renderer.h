@@ -21,6 +21,14 @@ public:
      */
     void Draw();
 
+	/** Scrolls the Map/ Camera
+	*/
+	void MoveCamera(Vector3& change);
+
+	/** Sets the Speed of the Camera
+	*/
+	void SetCameraSpeed(float _speed);
+
 private:
     void ResetDevice();
 
@@ -29,5 +37,7 @@ private:
     Device^ mDevice;
 
     Camera^ mCamera;
+    
+	Vector3 mScrollVector;
     Mesh^ meme;
 };
