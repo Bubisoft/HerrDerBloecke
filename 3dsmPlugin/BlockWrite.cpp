@@ -37,6 +37,7 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	mesh->buildNormals();
 	_ftprintf(mStream, _T("\t\t<NumVertices=%i>\n"), mesh->getNumVerts());
 	_ftprintf(mStream, _T("\t\t<NumFaces=%i>\n"), mesh->getNumFaces());
+	_ftprintf(mStream, _T("\t\t<NumTVerts=%i>\n"), mesh->getNumTVerts()); //UVs
 
 	//start the vertexlist and export the vertices
 	_ftprintf(mStream, _T("\t\t<Vertices>\n"));
@@ -81,6 +82,16 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 		_ftprintf(mStream, _T("\t\t\t%f,%f,%f;\n"), n.x, n.y, n.z);
 	}
 	_ftprintf(mStream, _T("\t\t</Normals>\n")); //close the normallist
+
+	//start the UV List
+	_ftprintf(mStream, _T("\t\t<UVMap>\n"));
+	for(int vert = 0; vert < mesh->getNumTVerts(); vert++)
+	{
+		UVVert tv = mesh->tVerts[vert];
+		_ftprintf(mStream, _T("\t\t\t%f,%f,%f;\n"), tv.x, tv.y, tv.z);
+	}
+	_ftprintf(mStream, _T("\t\t</UVMap>\n")); //end UV List
+
 	_ftprintf(mStream, _T("\t</Mesh>\n")); //we are done with the Mesh so close it.
 }
 
@@ -109,11 +120,13 @@ void Blockporter::WriteMaterialData(INode* objNode)
 		for (int i = 0; i < mtl->NumSubTexmaps(); i++)
 		{
 			Texmap* tex = mtl->GetSubTexmap(i);
-			if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0x00) && mtl->SubTexmapOn(i))
-			{
-				const TCHAR* mapName = ((BitmapTex *)tex)->GetMapName();
-				_ftprintf(mStream, _T("\t\t<TextureName=%s>\n"), mapName);
-			}
+			if (!tex || tex->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
+				continue;
+
+			TCHAR mapName[128];
+			TCHAR mapExt[8];
+			_tsplitpath(((BitmapTex *)tex)->GetMapName(), nullptr, nullptr, mapName, mapExt);
+			_ftprintf(mStream, _T("\t\t<TextureName=%s%s>\n"), mapName, mapExt);
 		}
 	}
 	_ftprintf(mStream, _T("\t</Material>\n"));

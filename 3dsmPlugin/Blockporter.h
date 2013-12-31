@@ -36,10 +36,7 @@ public:
 
 	//the actual export function
 	/* TODO:
-	-fix crash when exporting material
 	-export lights
-	-export uv coordinates
-	-export texturename
 	-export animation
 	*/
 
@@ -50,7 +47,6 @@ private:
 	void WriteHeader(const TCHAR* nodeName);
 	void WriteMeshData(INode* objNode, int id);
 	void WriteMaterialData(INode* objNode);
-	//void WriteMaterialData(INode* objNode);
 	//void WriteLightData(INode* objNode, int id);
 
 	FILE* mStream;
