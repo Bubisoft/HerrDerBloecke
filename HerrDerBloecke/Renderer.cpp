@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-Renderer::Renderer(Control^ target)
+HdB::Renderer::Renderer(Control^ target)
 {
     mParams = gcnew PresentParameters();
     mParams->BackBufferFormat = Format::X8R8G8B8;
@@ -21,10 +21,10 @@ Renderer::Renderer(Control^ target)
     ResetDevice();
 
     mCamera = gcnew Camera(Vector3(0.f, 10.f, 9.f), Vector3::Zero);
-    meme = Mesh::CreateTeapot(mDevice);
+    mTeapot = Mesh::CreateTeapot(mDevice);
 }
 
-void Renderer::Resize(const int& w, const int& h)
+void HdB::Renderer::Resize(const int& w, const int& h)
 {
     if (w < 1 || h < 1)
         return;
@@ -33,20 +33,20 @@ void Renderer::Resize(const int& w, const int& h)
     ResetDevice();
 }
 
-void Renderer::Draw()
+void HdB::Renderer::Draw()
 {
     mDevice->Clear(ClearFlags::Target | ClearFlags::ZBuffer, Color4(0.f, 0.f, 0.f), 1.f, 0);
     mDevice->BeginScene();
     mDevice->SetTransform(TransformState::World, Matrix::RotationY(0));
     mDevice->SetTransform(TransformState::View, mCamera->ViewMatrix());
     mDevice->SetTransform(TransformState::Projection,
-            Matrix::PerspectiveFovRH(45.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
-    meme->DrawSubset(0);
+            Matrix::PerspectiveFovRH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
+    mTeapot->DrawSubset(0);
     mDevice->EndScene();
     mDevice->Present();
 }
 
-void Renderer::ResetDevice() {
+void HdB::Renderer::ResetDevice() {
     mDevice->Reset(mParams);
     mDevice->SetRenderState(RenderState::ZEnable, ZBufferType::UseZBuffer);
     mDevice->SetRenderState(RenderState::CullMode, Cull::Clockwise);
@@ -67,13 +67,13 @@ void Renderer::ResetDevice() {
 
 }
 
-void Renderer::MoveCamera(Vector3& change)
+void HdB::Renderer::MoveCamera(const Vector3& change)
 {
-		mCamera->MoveCamera(change);
+    mCamera->MoveCamera(change);
 }
 
-void Renderer::SetCameraSpeed(float _speed)
+void HdB::Renderer::SetCameraSpeed(const float& speed)
 {
-	mCamera->mCameraSpeed=_speed;
+    mCamera->Speed = speed;
 }
 

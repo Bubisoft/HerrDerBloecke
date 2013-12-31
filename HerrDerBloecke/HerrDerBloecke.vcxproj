@@ -76,8 +76,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="myTimer.cpp" />
-    <ClCompile Include="Options.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -93,7 +92,7 @@
     <ClInclude Include="MainWindow.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="myTimer.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Options.h">
       <FileType>CppForm</FileType>
     </ClInclude>

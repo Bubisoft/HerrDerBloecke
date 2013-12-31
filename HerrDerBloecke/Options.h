@@ -1,6 +1,6 @@
 #pragma once
 
-namespace HerrDerBloecke {
+namespace HdB {
 
 	using namespace System;
 	using namespace System::ComponentModel;

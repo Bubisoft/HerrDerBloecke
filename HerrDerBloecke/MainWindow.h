@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "Options.h"
 
-namespace HerrDerBloecke {
+namespace HdB {
 
     using namespace System;
     using namespace System::ComponentModel;

@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 
-using namespace HerrDerBloecke;
+using namespace HdB;
 
 [STAThreadAttribute]
 int main(array<System::String^> ^args)

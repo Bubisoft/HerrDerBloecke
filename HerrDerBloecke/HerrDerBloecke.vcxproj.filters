@@ -24,10 +24,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Options.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="myTimer.cpp">
+    <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,7 +41,7 @@
     <ClInclude Include="Options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="myTimer.h">
+    <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
