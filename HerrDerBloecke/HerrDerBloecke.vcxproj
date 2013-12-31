@@ -76,6 +76,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
@@ -92,11 +93,13 @@
     <ClInclude Include="MainWindow.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Options.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainWindow.resx">
