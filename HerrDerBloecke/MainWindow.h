@@ -18,9 +18,9 @@ namespace HdB {
         MainWindow()
         {
             InitializeComponent();
-			mMousePos=this->MousePosition;
-			mMousePosSet=false;
-			mOptions=gcnew Options;
+            mMousePos = this->MousePosition;
+            mMousePosSet = false;
+            mOptions = gcnew Options;
             mRenderer = gcnew Renderer(mRenderFrame);
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
@@ -39,18 +39,17 @@ namespace HdB {
         System::Windows::Forms::PictureBox^  mRenderFrame;
         System::ComponentModel::Container^ components;
         Renderer^ mRenderer;
-		Point mMousePos;
-		Options^ mOptions;
+        Point mMousePos;
+        Options^ mOptions;
+        bool mMousePosSet;
+    private: System::Windows::Forms::Button^  btnMenu;
+    private: System::Windows::Forms::Label^  lblResGold;
+    private: System::Windows::Forms::Label^  lblResBlockterie;
+    private: System::Windows::Forms::Label^  lblResNahrung;
+    private: System::Windows::Forms::TextBox^  boxNotifications;
+    private: System::Windows::Forms::Label^  lblBenachrichtigungen;
+    private: System::Windows::Forms::Button^  btnGraph;
 
-	private: System::Windows::Forms::Button^  button1;
-    private: System::Windows::Forms::Label^  label1;
-    private: System::Windows::Forms::Label^  label2;
-    private: System::Windows::Forms::Label^  label3;
-    private: System::Windows::Forms::TextBox^  mNotificationBox;
-
-    private: System::Windows::Forms::Label^  label4;
-    private: System::Windows::Forms::Button^  mGraphButton;
-             bool mMousePosSet;
 #pragma region Windows Form Designer generated code
         /// <summary>
         /// Required method for Designer support - do not modify
@@ -59,13 +58,13 @@ namespace HdB {
         void InitializeComponent(void)
         {
             this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
-            this->button1 = (gcnew System::Windows::Forms::Button());
-            this->label1 = (gcnew System::Windows::Forms::Label());
-            this->label2 = (gcnew System::Windows::Forms::Label());
-            this->label3 = (gcnew System::Windows::Forms::Label());
-            this->mNotificationBox = (gcnew System::Windows::Forms::TextBox());
-            this->label4 = (gcnew System::Windows::Forms::Label());
-            this->mGraphButton = (gcnew System::Windows::Forms::Button());
+            this->btnMenu = (gcnew System::Windows::Forms::Button());
+            this->lblResGold = (gcnew System::Windows::Forms::Label());
+            this->lblResBlockterie = (gcnew System::Windows::Forms::Label());
+            this->lblResNahrung = (gcnew System::Windows::Forms::Label());
+            this->boxNotifications = (gcnew System::Windows::Forms::TextBox());
+            this->lblBenachrichtigungen = (gcnew System::Windows::Forms::Label());
+            this->btnGraph = (gcnew System::Windows::Forms::Button());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
             this->SuspendLayout();
             // 
@@ -83,98 +82,98 @@ namespace HdB {
             this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
             // 
-            // button1
+            // btnMenu
             // 
-            this->button1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->button1->Location = System::Drawing::Point(992, 423);
-            this->button1->Name = L"button1";
-            this->button1->Size = System::Drawing::Size(100, 53);
-            this->button1->TabIndex = 1;
-            this->button1->Text = L"Menü";
-            this->button1->UseVisualStyleBackColor = true;
-            this->button1->Click += gcnew System::EventHandler(this, &MainWindow::button1_Click);
+            this->btnMenu->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+            this->btnMenu->Location = System::Drawing::Point(992, 423);
+            this->btnMenu->Name = L"btnMenu";
+            this->btnMenu->Size = System::Drawing::Size(100, 53);
+            this->btnMenu->TabIndex = 1;
+            this->btnMenu->Text = L"Menü";
+            this->btnMenu->UseVisualStyleBackColor = true;
+            this->btnMenu->Click += gcnew System::EventHandler(this, &MainWindow::btnMenu_Click);
             // 
-            // label1
+            // lblResGold
             // 
-            this->label1->AutoSize = true;
-            this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResGold->AutoSize = true;
+            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(0)));
-            this->label1->Location = System::Drawing::Point(379, 11);
-            this->label1->Name = L"label1";
-            this->label1->Size = System::Drawing::Size(42, 17);
-            this->label1->TabIndex = 2;
-            this->label1->Text = L"Gold";
+            this->lblResGold->Location = System::Drawing::Point(379, 11);
+            this->lblResGold->Name = L"lblResGold";
+            this->lblResGold->Size = System::Drawing::Size(42, 17);
+            this->lblResGold->TabIndex = 2;
+            this->lblResGold->Text = L"Gold";
             // 
-            // label2
+            // lblResBlockterie
             // 
-            this->label2->AutoSize = true;
-            this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResBlockterie->AutoSize = true;
+            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(0)));
-            this->label2->Location = System::Drawing::Point(516, 11);
-            this->label2->Name = L"label2";
-            this->label2->Size = System::Drawing::Size(80, 17);
-            this->label2->TabIndex = 3;
-            this->label2->Text = L"Blockterie";
+            this->lblResBlockterie->Location = System::Drawing::Point(516, 11);
+            this->lblResBlockterie->Name = L"lblResBlockterie";
+            this->lblResBlockterie->Size = System::Drawing::Size(80, 17);
+            this->lblResBlockterie->TabIndex = 3;
+            this->lblResBlockterie->Text = L"Blockterie";
             // 
-            // label3
+            // lblResNahrung
             // 
-            this->label3->AutoSize = true;
-            this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResNahrung->AutoSize = true;
+            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(0)));
-            this->label3->Location = System::Drawing::Point(670, 11);
-            this->label3->Name = L"label3";
-            this->label3->Size = System::Drawing::Size(70, 17);
-            this->label3->TabIndex = 4;
-            this->label3->Text = L"Nahrung";
+            this->lblResNahrung->Location = System::Drawing::Point(670, 11);
+            this->lblResNahrung->Name = L"lblResNahrung";
+            this->lblResNahrung->Size = System::Drawing::Size(70, 17);
+            this->lblResNahrung->TabIndex = 4;
+            this->lblResNahrung->Text = L"Nahrung";
             // 
-            // mNotificationBox
+            // boxNotifications
             // 
-            this->mNotificationBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->mNotificationBox->BackColor = System::Drawing::SystemColors::Menu;
-            this->mNotificationBox->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-            this->mNotificationBox->Cursor = System::Windows::Forms::Cursors::Arrow;
-            this->mNotificationBox->ImeMode = System::Windows::Forms::ImeMode::NoControl;
-            this->mNotificationBox->Location = System::Drawing::Point(574, 423);
-            this->mNotificationBox->Multiline = true;
-            this->mNotificationBox->Name = L"mNotificationBox";
-            this->mNotificationBox->ReadOnly = true;
-            this->mNotificationBox->ShortcutsEnabled = false;
-            this->mNotificationBox->Size = System::Drawing::Size(412, 53);
-            this->mNotificationBox->TabIndex = 5;
-            this->mNotificationBox->TabStop = false;
-            this->mNotificationBox->Enter += gcnew System::EventHandler(this, &MainWindow::textBox1_Enter);
+            this->boxNotifications->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+            this->boxNotifications->BackColor = System::Drawing::SystemColors::Menu;
+            this->boxNotifications->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+            this->boxNotifications->Cursor = System::Windows::Forms::Cursors::Arrow;
+            this->boxNotifications->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+            this->boxNotifications->Location = System::Drawing::Point(574, 423);
+            this->boxNotifications->Multiline = true;
+            this->boxNotifications->Name = L"boxNotifications";
+            this->boxNotifications->ReadOnly = true;
+            this->boxNotifications->ShortcutsEnabled = false;
+            this->boxNotifications->Size = System::Drawing::Size(412, 53);
+            this->boxNotifications->TabIndex = 5;
+            this->boxNotifications->TabStop = false;
+            this->boxNotifications->Enter += gcnew System::EventHandler(this, &MainWindow::boxNotifications_Enter);
             // 
-            // label4
+            // lblBenachrichtigungen
             // 
-            this->label4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->label4->AutoSize = true;
-            this->label4->Location = System::Drawing::Point(571, 407);
-            this->label4->Name = L"label4";
-            this->label4->Size = System::Drawing::Size(102, 13);
-            this->label4->TabIndex = 6;
-            this->label4->Text = L"Benachrichtigungen";
+            this->lblBenachrichtigungen->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+            this->lblBenachrichtigungen->AutoSize = true;
+            this->lblBenachrichtigungen->Location = System::Drawing::Point(571, 407);
+            this->lblBenachrichtigungen->Name = L"lblBenachrichtigungen";
+            this->lblBenachrichtigungen->Size = System::Drawing::Size(102, 13);
+            this->lblBenachrichtigungen->TabIndex = 6;
+            this->lblBenachrichtigungen->Text = L"Benachrichtigungen";
             // 
-            // mGraphButton
+            // btnGraph
             // 
-            this->mGraphButton->Location = System::Drawing::Point(785, 11);
-            this->mGraphButton->Name = L"mGraphButton";
-            this->mGraphButton->Size = System::Drawing::Size(75, 23);
-            this->mGraphButton->TabIndex = 7;
-            this->mGraphButton->Text = L"Graph";
-            this->mGraphButton->UseVisualStyleBackColor = true;
+            this->btnGraph->Location = System::Drawing::Point(785, 11);
+            this->btnGraph->Name = L"btnGraph";
+            this->btnGraph->Size = System::Drawing::Size(75, 23);
+            this->btnGraph->TabIndex = 7;
+            this->btnGraph->Text = L"Graph";
+            this->btnGraph->UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(1104, 488);
-            this->Controls->Add(this->mGraphButton);
-            this->Controls->Add(this->label4);
-            this->Controls->Add(this->mNotificationBox);
-            this->Controls->Add(this->label3);
-            this->Controls->Add(this->label2);
-            this->Controls->Add(this->label1);
-            this->Controls->Add(this->button1);
+            this->Controls->Add(this->btnGraph);
+            this->Controls->Add(this->lblBenachrichtigungen);
+            this->Controls->Add(this->boxNotifications);
+            this->Controls->Add(this->lblResNahrung);
+            this->Controls->Add(this->lblResBlockterie);
+            this->Controls->Add(this->lblResGold);
+            this->Controls->Add(this->btnMenu);
             this->Controls->Add(this->mRenderFrame);
             this->DoubleBuffered = true;
             this->Name = L"MainWindow";
@@ -190,42 +189,34 @@ namespace HdB {
             mRenderer->Resize(mRenderFrame->ClientRectangle.Width, mRenderFrame->ClientRectangle.Height);
             mRenderer->Draw();
         }
-	private: System::Void mRenderFrame_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-				 if(e->Button != System::Windows::Forms::MouseButtons::Right)
-					return;
-				 if(!mMousePosSet)
-				 {
-					 mMousePos=e->Location;
-					 mMousePosSet=true;
-				 }
+    private: System::Void mRenderFrame_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+            if (e->Button != System::Windows::Forms::MouseButtons::Right)
+                return;
+                if(!mMousePosSet) {
+                    mMousePos = e->Location;
+                    mMousePosSet = true;
+                }
 
-				 Vector3 v;
-				 v.X=(mMousePos.X-(float)e->Location.X);
-				 v.Y=0;
-				 v.Z=(mMousePos.Y-(float)e->Location.Y);
-				 				 
-				 mRenderer->MoveCamera(v);
-
-				 mMousePos=e->Location;
-			
-			 }
-	private: System::Void mRenderFrame_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-				 mMousePosSet=false;
-			 }
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-				if( mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK)
-				{
-					mRenderer->SetCameraSpeed((float)mOptions->mCameraSpeed/10);
-				}
-			 }
-private: System::Void MainWindow_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-             label1->Location=Point(this->Width / 2 - label1->Width / 2 - 150, 11);
-             label2->Location=Point(this->Width / 2 - label2->Width / 2 , 11);
-             label3->Location=Point(this->Width / 2 - label3->Width / 2 + 150, 11);
+                Vector3 v(mMousePos.X - e->Location.X, 0, mMousePos.Y - e->Location.Y);
+                mRenderer->MoveCamera(v);
+                mMousePos = e->Location;
+        }
+    private: System::Void mRenderFrame_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+            mMousePosSet = false;
+        }
+    private: System::Void btnMenu_Click(System::Object^  sender, System::EventArgs^  e) {
+            if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
+                mRenderer->SetCameraSpeed(mOptions->CameraSpeed / 10.f);
+            }
+        }
+    private: System::Void MainWindow_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+             lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
+             lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
+             lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
          }
-private: System::Void textBox1_Enter(System::Object^  sender, System::EventArgs^  e) {
-             //prevents the notificationbox being focused (flashing mouse in the box)
+    private: System::Void boxNotifications_Enter(System::Object^  sender, System::EventArgs^  e) {
+             // prevents the notification box from being focused (flashing mouse in the box)
              this->Owner->Focus();
          }
-};
+    };
 }

@@ -76,4 +76,3 @@ void HdB::Renderer::SetCameraSpeed(const float& speed)
 {
     mCamera->Speed = speed;
 }
-

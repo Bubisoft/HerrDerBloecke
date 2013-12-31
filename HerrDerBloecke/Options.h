@@ -2,151 +2,137 @@
 
 namespace HdB {
 
-	using namespace System;
-	using namespace System::ComponentModel;
-	using namespace System::Collections;
-	using namespace System::Windows::Forms;
-	using namespace System::Data;
-	using namespace System::Drawing;
+    using namespace System;
+    using namespace System::ComponentModel;
+    using namespace System::Collections;
+    using namespace System::Windows::Forms;
+    using namespace System::Data;
+    using namespace System::Drawing;
 
-	/// <summary>
-	/// Zusammenfassung für Options
-	/// </summary>
-	public ref class Options : public System::Windows::Forms::Form
-	{
-	public:
-		Options(void)
-		{
-			InitializeComponent();
-			//
-			//TODO: Konstruktorcode hier hinzufügen.
-			//
-		}
+    public ref class Options : public System::Windows::Forms::Form
+    {
+    public:
+        Options(void)
+        {
+            InitializeComponent();
+        }
 
-	protected:
-		/// <summary>
-		/// Verwendete Ressourcen bereinigen.
-		/// </summary>
-		~Options()
-		{
-			if (components)
-			{
-				delete components;
-			}
-		}
-	private: System::Windows::Forms::TrackBar^  trackBar1;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::Button^  button1;
-	private: System::Windows::Forms::Label^  label2;
-	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Label^  label4;
+    protected:
+        ~Options()
+        {
+            if (components)
+            {
+                delete components;
+            }
+        }
+    private: System::Windows::Forms::TrackBar^  tbCamSpeed;
+    private: System::Windows::Forms::Label^  lblCameraSpeed;
+    private: System::Windows::Forms::Button^  btnOK;
+    private: System::Windows::Forms::Label^  lblSpeed4;
+    private: System::Windows::Forms::Label^  lblSpeed1;
+    private: System::Windows::Forms::Label^  lblSpeed10th;
 
-	public:
-		property int mCameraSpeed
-		{
-			int get()
-			{
-				return trackBar1->Value;
-			}
-		}
-	protected: 
+    public:
+        property int CameraSpeed
+        {
+            int get()
+            {
+                return tbCamSpeed->Value;
+            }
+        }
 
-	private:
-		/// <summary>
-		/// Erforderliche Designervariable.
-		/// </summary>
-		System::ComponentModel::Container ^components;
+    private: System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Erforderliche Methode für die Designerunterstützung.
-		/// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
-		/// </summary>
-		void InitializeComponent(void)
-		{
-			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->BeginInit();
-			this->SuspendLayout();
-			// 
-			// trackBar1
-			// 
-			this->trackBar1->Location = System::Drawing::Point(56, 29);
-			this->trackBar1->Maximum = 40;
-			this->trackBar1->Minimum = 1;
-			this->trackBar1->Name = L"trackBar1";
-			this->trackBar1->Size = System::Drawing::Size(250, 42);
-			this->trackBar1->TabIndex = 0;
-			this->trackBar1->Value = 10;
-			// 
-			// label1
-			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(62, 13);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(74, 13);
-			this->label1->TabIndex = 1;
-			this->label1->Text = L"CameraSpeed";
-			// 
-			// button1
-			// 
-			this->button1->DialogResult = System::Windows::Forms::DialogResult::OK;
-			this->button1->Location = System::Drawing::Point(474, 189);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 2;
-			this->button1->Text = L"OK";
-			this->button1->UseVisualStyleBackColor = true;
-			// 
-			// label2
-			// 
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(288, 58);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(18, 13);
-			this->label2->TabIndex = 3;
-			this->label2->Text = L"x4";
-			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(109, 58);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(18, 13);
-			this->label3->TabIndex = 4;
-			this->label3->Text = L"x1";
-			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(38, 58);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(35, 13);
-			this->label4->TabIndex = 5;
-			this->label4->Text = L"x1/10";
-			// 
-			// Options
-			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(561, 224);
-			this->Controls->Add(this->label4);
-			this->Controls->Add(this->label3);
-			this->Controls->Add(this->label2);
-			this->Controls->Add(this->button1);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->trackBar1);
-			this->Name = L"Options";
-			this->Text = L"Options";
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->EndInit();
-			this->ResumeLayout(false);
-			this->PerformLayout();
+        /// <summary>
+        /// Erforderliche Methode für die Designerunterstützung.
+        /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
+        /// </summary>
+        void InitializeComponent(void)
+        {
+            this->tbCamSpeed = (gcnew System::Windows::Forms::TrackBar());
+            this->lblCameraSpeed = (gcnew System::Windows::Forms::Label());
+            this->btnOK = (gcnew System::Windows::Forms::Button());
+            this->lblSpeed4 = (gcnew System::Windows::Forms::Label());
+            this->lblSpeed1 = (gcnew System::Windows::Forms::Label());
+            this->lblSpeed10th = (gcnew System::Windows::Forms::Label());
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->BeginInit();
+            this->SuspendLayout();
+            // 
+            // tbCamSpeed
+            // 
+            this->tbCamSpeed->Location = System::Drawing::Point(56, 29);
+            this->tbCamSpeed->Maximum = 40;
+            this->tbCamSpeed->Minimum = 1;
+            this->tbCamSpeed->Name = L"tbCamSpeed";
+            this->tbCamSpeed->Size = System::Drawing::Size(250, 45);
+            this->tbCamSpeed->TabIndex = 0;
+            this->tbCamSpeed->Value = 10;
+            // 
+            // lblCameraSpeed
+            // 
+            this->lblCameraSpeed->AutoSize = true;
+            this->lblCameraSpeed->Location = System::Drawing::Point(62, 13);
+            this->lblCameraSpeed->Name = L"lblCameraSpeed";
+            this->lblCameraSpeed->Size = System::Drawing::Size(74, 13);
+            this->lblCameraSpeed->TabIndex = 1;
+            this->lblCameraSpeed->Text = L"CameraSpeed";
+            // 
+            // btnOK
+            // 
+            this->btnOK->DialogResult = System::Windows::Forms::DialogResult::OK;
+            this->btnOK->Location = System::Drawing::Point(474, 189);
+            this->btnOK->Name = L"btnOK";
+            this->btnOK->Size = System::Drawing::Size(75, 23);
+            this->btnOK->TabIndex = 2;
+            this->btnOK->Text = L"OK";
+            this->btnOK->UseVisualStyleBackColor = true;
+            // 
+            // lblSpeed4
+            // 
+            this->lblSpeed4->AutoSize = true;
+            this->lblSpeed4->Location = System::Drawing::Point(288, 58);
+            this->lblSpeed4->Name = L"lblSpeed4";
+            this->lblSpeed4->Size = System::Drawing::Size(18, 13);
+            this->lblSpeed4->TabIndex = 3;
+            this->lblSpeed4->Text = L"x4";
+            // 
+            // lblSpeed1
+            // 
+            this->lblSpeed1->AutoSize = true;
+            this->lblSpeed1->Location = System::Drawing::Point(109, 58);
+            this->lblSpeed1->Name = L"lblSpeed1";
+            this->lblSpeed1->Size = System::Drawing::Size(18, 13);
+            this->lblSpeed1->TabIndex = 4;
+            this->lblSpeed1->Text = L"x1";
+            // 
+            // lblSpeed10th
+            // 
+            this->lblSpeed10th->AutoSize = true;
+            this->lblSpeed10th->Location = System::Drawing::Point(38, 58);
+            this->lblSpeed10th->Name = L"lblSpeed10th";
+            this->lblSpeed10th->Size = System::Drawing::Size(35, 13);
+            this->lblSpeed10th->TabIndex = 5;
+            this->lblSpeed10th->Text = L"x1/10";
+            // 
+            // Options
+            // 
+            this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+            this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+            this->ClientSize = System::Drawing::Size(561, 224);
+            this->Controls->Add(this->lblSpeed10th);
+            this->Controls->Add(this->lblSpeed1);
+            this->Controls->Add(this->lblSpeed4);
+            this->Controls->Add(this->btnOK);
+            this->Controls->Add(this->lblCameraSpeed);
+            this->Controls->Add(this->tbCamSpeed);
+            this->Name = L"Options";
+            this->Text = L"Options";
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->EndInit();
+            this->ResumeLayout(false);
+            this->PerformLayout();
 
-		}
+        }
 #pragma endregion
-	};
+    };
 }

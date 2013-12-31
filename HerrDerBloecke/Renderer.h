@@ -34,10 +34,7 @@ namespace HdB {
         PresentParameters^ mParams;
         Direct3D^ m3D;
         Device^ mDevice;
-
         Camera^ mCamera;
-    
-	    Vector3 mScrollVector;
         Mesh^ mTeapot;
     };
 }
