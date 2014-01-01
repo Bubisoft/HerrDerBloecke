@@ -1,4 +1,7 @@
 #include "Renderer.h"
+#include "Camera.h"
+#include "Model.h"
+#include "Unit.h"
 
 HdB::Renderer::Renderer(Control^ target)
 {
@@ -20,8 +23,19 @@ HdB::Renderer::Renderer(Control^ target)
     mDevice = gcnew Device(m3D, 0, DeviceType::Hardware, target->Handle, CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    mCamera = gcnew Camera(Vector3(0.f, 10.f, 9.f), Vector3::Zero);
-    mTeapot = Mesh::CreateTeapot(mDevice);
+    mCamera = gcnew Camera(Vector3(0.f, 50.f, 9.f), Vector3::Zero);
+    mModels = gcnew List<Model^>();
+
+    // TEMP Test: Load Model
+    mModels->Add(gcnew Model("Teapot", Mesh::CreateTeapot(mDevice)));
+    SpawnUnit(gcnew Teapot("Teapot", Vector3::Zero));
+    SpawnUnit(gcnew Teapot("Teapot", Vector3(-5.f, 0.f, -5.f)));
+    SpawnUnit(gcnew Teapot("Teapot", Vector3(5.f, 0.f, 5.f)));
+}
+
+HdB::Renderer::~Renderer()
+{
+    mModels->Clear();
 }
 
 void HdB::Renderer::Resize(const int& w, const int& h)
@@ -37,11 +51,14 @@ void HdB::Renderer::Draw()
 {
     mDevice->Clear(ClearFlags::Target | ClearFlags::ZBuffer, Color4(0.f, 0.f, 0.f), 1.f, 0);
     mDevice->BeginScene();
-    mDevice->SetTransform(TransformState::World, Matrix::RotationY(0));
     mDevice->SetTransform(TransformState::View, mCamera->ViewMatrix());
     mDevice->SetTransform(TransformState::Projection,
             Matrix::PerspectiveFovRH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
-    mTeapot->DrawSubset(0);
+
+    for each (Model^ m in mModels) {
+        m->Draw(mDevice);
+    }
+
     mDevice->EndScene();
     mDevice->Present();
 }
@@ -60,11 +77,6 @@ void HdB::Renderer::ResetDevice() {
     l.Range = 200.f;
     mDevice->SetLight(0, l);
     mDevice->EnableLight(0, true);
-
-    Material mat;
-    mat.Diffuse = Color4(.75f, .75f, .75f);
-    mDevice->Material = mat;
-
 }
 
 void HdB::Renderer::MoveCamera(const Vector3& change)
@@ -75,4 +87,12 @@ void HdB::Renderer::MoveCamera(const Vector3& change)
 void HdB::Renderer::SetCameraSpeed(const float& speed)
 {
     mCamera->Speed = speed;
+}
+
+void HdB::Renderer::SpawnUnit(Unit^ unit)
+{
+    for each (Model^ m in mModels) {
+        if (m->Name == unit->ModelName)
+            m->AddInstance(unit);
+    }
 }

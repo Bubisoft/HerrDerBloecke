@@ -24,7 +24,10 @@ namespace HdB {
         property float Speed;
 
     private:
-        Vector3 mPosition;  //Position of the Camera
-        Vector3 mLookAt;    //Position the Camera is looking at
+        // Position of the Camera
+        Vector3 mPosition;
+
+        // Position the Camera is looking at
+        Vector3 mLookAt;
     };
 }

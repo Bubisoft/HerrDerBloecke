@@ -78,6 +78,7 @@ namespace HdB {
             this->mRenderFrame->Size = System::Drawing::Size(1080, 356);
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
+            this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
             this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
@@ -185,14 +186,23 @@ namespace HdB {
 
         }
 #pragma endregion
-    private: System::Void mRenderFrame_Resize(System::Object^  sender, System::EventArgs^  e) {
+
+    // MainWindow Events
+    private: System::Void MainWindow_SizeChanged(Object^  sender, EventArgs^  e) {
+             lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
+             lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
+             lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
+         }
+
+    // mRenderFrame Events
+    private: System::Void mRenderFrame_Resize(Object^  sender, EventArgs^  e) {
             mRenderer->Resize(mRenderFrame->ClientRectangle.Width, mRenderFrame->ClientRectangle.Height);
             mRenderer->Draw();
         }
-    private: System::Void mRenderFrame_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+    private: System::Void mRenderFrame_MouseMove(Object^  sender, MouseEventArgs^  e) {
             if (e->Button != System::Windows::Forms::MouseButtons::Right)
                 return;
-                if(!mMousePosSet) {
+                if (!mMousePosSet) {
                     mMousePos = e->Location;
                     mMousePosSet = true;
                 }
@@ -201,22 +211,24 @@ namespace HdB {
                 mRenderer->MoveCamera(v);
                 mMousePos = e->Location;
         }
-    private: System::Void mRenderFrame_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+    private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
             mMousePosSet = false;
         }
-    private: System::Void btnMenu_Click(System::Object^  sender, System::EventArgs^  e) {
+    private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
+            // TODO
+        }
+
+    // btnMenu Events
+    private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
             if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 mRenderer->SetCameraSpeed(mOptions->CameraSpeed / 10.f);
             }
         }
-    private: System::Void MainWindow_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-             lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
-             lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
-             lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
-         }
-    private: System::Void boxNotifications_Enter(System::Object^  sender, System::EventArgs^  e) {
+
+    // boxNotifications Events
+    private: System::Void boxNotifications_Enter(Object^  sender, EventArgs^  e) {
              // prevents the notification box from being focused (flashing mouse in the box)
              this->Owner->Focus();
          }
-    };
+};
 }
