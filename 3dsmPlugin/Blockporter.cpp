@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Blockporter.h"
 
 const TCHAR* Blockporter::GetString(UINT id)
@@ -90,7 +91,7 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
 	//now we have our file stream, so let's write the header
 	i->PushPrompt(_T("Writing Header"));
-	WriteHeader(root->GetName());
+	WriteHeader(root->GetName(), root->NumberOfChildren());
 
 	//now that we have the header written, let's iterate through the objects in the
 	//group and export the meshes and lights
@@ -117,10 +118,12 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		switch(os.obj->SuperClassID())
 		{
 		case GEOMOBJECT_CLASS_ID:
+			_ftprintf(mStream, _T("<ObjectID=%i>\n"), idx);
 			i->PushPrompt(_T("Writing MeshData for Object %s", child->GetName()));
 			WriteMeshData(child, idx);
 			i->PushPrompt(_T("Writing MaterialData for Object %s", child->GetName()));
 			WriteMaterialData(child);
+			_ftprintf(mStream, _T("</Object>\n"));
 			break;
 		//case LIGHT_CLASS_ID:
 		//	WriteLightData(child, idx);
@@ -171,4 +174,29 @@ bool Blockporter::IsNewModelVersion(const TCHAR* file, const TCHAR* nodeName)
 
 	fclose(mStream);
 	return false; //The old version is above the new one. Better ask if we really want to export.
+}
+
+void Blockporter::BuildVertexNormals(Point3* normals, Mesh* m)
+{
+	for(int i = 0; i < m->getNumVerts(); i++)
+		normals[i] = Point3(0,0,0);
+	for(int norm = 0; norm < m->getNumFaces(); norm++)
+	{
+		Face f = m->faces[norm];
+		normals[f.v[0]] += m->getFaceNormal(norm);
+		normals[f.v[1]] += m->getFaceNormal(norm);
+		normals[f.v[2]] += m->getFaceNormal(norm);
+	}
+
+	//normalize the normals
+	for(int norm = 0; norm < m->getNumVerts(); norm++)
+	{
+		float l, x, y, z;
+		x = normals[norm].x;
+		y = normals[norm].y;
+		z = normals[norm].z;
+
+		l = sqrt(x*x+y*y+z*z);
+		normals[norm] = Point3(x/l, y/l, z/l);
+	}
 }

@@ -2,7 +2,7 @@
 #include <stdmat.h>
 #include "Blockporter.h"
 
-void Blockporter::WriteHeader(const TCHAR* nodeName)
+void Blockporter::WriteHeader(const TCHAR* nodeName, int objNumber)
 {
 	TCHAR grpname[64];
 	wcscpy(grpname, nodeName);
@@ -16,6 +16,7 @@ void Blockporter::WriteHeader(const TCHAR* nodeName)
 	int ver = _wtoi(sVer);
 
 	_ftprintf(mStream, _T("\t<Version=%i>\n"), ver);
+	_ftprintf(mStream, _T("\t<ObjectCount=%i>\n"), objNumber);
 	_ftprintf(mStream, _T("</Header>\n"));
 }
 
@@ -31,7 +32,6 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 		return;
 
     //now that we have th triobject write the start
-	_ftprintf(mStream, _T("<ObjectID=%i>\n"), id);
 	_ftprintf(mStream, _T("\t<Mesh>\n"));
 	Mesh* mesh = &tri->GetMesh();
 	mesh->buildNormals();
@@ -76,12 +76,19 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 
 	//start the normallist and export the normals
 	_ftprintf(mStream, _T("\t\t<Normals>\n"));
-	for(int norm = 0; norm < mesh->getNumFaces(); norm++)
+
+	//first build the vertex normals
+	Point3* normals = new Point3[mesh->getNumVerts()];
+	BuildVertexNormals(normals, mesh);
+
+	for(int norm = 0; norm < mesh->getNumVerts(); norm++)
 	{
-		Point3 n = mesh->getFaceNormal(norm);
+		Point3 n = normals[norm];
 		_ftprintf(mStream, _T("\t\t\t%f,%f,%f;\n"), n.x, n.y, n.z);
 	}
 	_ftprintf(mStream, _T("\t\t</Normals>\n")); //close the normallist
+
+	delete[] normals;
 
 	//start the UV List
 	_ftprintf(mStream, _T("\t\t<UVWMap>\n"));
@@ -131,7 +138,7 @@ void Blockporter::WriteMaterialData(INode* objNode)
 		_ftprintf(mStream, _T("\t\t<Diffuse=%f,%f,%f>\n"), c.r, c.g, c.b);
 		c = stdmat->GetSpecular(0);
 		_ftprintf(mStream, _T("\t\t<Specular=%f,%f,%f>\n"), c.r, c.g, c.b);
-		_ftprintf(mStream, _T("\t\t<Transperancy=%f>\n"), stdmat->GetXParency(0));
+		_ftprintf(mStream, _T("\t\t<Transparency=%f>\n"), stdmat->GetXParency(0));
 
 		for (int i = 0; i < mtl->NumSubTexmaps(); i++)
 		{

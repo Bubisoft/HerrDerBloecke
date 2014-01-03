@@ -44,9 +44,10 @@ public:
 
 private:
 	bool IsNewModelVersion(const TCHAR* file, const TCHAR* nodeName);
-	void WriteHeader(const TCHAR* nodeName);
+	void WriteHeader(const TCHAR* nodeName, int objNumber);
 	void WriteMeshData(INode* objNode, int id);
 	void WriteMaterialData(INode* objNode);
+	void BuildVertexNormals(Point3* normals, Mesh* m);
 	//void WriteLightData(INode* objNode, int id);
 
 	FILE* mStream;
