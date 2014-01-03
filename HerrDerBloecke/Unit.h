@@ -17,9 +17,9 @@ namespace HdB {
     /********
      * TEMP *
      ********/
-    ref class Teapot : Unit
+    ref class TestUnit : Unit
     {
     public:
-        Teapot(String^ model, const Vector3& pos);
+        TestUnit(String^ model, const Vector3& pos);
     };
 }

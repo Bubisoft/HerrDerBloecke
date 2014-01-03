@@ -27,10 +27,10 @@ HdB::Renderer::Renderer(Control^ target)
     mModels = gcnew List<Model^>();
 
     // TEMP Test: Load Model
+    mModels->Add(gcnew Model("exampleUnit", mDevice));
+    SpawnUnit(gcnew TestUnit("exampleUnit", Vector3::Zero));
     mModels->Add(gcnew Model("Teapot", Mesh::CreateTeapot(mDevice)));
-    SpawnUnit(gcnew Teapot("Teapot", Vector3::Zero));
-    SpawnUnit(gcnew Teapot("Teapot", Vector3(-5.f, 0.f, -5.f)));
-    SpawnUnit(gcnew Teapot("Teapot", Vector3(5.f, 0.f, 5.f)));
+    SpawnUnit(gcnew TestUnit("Teapot", Vector3(10.f, 10.f, 0.f)));
 }
 
 HdB::Renderer::~Renderer()
@@ -56,7 +56,7 @@ void HdB::Renderer::Draw()
             Matrix::PerspectiveFovLH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
 
     for each (Model^ m in mModels) {
-        m->Draw(mDevice);
+        m->Draw();
     }
 
     mDevice->EndScene();

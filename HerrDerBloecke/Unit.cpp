@@ -6,11 +6,10 @@ HdB::Unit::Unit(String^ model, const Vector3& pos)
     Position = pos;
 }
 
-
 /********
  * TEMP *
  ********/
-HdB::Teapot::Teapot(String^ model, const Vector3& pos)
+HdB::TestUnit::TestUnit(String^ model, const Vector3& pos)
     : Unit(model, pos)
 {
 }

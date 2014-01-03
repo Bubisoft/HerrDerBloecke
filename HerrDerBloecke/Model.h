@@ -7,11 +7,19 @@ using namespace SlimDX::Direct3D9;
 namespace HdB {
     // Forward declarations
     ref class Unit;
+    value struct Submesh;
 
     ref class Model
     {
     public:
-        /** Construct a new object to manage a specific model */
+        /** Construct a new object to manage a specific model.
+         *  The model will be loaded from the file models/<name>.HBM.
+         *  The Modelname in the file will be ignored as we want to
+         *  handle model creation and usage consistently.
+         */
+        Model(String^ name, Device^ device);
+
+        /** TEMP: Construct a Model from a SlimDX Mesh */
         Model(String^ name, Mesh^ mesh);
 
         /** Destructor */
@@ -21,15 +29,15 @@ namespace HdB {
         void AddInstance(Unit^ unit);
 
         /** Draw all of our model instances */
-        void Draw(Device^ device);
+        void Draw();
 
         property String^ Name;
 
     private:
-        List<Unit^>^ mInstances;
-        Material mMaterial;
+        void LoadFromHBMFile(String^ filename);
 
-        // Probably just for testing and to be replaced later
-        Mesh^ mMesh;
+        Device^ mDevice;
+        List<Submesh>^ mMeshes;
+        List<Unit^>^ mInstances;
     };
 }
