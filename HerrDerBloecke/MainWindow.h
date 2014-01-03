@@ -2,6 +2,7 @@
 
 #include "Renderer.h"
 #include "Options.h"
+#include "Camera.h"
 
 namespace HdB {
 
@@ -11,6 +12,7 @@ namespace HdB {
     using namespace System::Windows::Forms;
     using namespace System::Data;
     using namespace System::Drawing;
+    using namespace SlimDX::Windows;
 
     public ref class MainWindow : public Form
     {
@@ -207,8 +209,8 @@ namespace HdB {
                     mMousePosSet = true;
                 }
 
-                Vector3 v(mMousePos.X - e->Location.X, 0, mMousePos.Y - e->Location.Y);
-                mRenderer->MoveCamera(v);
+                Vector3 v(mMousePos.X - e->Location.X, mMousePos.Y - e->Location.Y, 0);
+                mRenderer->Camera->Move(v);
                 mMousePos = e->Location;
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
@@ -221,7 +223,7 @@ namespace HdB {
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
             if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
-                mRenderer->SetCameraSpeed(mOptions->CameraSpeed / 10.f);
+                mRenderer->Camera->Speed = mOptions->CameraSpeed / 10.f;
             }
         }
 

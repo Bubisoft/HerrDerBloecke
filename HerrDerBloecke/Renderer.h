@@ -4,7 +4,6 @@ using namespace System::Windows::Forms;
 using namespace System::Collections::Generic;
 using namespace SlimDX;
 using namespace SlimDX::Direct3D9;
-using namespace SlimDX::Windows;
 
 namespace HdB {
     // Forward Declarations
@@ -29,14 +28,10 @@ namespace HdB {
          */
         void Draw();
 
-        /** Scrolls the Map / Moves the Camera */
-        void MoveCamera(const Vector3& change);
-
-        /** Sets the Speed of the Camera */
-        void SetCameraSpeed(const float& speed);
-
         /** Assign a unit to its model and spawn the instance */
         void SpawnUnit(Unit^ unit);
+
+        property Camera^ Camera;
 
     private:
         void ResetDevice();
@@ -44,8 +39,6 @@ namespace HdB {
         PresentParameters^ mParams;
         Direct3D^ m3D;
         Device^ mDevice;
-        Camera^ mCamera;
-
         List<Model^>^ mModels;
     };
 }

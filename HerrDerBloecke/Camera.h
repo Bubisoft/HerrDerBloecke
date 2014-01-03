@@ -1,8 +1,5 @@
 #pragma once
 
-/** Default reduction of CameraSpeed */
-#define STD_SPEED 30.0f
-
 using namespace SlimDX;
 
 namespace HdB {
@@ -15,7 +12,7 @@ namespace HdB {
         Camera(const Vector3& pos, const Vector3& lookAt);
 
         /** Moves the Camera */
-        void MoveCamera(const Vector3& change);
+        void Move(const Vector3& change);
 
         /** Calculate the View Matrix for our Transform State in the Renderer. */
         Matrix ViewMatrix();

@@ -1,5 +1,8 @@
 #include "Camera.h"
 
+/** Default reduction of CameraSpeed */
+#define STD_SPEED 30.0f
+
 HdB::Camera::Camera(const Vector3& pos, const Vector3& lookAt)
     : mPosition(pos), mLookAt(lookAt)
 {
@@ -8,13 +11,13 @@ HdB::Camera::Camera(const Vector3& pos, const Vector3& lookAt)
 
 Matrix HdB::Camera::ViewMatrix()
 {
-    return Matrix::LookAtRH(mPosition, mLookAt, Vector3::UnitY);
+    return Matrix::LookAtLH(mPosition, mLookAt, Vector3::UnitZ);
 }
 
-void HdB::Camera::MoveCamera(const Vector3& change)
+void HdB::Camera::Move(const Vector3& change)
 {
     mLookAt.X += change.X * (1/STD_SPEED) * Speed;
-    mLookAt.Z += change.Z * (1/STD_SPEED) * Speed;
+    mLookAt.Y += change.Y * (1/STD_SPEED) * Speed;
     mPosition.X += change.X * (1/STD_SPEED) * Speed;
-    mPosition.Z += change.Z * (1/STD_SPEED) * Speed;
+    mPosition.Y += change.Y * (1/STD_SPEED) * Speed;
 }
