@@ -19,9 +19,6 @@ namespace HdB {
          */
         Model(String^ name, Device^ device);
 
-        /** TEMP: Construct a Model from a SlimDX Mesh */
-        Model(String^ name, Mesh^ mesh);
-
         /** Destructor */
         ~Model();
 

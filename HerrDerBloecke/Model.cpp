@@ -25,27 +25,14 @@ HdB::Model::Model(String^ name, Device^ device)
     LoadFromHBMFile("models" + Path::DirectorySeparatorChar + name + ".HBM");
 }
 
-HdB::Model::Model(String^ name, Mesh^ mesh)
-{
-    Name = name;
-    mDevice = mesh->Device;
-    mMeshes = gcnew List<Submesh>();
-    mInstances = gcnew List<Unit^>();
-
-    Submesh m; 
-    m.vertexSize = mesh->BytesPerVertex;
-    m.vertexFormat = mesh->VertexFormat;
-    m.vertices = mesh->VertexBuffer;
-    m.indices = mesh->IndexBuffer;
-    m.numVertices = mesh->VertexCount;
-    m.numFaces = mesh->FaceCount;
-    m.material.Diffuse = Color4(.75f, .75f, .75f);
-    mMeshes->Add(m);
-}
-
 HdB::Model::~Model()
 {
     mInstances->Clear();
+
+    for each(Submesh% m in mMeshes) {
+        delete m.vertices;
+        delete m.indices;
+    }
     mMeshes->Clear();
 }
 

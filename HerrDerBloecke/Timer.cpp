@@ -24,7 +24,7 @@ float HdB::Timer::Update()
     if (mIsRunning) {
         long long last = mCount;
         mCount = Stopwatch::GetTimestamp();
-        elapsed = safe_cast<float>(mCount - last) / mFrequency;
+        elapsed = static_cast<float>(mCount - last) / mFrequency;
     }
     return elapsed;
 }

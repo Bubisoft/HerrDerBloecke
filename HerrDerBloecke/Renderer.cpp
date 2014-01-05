@@ -29,13 +29,18 @@ HdB::Renderer::Renderer(Control^ target)
     // TEMP Test: Load Model
     mModels->Add(gcnew Model("exampleUnit", mDevice));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3::Zero));
-    mModels->Add(gcnew Model("Teapot", Mesh::CreateTeapot(mDevice)));
-    SpawnUnit(gcnew TestUnit("Teapot", Vector3(10.f, 10.f, 0.f)));
+    SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, -5.f, 0.f)));
+    SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, 5.f, 0.f)));
 }
 
 HdB::Renderer::~Renderer()
 {
+    for each (Model^ m in mModels)
+        delete m;
     mModels->Clear();
+
+    delete mDevice;
+    delete m3D;
 }
 
 void HdB::Renderer::Resize(const int& w, const int& h)

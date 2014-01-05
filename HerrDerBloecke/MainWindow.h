@@ -35,6 +35,7 @@ namespace HdB {
             {
                 delete components;
             }
+            delete mRenderer;
         }
 
     private:
@@ -67,13 +68,13 @@ namespace HdB {
             this->boxNotifications = (gcnew System::Windows::Forms::TextBox());
             this->lblBenachrichtigungen = (gcnew System::Windows::Forms::Label());
             this->btnGraph = (gcnew System::Windows::Forms::Button());
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->BeginInit();
             this->SuspendLayout();
             // 
             // mRenderFrame
             // 
-            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-                | System::Windows::Forms::AnchorStyles::Left) 
+            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+                | System::Windows::Forms::AnchorStyles::Left)
                 | System::Windows::Forms::AnchorStyles::Right));
             this->mRenderFrame->Location = System::Drawing::Point(12, 43);
             this->mRenderFrame->Name = L"mRenderFrame";
@@ -99,7 +100,7 @@ namespace HdB {
             // lblResGold
             // 
             this->lblResGold->AutoSize = true;
-            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->lblResGold->Location = System::Drawing::Point(379, 11);
             this->lblResGold->Name = L"lblResGold";
@@ -110,7 +111,7 @@ namespace HdB {
             // lblResBlockterie
             // 
             this->lblResBlockterie->AutoSize = true;
-            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->lblResBlockterie->Location = System::Drawing::Point(516, 11);
             this->lblResBlockterie->Name = L"lblResBlockterie";
@@ -121,7 +122,7 @@ namespace HdB {
             // lblResNahrung
             // 
             this->lblResNahrung->AutoSize = true;
-            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->lblResNahrung->Location = System::Drawing::Point(670, 11);
             this->lblResNahrung->Name = L"lblResNahrung";
@@ -158,6 +159,7 @@ namespace HdB {
             // 
             // btnGraph
             // 
+            this->btnGraph->Anchor = System::Windows::Forms::AnchorStyles::Top;
             this->btnGraph->Location = System::Drawing::Point(785, 11);
             this->btnGraph->Name = L"btnGraph";
             this->btnGraph->Size = System::Drawing::Size(75, 23);
@@ -179,10 +181,11 @@ namespace HdB {
             this->Controls->Add(this->btnMenu);
             this->Controls->Add(this->mRenderFrame);
             this->DoubleBuffered = true;
+            this->MinimumSize = System::Drawing::Size(640, 480);
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 
