@@ -225,15 +225,17 @@ namespace HdB {
 
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
+            mRenderer->Paused = true;
             if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 mRenderer->Camera->Speed = mOptions->CameraSpeed / 10.f;
             }
+            mRenderer->Paused = false;
         }
 
     // boxNotifications Events
     private: System::Void boxNotifications_Enter(Object^  sender, EventArgs^  e) {
-             // prevents the notification box from being focused (flashing mouse in the box)
-             this->Owner->Focus();
+            // prevents the notification box from being focused (flashing mouse in the box)
+            mRenderFrame->Focus();
          }
 };
 }

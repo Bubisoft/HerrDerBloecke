@@ -36,6 +36,7 @@ namespace HdB {
         void SpawnUnit(Unit^ unit);
 
         property Camera^ Camera;
+        property bool Paused;
 
     private:
         void ResetDevice();
