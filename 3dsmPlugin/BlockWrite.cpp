@@ -92,28 +92,10 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 
 	//start the UV List
 	_ftprintf(mStream, _T("\t\t<UVWMap>\n"));
-	for(int face = 0; face < mesh->getNumFaces(); face++)
-	{
-		/*If I understand everything correctly, faces and texturefaces are more or less the same.
-		At least they have the same indices. The vertices however have a 1->n correlation to the
-		texture vertices. That means, that the faces are the only constant in this. 
-		Because of this we first get both, the "space" face and the texture face, then get the id of the
-		"space" vertex and the correlating id of the texture vertex and save everything into the file.
-		This will allow us to properly and unambiguously define the UV Map.
-		~ Christopher*/
-		Face f = mesh->faces[face];
-		TVFace tvf = mesh->tvFace[face];
-
-		for (int vert = 0; vert < 3; vert++)
-		{
-			int fid = f.v[vert];
-			int tid = tvf.t[vert];
-			UVVert tv = mesh->tVerts[tid];
-
-			_ftprintf(mStream, _T("\t\t\t%i,%f,%f,%f;\n"), fid, tv.x, tv.y, tv.z);
-		}
-	}
-	_ftprintf(mStream, _T("\t\t</UVWMap>\n")); //end UV List
+	std::set<TVert> tVerts = GetTVerts(mesh);
+	for (const TVert& tv : tVerts)
+		_ftprintf(mStream, _T("\t\t\t%i,%f,%f,%f;\n"), tv.idx, tv.u, tv.v, tv.w);
+	_ftprintf(mStream, _T("\t\t</UVWMap>\n")); 	//end UV List
 
 	_ftprintf(mStream, _T("\t</Mesh>\n")); //we are done with the Mesh so close it.
 }

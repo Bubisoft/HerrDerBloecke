@@ -1,5 +1,7 @@
 #pragma once
+#pragma warning(disable : 4996)
 #include <cstring>
+#include <set>
 #include <max.h>
 #include <iparamb2.h>
 #include <maxtextfile.h>
@@ -7,6 +9,26 @@
 
 #define MB_BUFFER_LENGTH 512
 #define ENDING_HBM 0
+
+//Helper
+struct TVert
+{
+	int idx;
+	float u;
+	float v;
+	float w;
+	/*we need this function for the std::set. std::set doesn't use the == operator.
+	Instead it assumes two elemets are equal wenn !(a<b) && !(b<a)*/
+	bool operator<(const TVert& b) const
+	{
+		float x,y;
+		x = idx - u - v - w;
+		y = b.idx - b.u - b.v - b.w;
+		if(x < y)
+			return true;
+		return false;
+	}
+};
 
 //if you change the class name you also have to change it in the ClassDesc below
 class Blockporter : public SceneExport
@@ -43,11 +65,14 @@ public:
 	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
 
 private:
+	//helper functions
 	bool IsNewModelVersion(const TCHAR* file, const TCHAR* nodeName);
+	void BuildVertexNormals(Point3* normals, Mesh* m);
+	std::set<TVert> GetTVerts(Mesh* m);
+	//writer functions
 	void WriteHeader(const TCHAR* nodeName, int objNumber);
 	void WriteMeshData(INode* objNode, int id);
 	void WriteMaterialData(INode* objNode);
-	void BuildVertexNormals(Point3* normals, Mesh* m);
 	//void WriteLightData(INode* objNode, int id);
 
 	FILE* mStream;
