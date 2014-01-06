@@ -1,5 +1,7 @@
 #pragma once
 
+#include "IDrawable.h"
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace SlimDX::Direct3D9;
@@ -9,7 +11,7 @@ namespace HdB {
     ref class Unit;
     value struct Submesh;
 
-    ref class Model
+    ref class Model : IDrawable
     {
     public:
         /** Construct a new object to manage a specific model.
@@ -26,7 +28,7 @@ namespace HdB {
         void AddInstance(Unit^ unit);
 
         /** Draw all of our model instances */
-        void Draw();
+        virtual void Draw();
 
         property String^ Name;
 

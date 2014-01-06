@@ -24,10 +24,10 @@ HdB::Renderer::Renderer(Control^ target)
     ResetDevice();
 
     Camera = gcnew HdB::Camera(Vector3(0.f, 10.f, 30.f), Vector3::Zero);
-    mModels = gcnew List<Model^>();
+    mDrawables = gcnew List<IDrawable^>();
 
     // TEMP Test: Load Model
-    mModels->Add(gcnew Model("exampleUnit", mDevice));
+    AddDrawable(gcnew Model("exampleUnit", mDevice));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3::Zero));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, -5.f, 0.f)));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, 5.f, 0.f)));
@@ -35,9 +35,9 @@ HdB::Renderer::Renderer(Control^ target)
 
 HdB::Renderer::~Renderer()
 {
-    for each (Model^ m in mModels)
-        delete m;
-    mModels->Clear();
+    for each (IDrawable^ d in mDrawables)
+        delete d;
+    mDrawables->Clear();
 
     delete mDevice;
     delete m3D;
@@ -60,8 +60,8 @@ void HdB::Renderer::Draw()
     mDevice->SetTransform(TransformState::Projection,
             Matrix::PerspectiveFovLH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
 
-    for each (Model^ m in mModels) {
-        m->Draw();
+    for each (IDrawable^ d in mDrawables) {
+        d->Draw();
     }
 
     mDevice->EndScene();
@@ -84,10 +84,16 @@ void HdB::Renderer::ResetDevice() {
     mDevice->EnableLight(0, true);
 }
 
+void HdB::Renderer::AddDrawable(IDrawable^ drawable)
+{
+    mDrawables->Add(drawable);
+}
+
 void HdB::Renderer::SpawnUnit(Unit^ unit)
 {
-    for each (Model^ m in mModels) {
-        if (m->Name == unit->ModelName)
-            m->AddInstance(unit);
+    for each (IDrawable^ d in mDrawables) {
+        if (Model^ m = dynamic_cast<Model^>(d))
+            if (m->Name == unit->ModelName)
+                m->AddInstance(unit);
     }
 }

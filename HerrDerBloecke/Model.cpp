@@ -2,6 +2,7 @@
 #include "Unit.h"
 
 using namespace System::IO;
+using namespace System::Diagnostics;
 
 value struct HdB::Submesh
 {
@@ -155,5 +156,7 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             mMeshes->Add(mesh);
         }
         reader->Close();
-    } catch (Exception^ e) { }
+    } catch (Exception^ e) {
+        Debug::WriteLine(e->StackTrace);
+    }
 }

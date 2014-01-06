@@ -56,6 +56,9 @@
     <ClInclude Include="Unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IDrawable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainWindow.resx">
