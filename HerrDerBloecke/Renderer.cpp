@@ -23,7 +23,7 @@ HdB::Renderer::Renderer(Control^ target)
     mDevice = gcnew Device(m3D, 0, DeviceType::Hardware, target->Handle, CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    Camera = gcnew HdB::Camera(Vector3(0.f, 10.f, 30.f), Vector3::Zero);
+    Camera = gcnew HdB::Camera(Vector3(0.f, 10.f, 10.f), Vector3::Zero);
     mDrawables = gcnew List<IDrawable^>();
 
     // TEMP Test: Load Model
@@ -75,7 +75,11 @@ void HdB::Renderer::ResetDevice() {
     mDevice->Reset(mParams);
     mDevice->SetRenderState(RenderState::ZEnable, ZBufferType::UseZBuffer);
     mDevice->SetRenderState(RenderState::CullMode, Cull::Counterclockwise);
+    mDevice->SetRenderState(RenderState::AlphaBlendEnable, true);
+    mDevice->SetRenderState(RenderState::SourceBlend, Blend::SourceAlpha);
+    mDevice->SetRenderState(RenderState::DestinationBlend, Blend::InverseSourceAlpha);
     mDevice->SetRenderState(RenderState::Lighting, true);
+    mDevice->SetRenderState(RenderState::Ambient, Color4(1.f, 1.f, 1.f).ToArgb());
 
     Light l;
     l.Position = Vector3(100.f, 100.f, 100.f);

@@ -9,7 +9,7 @@ using namespace SlimDX::Direct3D9;
 namespace HdB {
     // Forward declarations
     ref class Unit;
-    value struct Submesh;
+    ref struct Submesh;
 
     ref class Model : IDrawable
     {
@@ -36,7 +36,7 @@ namespace HdB {
         void LoadFromHBMFile(String^ filename);
 
         Device^ mDevice;
-        List<Submesh>^ mMeshes;
+        List<Submesh^>^ mMeshes;
         List<Unit^>^ mInstances;
     };
 }
