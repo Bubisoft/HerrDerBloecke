@@ -212,7 +212,7 @@ namespace HdB {
                     mMousePosSet = true;
                 }
 
-                Vector3 v(mMousePos.X - e->Location.X, mMousePos.Y - e->Location.Y, 0);
+                Vector3 v(e->Location.X - mMousePos.X, mMousePos.Y - e->Location.Y, 0);
                 mRenderer->Camera->Move(v);
                 mMousePos = e->Location;
         }

@@ -11,7 +11,7 @@ HdB::Camera::Camera(const Vector3& pos, const Vector3& lookAt)
 
 Matrix HdB::Camera::ViewMatrix()
 {
-    return Matrix::LookAtLH(mPosition, mLookAt, Vector3::UnitZ);
+    return Matrix::LookAtRH(mPosition, mLookAt, Vector3::UnitZ);
 }
 
 void HdB::Camera::Move(const Vector3& change)

@@ -23,7 +23,7 @@ HdB::Renderer::Renderer(Control^ target)
     mDevice = gcnew Device(m3D, 0, DeviceType::Hardware, target->Handle, CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    Camera = gcnew HdB::Camera(Vector3(0.f, 10.f, 10.f), Vector3::Zero);
+    Camera = gcnew HdB::Camera(Vector3(0.f, -10.f, 10.f), Vector3::Zero);
     mDrawables = gcnew List<IDrawable^>();
 
     // TEMP Test: Load Model
@@ -61,7 +61,7 @@ void HdB::Renderer::Draw()
     mDevice->BeginScene();
     mDevice->SetTransform(TransformState::View, Camera->ViewMatrix());
     mDevice->SetTransform(TransformState::Projection,
-            Matrix::PerspectiveFovLH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
+            Matrix::PerspectiveFovRH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height, 1.0f, 100.0f));
 
     for each (IDrawable^ d in mDrawables) {
         d->Draw();

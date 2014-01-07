@@ -31,9 +31,6 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	else
 		return;
 
-	//Convert RHS to LHS
-	tm.Scale(Point3(1,-1,1));
-
     //now that we have the triobject write the start
 	_ftprintf(mStream, _T("\t<Mesh>\n"));
 	Mesh* mesh = &tri->GetMesh();
