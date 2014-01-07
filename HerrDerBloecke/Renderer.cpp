@@ -74,7 +74,7 @@ void HdB::Renderer::Draw()
 void HdB::Renderer::ResetDevice() {
     mDevice->Reset(mParams);
     mDevice->SetRenderState(RenderState::ZEnable, ZBufferType::UseZBuffer);
-    mDevice->SetRenderState(RenderState::CullMode, Cull::Counterclockwise);
+    mDevice->SetRenderState(RenderState::CullMode, Cull::None);
     mDevice->SetRenderState(RenderState::AlphaBlendEnable, true);
     mDevice->SetRenderState(RenderState::SourceBlend, Blend::SourceAlpha);
     mDevice->SetRenderState(RenderState::DestinationBlend, Blend::InverseSourceAlpha);
