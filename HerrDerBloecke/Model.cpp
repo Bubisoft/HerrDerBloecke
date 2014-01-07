@@ -11,21 +11,20 @@ ref struct Vertex
 {
     Vector3 position;
     Vector3 normal;
-    float u, v;
+    Vector2 uv;
     bool uvIsSet;
 
-    const static int Size = 2 * Vector3::SizeInBytes + 2 * sizeof(float);
+    const static int Size = 2 * Vector3::SizeInBytes + Vector2::SizeInBytes;
     const static VertexFormat Format = VertexFormat::Position | VertexFormat::Normal | VertexFormat::Texture1;
 
     Vertex() : uvIsSet(false) { }
-    Vertex(Vertex^ v) : position(v->position), normal(v->normal), u(v->u), v(v->v), uvIsSet(true) { }
+    Vertex(Vertex^ v) : position(v->position), normal(v->normal), uv(v->uv), uvIsSet(true) { }
 
     void Write(DataStream^ stream)
     {
         stream->Write(position);
         stream->Write(normal);
-        stream->Write(u);
-        stream->Write(v);
+        stream->Write(uv);
     }
 };
 
@@ -136,7 +135,8 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             line = reader->ReadLine(); // Close Vertices
 
             line = reader->ReadLine(); // Faces
-            mesh->indices = gcnew IndexBuffer(mDevice, mesh->numFaces * 3 * sizeof(UInt16), Usage::WriteOnly, Pool::Managed, true);
+            mesh->indices = gcnew IndexBuffer(mDevice, mesh->numFaces * 3 * sizeof(UInt16),
+                    Usage::WriteOnly, Pool::Managed, true);
             DataStream^ iBuf = mesh->indices->Lock(0, 0, LockFlags::None);
             for (int face = 0; face < mesh->numFaces; face++) {
                 line = reader->ReadLine();
@@ -163,13 +163,11 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
                 int vert = Convert::ToInt32(parts[0]);
                 if (!vertices[vert]->uvIsSet) {
-                    vertices[vert]->u = Convert::ToSingle(parts[1]);
-                    vertices[vert]->v = Convert::ToSingle(parts[2]);
+                    vertices[vert]->uv = Vector2(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
                     vertices[vert]->uvIsSet = true;
                 } else {
                     Vertex^ v = gcnew Vertex(vertices[vert]);
-                    v->u = Convert::ToSingle(parts[1]);
-                    v->v = Convert::ToSingle(parts[2]);
+                    v->uv = Vector2(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
                     vertices->Add(v);
                 }
             }
