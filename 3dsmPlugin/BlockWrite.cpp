@@ -31,7 +31,10 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	else
 		return;
 
-    //now that we have th triobject write the start
+	//Convert RHS to LHS
+	tm.Scale(Point3(1,-1,1));
+
+    //now that we have the triobject write the start
 	_ftprintf(mStream, _T("\t<Mesh>\n"));
 	Mesh* mesh = &tri->GetMesh();
 	mesh->buildNormals();
@@ -56,17 +59,18 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 			fid = f.v[j];
 			tid = t.t[j];
 
+			Point3 pos = mesh->verts[fid] * tm;
 			//position
-			vBuf[tid*8+0] = mesh->verts[fid].x;
-			vBuf[tid*8+1] = mesh->verts[fid].y;
-			vBuf[tid*8+2] = mesh->verts[fid].z;
+			vBuf[tid*8+0] = pos.x;
+			vBuf[tid*8+1] = pos.y;
+			vBuf[tid*8+2] = pos.z;
 			//normals
 			vBuf[tid*8+3] = normals[fid].x;
 			vBuf[tid*8+4] = normals[fid].y;
 			vBuf[tid*8+5] = normals[fid].z;
 			//UV
 			vBuf[tid*8+6] = mesh->tVerts[tid].x;
-			vBuf[tid*8+7] = mesh->tVerts[tid].y;
+			vBuf[tid*8+7] = 1 - mesh->tVerts[tid].y;
 
 			iBuf[i*3+j] = tid;
 		}
