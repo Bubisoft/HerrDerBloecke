@@ -35,69 +35,54 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	_ftprintf(mStream, _T("\t<Mesh>\n"));
 	Mesh* mesh = &tri->GetMesh();
 	mesh->buildNormals();
-	_ftprintf(mStream, _T("\t\t<NumVertices=%i>\n"), mesh->getNumVerts());
+	_ftprintf(mStream, _T("\t\t<NumVertices=%i>\n"), mesh->getNumTVerts());
 	_ftprintf(mStream, _T("\t\t<NumFaces=%i>\n"), mesh->getNumFaces());
-	_ftprintf(mStream, _T("\t\t<NumTVerts=%i>\n"), mesh->getNumTVerts()); //UVs
-
-	//start the vertexlist and export the vertices
 	_ftprintf(mStream, _T("\t\t<Vertices>\n"));
-	for(int vert = 0; vert < mesh->getNumVerts(); vert++)
-	{
-		Point3 v = mesh->verts[vert] * tm;
-		_ftprintf(mStream, _T("\t\t\t%f,%f,%f;\n"), v.x, v.y, v.z);
-	}
-	_ftprintf(mStream, _T("\t\t</Vertices>\n")); //end vertexlist
 
-	//start the facelist and export the faces
-	_ftprintf(mStream, _T("\t\t<Faces>\n"));
-	//is the object negativly scaled? If so we have to reverse the faces to see the object
-	BOOL negScale = (DotProd(CrossProd(tm.GetRow(0),tm.GetRow(1)),tm.GetRow(2))<0.0) ? true : false;
-	int v1,v3;
-	if(negScale)
-	{
-		v1 = 2;
-		v3 = 0;
-	}
-	else
-	{
-		v1 = 0;
-		v3 = 2;
-	}
+	float* vBuf = new float[mesh->getNumTVerts()*sizeof(float)*8];
+	int* iBuf = new int[mesh->getNumFaces()*sizeof(int)*3];
 
-	for(int face = 0; face < mesh->getNumFaces(); face++)
-	{
-		int vert1, vert2, vert3;
-		vert1 = mesh->faces[face].v[v1];
-		vert2 = mesh->faces[face].v[1];
-		vert3 = mesh->faces[face].v[v3];
-		_ftprintf(mStream, _T("\t\t\t%i,%i,%i;\n"), vert1, vert2, vert3);
-	}
-	_ftprintf(mStream, _T("\t\t</Faces>\n"));
-
-	//start the normallist and export the normals
-	_ftprintf(mStream, _T("\t\t<Normals>\n"));
-
-	//first build the vertex normals
 	Point3* normals = new Point3[mesh->getNumVerts()];
 	BuildVertexNormals(normals, mesh);
 
-	for(int norm = 0; norm < mesh->getNumVerts(); norm++)
+	for(int i = 0; i < mesh->getNumFaces(); i++)
 	{
-		Point3 n = normals[norm];
-		_ftprintf(mStream, _T("\t\t\t%f,%f,%f;\n"), n.x, n.y, n.z);
+		TVFace t = mesh->tvFace[i];
+		Face f = mesh->faces[i];
+
+		int fid, tid;
+		for(int j = 0; j < 3; j++)
+		{
+			fid = f.v[j];
+			tid = t.t[j];
+
+			//position
+			vBuf[tid*8+0] = mesh->verts[fid].x;
+			vBuf[tid*8+1] = mesh->verts[fid].y;
+			vBuf[tid*8+2] = mesh->verts[fid].z;
+			//normals
+			vBuf[tid*8+3] = normals[fid].x;
+			vBuf[tid*8+4] = normals[fid].y;
+			vBuf[tid*8+5] = normals[fid].z;
+			//UV
+			vBuf[tid*8+6] = mesh->tVerts[tid].x;
+			vBuf[tid*8+7] = mesh->tVerts[tid].y;
+
+			iBuf[i*3+j] = tid;
+		}
 	}
-	_ftprintf(mStream, _T("\t\t</Normals>\n")); //close the normallist
+	//write the buffers into the file
+	for(int i = 0; i < mesh->getNumTVerts(); i++)
+		_ftprintf(mStream, _T("\t\t\t%f,%f,%f;%f,%f,%f;%f,%f;\n"),vBuf[i*8+0],vBuf[i*8+1],vBuf[i*8+2],vBuf[i*8+3],vBuf[i*8+4],vBuf[i*8+5],vBuf[i*8+6],vBuf[i*8+7]);
+	_ftprintf(mStream, _T("\t\t</Vertices>\n"));
+	_ftprintf(mStream, _T("\t\t<Faces>\n"));
+	for(int i = 0; i < mesh->getNumFaces(); i++)
+		_ftprintf(mStream, _T("\t\t\t%i,%i,%i;\n"),iBuf[i*3+0],iBuf[i*3+1],iBuf[i*3+2]);
+	_ftprintf(mStream, _T("\t\t</Faces>\n"));
+	_ftprintf(mStream, _T("\t</Mesh>\n"));
 
-	delete[] normals;
-
-	//start the UV List
-	_ftprintf(mStream, _T("\t\t<UVWMap>\n"));
-	std::set<TVert> tVerts = GetTVerts(mesh);
-	for (const TVert& tv : tVerts)
-		_ftprintf(mStream, _T("\t\t\t%i,%f,%f,%f;\n"), tv.idx, tv.u, tv.v, tv.w);
-	_ftprintf(mStream, _T("\t\t</UVWMap>\n")); 	//end UV List
-
-	_ftprintf(mStream, _T("\t</Mesh>\n")); //we are done with the Mesh so close it.
+	delete[] vBuf;
+	delete[] iBuf;
 }
 
 void Blockporter::WriteMaterialData(INode* objNode)

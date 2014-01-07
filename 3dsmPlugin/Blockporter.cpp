@@ -178,6 +178,7 @@ bool Blockporter::IsNewModelVersion(const TCHAR* file, const TCHAR* nodeName)
 
 void Blockporter::BuildVertexNormals(Point3* normals, Mesh* m)
 {
+	int* faceCount = new int[m->getNumVerts()*sizeof(int)];
 	for(int i = 0; i < m->getNumVerts(); i++)
 		normals[i] = Point3(0,0,0);
 	for(int norm = 0; norm < m->getNumFaces(); norm++)
@@ -186,50 +187,22 @@ void Blockporter::BuildVertexNormals(Point3* normals, Mesh* m)
 		normals[f.v[0]] += m->getFaceNormal(norm);
 		normals[f.v[1]] += m->getFaceNormal(norm);
 		normals[f.v[2]] += m->getFaceNormal(norm);
+		faceCount[f.v[0]]++;
+		faceCount[f.v[1]]++;
+		faceCount[f.v[2]]++;
 	}
 
 	//normalize the normals
 	for(int norm = 0; norm < m->getNumVerts(); norm++)
 	{
 		float l, x, y, z;
-		x = normals[norm].x;
-		y = normals[norm].y;
-		z = normals[norm].z;
+		x = normals[norm].x/faceCount[norm];
+		y = normals[norm].y/faceCount[norm];
+		z = normals[norm].z/faceCount[norm];
 
 		l = sqrt(x*x+y*y+z*z);
 		normals[norm] = Point3(x/l, y/l, z/l);
 	}
+	delete[] faceCount;
 }
 
-std::set<TVert> Blockporter::GetTVerts(Mesh* m)
-{
-	/*If I understand everything correctly, faces and texturefaces are more or less the same.
-	At least they have the same indices. The vertices however have a 1->n correlation to the
-	texture vertices. That means, that the faces are the only constant in this.
-	Because of this we first get both, the "space" face and the texture face, then get the id of the
-	"space" vertex and the correlating id of the texture vertex and save everything into the file.
-	This will allow us to properly and unambiguously define the UV Map.
-	~ Christopher*/
-	std::set<TVert> tVerts;
-	for (int i = 0; i < m->getNumFaces(); i++)
-	{
-		Face f = m->faces[i];
-		TVFace tvf = m->tvFace[i];
-
-		for (int j = 0; j < 3; j++)
-		{
-			TVert tv;
-			int fid = f.v[j];
-			int tid = tvf.t[j];
-			UVVert uvv = m->tVerts[tid];
-			tv.idx = fid;
-			tv.u = uvv.x;
-			tv.v = uvv.y;
-			tv.w = uvv.z;
-
-			tVerts.insert(tv);
-		}
-	}
-
-	return tVerts;
-}
