@@ -7,18 +7,14 @@ using namespace System::Diagnostics;
 #define MODEL_PATH "models" + Path::DirectorySeparatorChar
 #define TEXTURE_PATH "textures" + Path::DirectorySeparatorChar
 
-ref struct Vertex
+value struct Vertex
 {
     Vector3 position;
     Vector3 normal;
     Vector2 uv;
-    bool uvIsSet;
 
     const static int Size = 2 * Vector3::SizeInBytes + Vector2::SizeInBytes;
     const static VertexFormat Format = VertexFormat::Position | VertexFormat::Normal | VertexFormat::Texture1;
-
-    Vertex() : uvIsSet(false) { }
-    Vertex(Vertex^ v) : position(v->position), normal(v->normal), uv(v->uv), uvIsSet(true) { }
 
     void Write(DataStream^ stream)
     {
@@ -32,7 +28,6 @@ ref struct HdB::Submesh
 {
     int numVertices;
     int numFaces;
-    int numTVerts;
     VertexBuffer^ vertices;
     IndexBuffer^ indices;
     Texture^ texture;
@@ -109,7 +104,6 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
         line = reader->ReadLine(); // Close Header
 
         // Loop through the objects
-        // Counting to 1 as count not yet in header
         for (int i = 0; i < objects; i++) {
             Submesh^ mesh = gcnew Submesh();
             line = reader->ReadLine(); // ObjectID
@@ -120,65 +114,35 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             line = reader->ReadLine(); // NumFaces
             mesh->numFaces = Convert::ToInt32(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
 
-            line = reader->ReadLine(); // NumTVerts
-            mesh->numTVerts = Convert::ToInt32(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
-
             line = reader->ReadLine(); // Vertices
-            List<Vertex^>^ vertices = gcnew List<Vertex^>(mesh->numVertices);
+            mesh->vertices = gcnew VertexBuffer(mDevice, mesh->numVertices * Vertex::Size, Usage::WriteOnly,
+                Vertex::Format, Pool::Managed);
+            DataStream^ vBuf = mesh->vertices->Lock(0, 0, LockFlags::None);
             for (int vert = 0; vert < mesh->numVertices; vert++) {
                 line = reader->ReadLine();
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                Vertex^ v = gcnew Vertex();
-                v->position = Vector3(Convert::ToSingle(parts[0]), Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
-                vertices->Add(v);
+                Vertex v;
+                v.position = Vector3(Convert::ToSingle(parts[0]), Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
+                v.normal = Vector3(Convert::ToSingle(parts[3]), Convert::ToSingle(parts[4]), Convert::ToSingle(parts[5]));
+                v.uv = Vector2(Convert::ToSingle(parts[6]), Convert::ToSingle(parts[7]));
+                v.Write(vBuf);
             }
+            vBuf->Close();
             line = reader->ReadLine(); // Close Vertices
 
             line = reader->ReadLine(); // Faces
-            mesh->indices = gcnew IndexBuffer(mDevice, mesh->numFaces * 3 * sizeof(UInt16),
-                    Usage::WriteOnly, Pool::Managed, true);
+            mesh->indices = gcnew IndexBuffer(mDevice, mesh->numFaces * 3 * sizeof(UInt32),
+                    Usage::WriteOnly, Pool::Managed, false);
             DataStream^ iBuf = mesh->indices->Lock(0, 0, LockFlags::None);
             for (int face = 0; face < mesh->numFaces; face++) {
                 line = reader->ReadLine();
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                iBuf->Write(Convert::ToUInt16(parts[0]));
-                iBuf->Write(Convert::ToUInt16(parts[1]));
-                iBuf->Write(Convert::ToUInt16(parts[2]));
+                iBuf->Write(Convert::ToUInt32(parts[0]));
+                iBuf->Write(Convert::ToUInt32(parts[1]));
+                iBuf->Write(Convert::ToUInt32(parts[2]));
             }
             iBuf->Close();
             line = reader->ReadLine(); // Close Faces
-
-            line = reader->ReadLine(); // Normals
-            for (int norm = 0; norm < mesh->numVertices; norm++) {
-                line = reader->ReadLine();
-                parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                vertices[norm]->normal = Vector3(Convert::ToSingle(parts[0]), Convert::ToSingle(parts[1]),
-                        Convert::ToSingle(parts[2]));
-            }
-            line = reader->ReadLine(); // Close Normals
-
-            line = reader->ReadLine(); // UVWMap
-            for (int tv = 0; tv < mesh->numTVerts; tv++) {
-                line = reader->ReadLine();
-                parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                int vert = Convert::ToInt32(parts[0]);
-                if (!vertices[vert]->uvIsSet) {
-                    vertices[vert]->uv = Vector2(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
-                    vertices[vert]->uvIsSet = true;
-                } else {
-                    Vertex^ v = gcnew Vertex(vertices[vert]);
-                    v->uv = Vector2(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
-                    vertices->Add(v);
-                }
-            }
-            mesh->numVertices = vertices->Count;
-            mesh->vertices = gcnew VertexBuffer(mDevice, mesh->numVertices * Vertex::Size, Usage::WriteOnly,
-                Vertex::Format, Pool::Managed);
-            DataStream^ vBuf = mesh->vertices->Lock(0, 0, LockFlags::None);
-            for each (Vertex^ v in vertices)
-                v->Write(vBuf);
-            vBuf->Close();
-            line = reader->ReadLine(); // Close UVWMap
             line = reader->ReadLine(); // Close Mesh
 
             line = reader->ReadLine(); // Material
