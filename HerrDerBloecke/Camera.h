@@ -27,6 +27,9 @@ namespace HdB {
         /** Rotate the Camera according to the change of the cursor position */
         void Rotate(const Vector2% change);
 
+        /** Zoom the Camera */
+        void Zoom(const int% delta);
+
         /** Defines the camera rotation speed. */
         property float Speed;
 

@@ -88,6 +88,7 @@ namespace HdB {
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
             this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
+            this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
             this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
@@ -191,6 +192,8 @@ namespace HdB {
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
+            this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
+            this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
@@ -235,7 +238,10 @@ namespace HdB {
     private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
             // TODO
         }
-
+    private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
+            if(mRenderFrame->Focused)
+                mRenderer->Camera->Zoom(e->Delta);
+        }
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
             mRenderer->Paused = true;
@@ -248,7 +254,14 @@ namespace HdB {
     // boxNotifications Events
     private: System::Void boxNotifications_Enter(Object^  sender, EventArgs^  e) {
             // prevents the notification box from being focused (flashing mouse in the box)
-            mRenderFrame->Focus();
+            lblResGold->Focus();
+         }
+private: System::Void MainWindow_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+             // give the Focus to something else, so the Render Frame looses the focus
+             lblResGold->Focus();
+         }
+private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+             mRenderFrame->Focus();
          }
 };
 }

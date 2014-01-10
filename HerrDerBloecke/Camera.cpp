@@ -1,4 +1,6 @@
 #include "Camera.h"
+#include <cmath>
+#define ZOOM_SPEED 0.05
 
 HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)
 : mDevice(device), mPosition(pos), mLookAt(lookAt)
@@ -44,6 +46,28 @@ void HdB::Camera::Move(const Vector3% change)
 
 void HdB::Camera::Rotate(const Vector2% change)
 {
-    Matrix rot = Matrix::Translation(-mLookAt) * Matrix::RotationZ(change.X * Speed) * Matrix::Translation(mLookAt);
+    Vector3 v = Vector3::Subtract(mLookAt, mPosition);
+    Matrix rotY = Matrix::Identity;
+
+    // get the angle between the camera and the z-axis
+    float yAngle = Vector3::Dot(v, Vector3::UnitZ) / v.Length();
+    yAngle = asin(yAngle);
+
+    // we only want to rotate between 5 and 85 degrees in the y-direction
+    if(change.Y < 0 && yAngle < -System::Math::PI / 36 && yAngle ||
+        change.Y > 0 && yAngle > -System::Math::PI * 17 / 36)
+        rotY = Matrix::RotationAxis(Vector3::Cross(Vector3::UnitZ, v), change.Y * Speed);
+
+    Matrix rot = Matrix::Translation(-mLookAt) * Matrix::RotationZ(change.X * Speed) * rotY * Matrix::Translation(mLookAt);
     mPosition = Vector3::TransformCoordinate(mPosition, rot);
+}
+
+void HdB::Camera::Zoom(const int% delta)
+{
+    Vector3 v = Vector3::Subtract(mPosition, mLookAt);
+
+    if(delta > 0 && v.Length() > 5)
+        mPosition = mLookAt + v * (1 - ZOOM_SPEED);
+    if(delta < 0 && v.Length() < 40)
+        mPosition = mLookAt + v * (1 + ZOOM_SPEED);
 }
