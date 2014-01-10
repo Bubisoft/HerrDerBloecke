@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include <cmath>
 #define ZOOM_SPEED 0.05
 
 HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)
@@ -51,7 +50,7 @@ void HdB::Camera::Rotate(const Vector2% change)
 
     // get the angle between the camera and the z-axis
     float yAngle = Vector3::Dot(v, Vector3::UnitZ) / v.Length();
-    yAngle = asin(yAngle);
+    yAngle = System::Math::Asin(yAngle);
 
     // we only want to rotate between 5 and 85 degrees in the y-direction
     if(change.Y < 0 && yAngle < -System::Math::PI / 36 && yAngle ||
