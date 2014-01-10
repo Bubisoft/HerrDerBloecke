@@ -22,8 +22,14 @@ namespace HdB {
             InitializeComponent();
             mMousePos = this->MousePosition;
             mMousePosSet = false;
-            mOptions = gcnew Options;
-            mRenderer = gcnew Renderer(mRenderFrame);
+            mOptions = gcnew Options();
+            mRenderer = gcnew Renderer();
+            if (!mRenderer->Init(mRenderFrame)) {
+                MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
+                    "ERROR", MessageBoxButtons::OK, MessageBoxIcon::Error);
+                Close();
+                return;
+            }
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
         }

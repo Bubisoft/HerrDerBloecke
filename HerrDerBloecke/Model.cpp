@@ -3,9 +3,14 @@
 
 using namespace System::IO;
 using namespace System::Diagnostics;
+using namespace System::Globalization;
 
 #define MODEL_PATH "models" + Path::DirectorySeparatorChar
 #define TEXTURE_PATH "textures" + Path::DirectorySeparatorChar
+
+#define StrToFloat(x) Convert::ToSingle(x, CultureInfo::InvariantCulture)
+#define StrToInt(x) Convert::ToInt32(x, CultureInfo::InvariantCulture)
+#define StrToUInt(x) Convert::ToUInt32(x, CultureInfo::InvariantCulture)
 
 value struct Vertex
 {
@@ -13,8 +18,8 @@ value struct Vertex
     Vector3 normal;
     Vector2 uv;
 
-    const static int Size = 2 * Vector3::SizeInBytes + Vector2::SizeInBytes;
-    const static VertexFormat Format = VertexFormat::Position | VertexFormat::Normal | VertexFormat::Texture1;
+    static const int Size = 2 * Vector3::SizeInBytes + Vector2::SizeInBytes;
+    static const VertexFormat Format = VertexFormat::Position | VertexFormat::Normal | VertexFormat::Texture1;
 
     void Write(DataStream^ stream)
     {
@@ -35,9 +40,9 @@ ref struct HdB::Submesh
 
     ~Submesh()
     {
-        delete vertices;
-        delete indices;
         delete texture;
+        delete indices;
+        delete vertices;
     }
 };
 
@@ -73,14 +78,11 @@ void HdB::Model::Draw()
         mDevice->Indices = m->indices;
         mDevice->SetStreamSource(0, m->vertices, 0, Vertex::Size);
         mDevice->SetTexture(0, m->texture);
-        mDevice->SetSamplerState(0, SamplerState::MinFilter, TextureFilter::Linear);
-        mDevice->SetSamplerState(0, SamplerState::MagFilter, TextureFilter::Linear);
-        mDevice->SetSamplerState(0, SamplerState::MipFilter, TextureFilter::Linear);
 
         for each (Unit^ u in mInstances) {
             mDevice->SetTransform(TransformState::World, Matrix::Translation(u->Position));
             mDevice->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,
-                    m->numVertices, 0, m->numFaces);
+                m->numVertices, 0, m->numFaces);
         }
     }
 }
@@ -100,7 +102,7 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
         line = reader->ReadLine(); // ModelName in File
         line = reader->ReadLine(); // Version
         line = reader->ReadLine(); // ObjectCount
-        int objects = Convert::ToInt32(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
+        int objects = StrToInt(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
         line = reader->ReadLine(); // Close Header
 
         // Loop through the objects
@@ -109,10 +111,10 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             line = reader->ReadLine(); // ObjectID
             line = reader->ReadLine(); // Mesh
             line = reader->ReadLine(); // NumVertices
-            mesh->numVertices = Convert::ToInt32(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
+            mesh->numVertices = StrToInt(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
 
             line = reader->ReadLine(); // NumFaces
-            mesh->numFaces = Convert::ToInt32(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
+            mesh->numFaces = StrToInt(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
 
             line = reader->ReadLine(); // Vertices
             mesh->vertices = gcnew VertexBuffer(mDevice, mesh->numVertices * Vertex::Size, Usage::WriteOnly,
@@ -122,9 +124,9 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
                 line = reader->ReadLine();
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
                 Vertex v;
-                v.position = Vector3(Convert::ToSingle(parts[0]), Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]));
-                v.normal = Vector3(Convert::ToSingle(parts[3]), Convert::ToSingle(parts[4]), Convert::ToSingle(parts[5]));
-                v.uv = Vector2(Convert::ToSingle(parts[6]), Convert::ToSingle(parts[7]));
+                v.position = Vector3(StrToFloat(parts[0]), StrToFloat(parts[1]), StrToFloat(parts[2]));
+                v.normal = Vector3(StrToFloat(parts[3]), StrToFloat(parts[4]), StrToFloat(parts[5]));
+                v.uv = Vector2(StrToFloat(parts[6]), StrToFloat(parts[7]));
                 v.Write(vBuf);
             }
             vBuf->Close();
@@ -132,14 +134,14 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
 
             line = reader->ReadLine(); // Faces
             mesh->indices = gcnew IndexBuffer(mDevice, mesh->numFaces * 3 * sizeof(UInt32),
-                    Usage::WriteOnly, Pool::Managed, false);
+                Usage::WriteOnly, Pool::Managed, false);
             DataStream^ iBuf = mesh->indices->Lock(0, 0, LockFlags::None);
             for (int face = 0; face < mesh->numFaces; face++) {
                 line = reader->ReadLine();
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                iBuf->Write(Convert::ToUInt32(parts[0]));
-                iBuf->Write(Convert::ToUInt32(parts[1]));
-                iBuf->Write(Convert::ToUInt32(parts[2]));
+                iBuf->Write(StrToUInt(parts[0]));
+                iBuf->Write(StrToUInt(parts[1]));
+                iBuf->Write(StrToUInt(parts[2]));
             }
             iBuf->Close();
             line = reader->ReadLine(); // Close Faces
@@ -149,32 +151,33 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             if (line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1] == "TRUE") {
                 line = reader->ReadLine(); // Ambient
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                mesh->material.Ambient = Color4(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]),
-                        Convert::ToSingle(parts[3]));
+                mesh->material.Ambient = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 line = reader->ReadLine(); // Diffuse
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                mesh->material.Diffuse = Color4(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]),
-                        Convert::ToSingle(parts[3]));
+                mesh->material.Diffuse = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 line = reader->ReadLine(); // Specular
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                mesh->material.Specular = Color4(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]),
-                        Convert::ToSingle(parts[3]));
+                mesh->material.Specular = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 line = reader->ReadLine(); // Transparency
-                float alpha = 1.f - Convert::ToSingle(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
+                float alpha = 1.f - StrToFloat(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
                 mesh->material.Ambient.Alpha = alpha;
                 mesh->material.Diffuse.Alpha = alpha;
                 mesh->material.Specular.Alpha = alpha;
                 line = reader->ReadLine(); // TextureName
                 String^ texture = TEXTURE_PATH + line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1];
-                mesh->texture = Texture::FromFile(mDevice, texture);
+                try {
+                    mesh->texture = Texture::FromFile(mDevice, texture, Usage::None, Pool::Managed);
+                } catch (Exception^ e) {
+                    mesh->texture = nullptr;
+                    Debug::WriteLine("ERROR: Could not load texture " + texture);
+                }
             } else {
                 line = reader->ReadLine(); // Color
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                Color4 color = Color4(Convert::ToSingle(parts[1]), Convert::ToSingle(parts[2]),
-                        Convert::ToSingle(parts[3]));
+                Color4 color = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 mesh->material.Diffuse = color;
                 mesh->material.Ambient = Color4(.5f, .5f, .5f); // Hardcoded default
-                mesh->material.Ambient = Color4(.9f, .9f, .9f); // Hardcoded default
+                mesh->material.Specular = Color4(.9f, .9f, .9f); // Hardcoded default
             }
             line = reader->ReadLine(); // Close Material
             line = reader->ReadLine(); // Close Object

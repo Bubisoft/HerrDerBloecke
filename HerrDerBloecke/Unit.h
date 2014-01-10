@@ -7,7 +7,7 @@ namespace HdB {
     ref class Unit abstract
     {
     public:
-        Unit(String^ model, const Vector3& pos);
+        Unit(String^ model, const Vector3% pos);
         property String^ ModelName;
         property Vector3 Position;
     private:
@@ -20,6 +20,6 @@ namespace HdB {
     ref class TestUnit : Unit
     {
     public:
-        TestUnit(String^ model, const Vector3& pos);
+        TestUnit(String^ model, const Vector3% pos);
     };
 }

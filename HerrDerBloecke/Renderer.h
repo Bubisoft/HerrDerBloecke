@@ -15,14 +15,17 @@ namespace HdB {
     ref class Renderer
     {
     public:
-        /** Construct a Renderer that will render into the supplied Form Control Handle. */
-        Renderer(Control^ target);
+        /** Constructor */
+        Renderer();
 
         /** Destroy the whole world! */
         ~Renderer();
 
+        /** Initialize a Renderer that will render into the supplied Form Control Handle. */
+        bool Init(Control^ target);
+
         /** Resize the BackBuffer of our Render Device to match the supplied size. */
-        void Resize(const int& w, const int& h);
+        void Resize(const int% w, const int% h);
 
         /** Draw the next Frame. This is the render function that should be called in our
          *  main loop.

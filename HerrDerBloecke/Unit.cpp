@@ -1,6 +1,6 @@
 #include "Unit.h"
 
-HdB::Unit::Unit(String^ model, const Vector3& pos)
+HdB::Unit::Unit(String^ model, const Vector3% pos)
 {
     ModelName = model;
     Position = pos;
@@ -9,7 +9,7 @@ HdB::Unit::Unit(String^ model, const Vector3& pos)
 /********
  * TEMP *
  ********/
-HdB::TestUnit::TestUnit(String^ model, const Vector3& pos)
+HdB::TestUnit::TestUnit(String^ model, const Vector3% pos)
     : Unit(model, pos)
 {
 }
