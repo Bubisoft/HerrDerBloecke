@@ -1,6 +1,7 @@
 #pragma once
 
 using namespace SlimDX;
+using namespace SlimDX::Direct3D9;
 
 namespace HdB {
     ref class Camera
@@ -9,25 +10,29 @@ namespace HdB {
         /** Create a new camera at the supplied position which will look at the
          *  given lookAt position.
          */
-        Camera(const Vector3% pos, const Vector3% lookAt);
-
-        /** Moves the Camera */
-        void Move(const Vector2% oldPos, const Vector2% newPos, const Vector2% window);
-
-        /** Rotate the Camera */
-        void Rotate(const Vector2% change);
+        Camera(Device^ device, const Vector3% pos, const Vector3% lookAt);
 
         /** Calculate the View Matrix for our Transform State in the Renderer. */
         Matrix ViewMatrix();
 
-        /** Defines the camera movement speed. */
+        /** Calculate the Projection Matrix */
+        Matrix ProjectionMatrix();
+
+        /** Project the 2D mouse pointer location onto our ground plane. */
+        Vector3 Unproject2D(System::Drawing::Point pos);
+
+        /** Move the Camera by the given direction */
+        void Move(const Vector3% change);
+
+        /** Rotate the Camera according to the change of the cursor position */
+        void Rotate(const Vector2% change);
+
+        /** Defines the camera rotation speed. */
         property float Speed;
 
     private:
-        // Position of the Camera
+        Device^ mDevice;
         Vector3 mPosition;
-
-        // Position the Camera is looking at
         Vector3 mLookAt;
     };
 }

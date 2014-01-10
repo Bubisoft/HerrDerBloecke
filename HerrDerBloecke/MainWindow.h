@@ -220,12 +220,12 @@ namespace HdB {
                 mMousePosSet = true;
             }
 
-            if (e->Button == System::Windows::Forms::MouseButtons::Right)
-                mRenderer->Camera->Move(Vector2(mMousePos.X, mMousePos.Y), Vector2(e->Location.X, e->Location.Y),
-                    Vector2(mRenderFrame->ClientRectangle.Width, mRenderFrame->ClientRectangle.Height));
-            else if (e->Button == System::Windows::Forms::MouseButtons::Middle) {
-                Vector2 v((mMousePos.X - e->Location.X), (e->Location.Y - mMousePos.Y));
-                mRenderer->Camera->Rotate(v);
+            if (e->Button == System::Windows::Forms::MouseButtons::Right) {
+                Vector3 move = Vector3::Subtract(mRenderer->Camera->Unproject2D(mMousePos),
+                    mRenderer->Camera->Unproject2D(e->Location));
+                mRenderer->Camera->Move(move);
+            } else if (e->Button == System::Windows::Forms::MouseButtons::Middle) {
+                mRenderer->Camera->Rotate(Vector2(mMousePos.X - e->Location.X, e->Location.Y - mMousePos.Y));
             }
             mMousePos = e->Location;
         }

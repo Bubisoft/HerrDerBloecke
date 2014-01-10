@@ -71,7 +71,7 @@ bool HdB::Renderer::Init(Control^ target)
         CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    Camera = gcnew HdB::Camera(Vector3(0.f, -10.f, 10.f), Vector3::Zero);
+    Camera = gcnew HdB::Camera(mDevice, Vector3(0.f, -10.f, 10.f), Vector3::Zero);
 
     // TEMP Test: Load Model
     AddDrawable(gcnew Model("exampleUnit", mDevice));
@@ -99,9 +99,7 @@ void HdB::Renderer::Draw()
     mDevice->Clear(ClearFlags::Target | ClearFlags::ZBuffer, Color4(0.f, 0.f, 0.f), 1.f, 0);
     mDevice->BeginScene();
     mDevice->SetTransform(TransformState::View, Camera->ViewMatrix());
-    mDevice->SetTransform(TransformState::Projection,
-        Matrix::PerspectiveFovRH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height,
-        1.0f, 100.0f));
+    mDevice->SetTransform(TransformState::Projection, Camera->ProjectionMatrix());
 
     for each (IDrawable^ d in mDrawables) {
         d->Draw();

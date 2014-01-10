@@ -1,11 +1,9 @@
 #include "Camera.h"
 
-/** Default reduction of CameraSpeed */
-
-HdB::Camera::Camera(const Vector3% pos, const Vector3% lookAt)
-    : mPosition(pos), mLookAt(lookAt)
+HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)
+: mDevice(device), mPosition(pos), mLookAt(lookAt)
 {
-    Speed = 0.005;
+    Speed = 0.005f;
 }
 
 Matrix HdB::Camera::ViewMatrix()
@@ -13,33 +11,39 @@ Matrix HdB::Camera::ViewMatrix()
     return Matrix::LookAtRH(mPosition, mLookAt, Vector3::UnitZ);
 }
 
-void HdB::Camera::Move(const Vector2% oldPos, const Vector2% newPos, const Vector2% window)
+Matrix HdB::Camera::ProjectionMatrix()
 {
-    Vector3 lookAtV = Vector3::Subtract(mLookAt, mPosition);
-    Vector3 upVector = Vector3::Cross(Vector3::Cross(Vector3::UnitZ,lookAtV),lookAtV);
+    return Matrix::PerspectiveFovRH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height,
+        1.0f, 100.0f);
+}
 
-    float oldAngX = (oldPos.X/window.X - 0.5) * 0.78540;
-    float oldAngY = (oldPos.Y/window.Y - 0.5) * 0.78540;
-    float newAngX = (newPos.X/window.X - 0.5) * 0.78540;
-    float newAngY = (newPos.Y/window.Y - 0.5) * 0.78540;
+Vector3 HdB::Camera::Unproject2D(System::Drawing::Point pos)
+{
+    Matrix viewProj = ViewMatrix() * ProjectionMatrix();
 
-    Matrix m00 = Matrix::Translation(mLookAt) * Matrix::RotationAxis(upVector, -oldAngX) * Matrix::RotationAxis(Vector3::Cross(Vector3::UnitZ, lookAtV), -oldAngY) * Matrix::Translation(-mLookAt);
-    Matrix m11 = Matrix::Translation(mLookAt) * Matrix::RotationAxis(upVector, -newAngX) * Matrix::RotationAxis(Vector3::Cross(Vector3::UnitZ, lookAtV), -newAngY) * Matrix::Translation(-mLookAt);
+    // Get our 3D cursor position in both near and far Camera plane
+    Vector3 near = Vector3::Unproject(Vector3(pos.X, pos.Y, 0.f), mDevice->Viewport.X, mDevice->Viewport.Y,
+        mDevice->Viewport.Width, mDevice->Viewport.Height, mDevice->Viewport.MinZ, mDevice->Viewport.MaxZ, viewProj);
+    Vector3 far = Vector3::Unproject(Vector3(pos.X, pos.Y, 1.f), mDevice->Viewport.X, mDevice->Viewport.Y,
+        mDevice->Viewport.Width, mDevice->Viewport.Height, mDevice->Viewport.MinZ, mDevice->Viewport.MaxZ, viewProj);
 
-    Vector3 ray00 = Vector3::TransformCoordinate(lookAtV, m00);
-    Vector3 ray11 = Vector3::TransformCoordinate(lookAtV, m11);
+    // Create a X-Y-Plane that emulates our ground
+    Plane xy(Vector3::Zero, Vector3::UnitZ);
 
-    Vector3 p00 = Vector3(-(mPosition.Z/ray00.Z)*ray00.X+mPosition.X, -(mPosition.Z/ray00.Z)*ray00.Y+mPosition.Y, 0);
-    Vector3 p11 = Vector3(-(mPosition.Z/ray11.Z)*ray11.X+mPosition.X, -(mPosition.Z/ray11.Z)*ray11.Y+mPosition.Y, 0);
+    // Get the intersection of our cursor ray and the plane
+    Vector3 result;
+    Plane::Intersects(xy, near, far, result);
+    return result;
+}
 
-    Vector3 move = Vector3(p11.X-p00.X, p11.Y-p00.Y, 0);
-
-    mPosition += move;
-    mLookAt += move;
+void HdB::Camera::Move(const Vector3% change)
+{
+    mPosition += change;
+    mLookAt += change;
 }
 
 void HdB::Camera::Rotate(const Vector2% change)
 {
-    Matrix rot = Matrix::Translation(mLookAt) * Matrix::RotationZ(change.X*Speed) * Matrix::Translation(-mLookAt);
+    Matrix rot = Matrix::Translation(-mLookAt) * Matrix::RotationZ(change.X * Speed) * Matrix::Translation(mLookAt);
     mPosition = Vector3::TransformCoordinate(mPosition, rot);
 }
