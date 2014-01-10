@@ -205,16 +205,23 @@ namespace HdB {
             mRenderer->Draw();
         }
     private: System::Void mRenderFrame_MouseMove(Object^  sender, MouseEventArgs^  e) {
-            if (e->Button != System::Windows::Forms::MouseButtons::Right)
+            if (e->Button != System::Windows::Forms::MouseButtons::Right &&
+                e->Button != System::Windows::Forms::MouseButtons::Middle)
                 return;
-                if (!mMousePosSet) {
-                    mMousePos = e->Location;
-                    mMousePosSet = true;
-                }
 
-                Vector3 v(mMousePos.X - e->Location.X, e->Location.Y - mMousePos.Y, 0);
-                mRenderer->Camera->Move(v);
+            if (!mMousePosSet) {
                 mMousePos = e->Location;
+                mMousePosSet = true;
+            }
+
+            if (e->Button == System::Windows::Forms::MouseButtons::Right)
+                mRenderer->Camera->Move(Vector2(mMousePos.X, mMousePos.Y), Vector2(e->Location.X, e->Location.Y),
+                    Vector2(mRenderFrame->ClientRectangle.Width, mRenderFrame->ClientRectangle.Height));
+            else if (e->Button == System::Windows::Forms::MouseButtons::Middle) {
+                Vector2 v((mMousePos.X - e->Location.X), (e->Location.Y - mMousePos.Y));
+                mRenderer->Camera->Rotate(v);
+            }
+            mMousePos = e->Location;
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
             mMousePosSet = false;
@@ -227,7 +234,7 @@ namespace HdB {
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
             mRenderer->Paused = true;
             if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
-                mRenderer->Camera->Speed = mOptions->CameraSpeed / 10.f;
+                mRenderer->Camera->Speed = mOptions->CameraSpeed / 2000.f;
             }
             mRenderer->Paused = false;
         }

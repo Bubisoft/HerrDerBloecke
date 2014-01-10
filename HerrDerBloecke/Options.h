@@ -62,7 +62,7 @@ namespace HdB {
             // tbCamSpeed
             // 
             this->tbCamSpeed->Location = System::Drawing::Point(56, 29);
-            this->tbCamSpeed->Maximum = 40;
+            this->tbCamSpeed->Maximum = 20;
             this->tbCamSpeed->Minimum = 1;
             this->tbCamSpeed->Name = L"tbCamSpeed";
             this->tbCamSpeed->Size = System::Drawing::Size(250, 45);
@@ -74,9 +74,9 @@ namespace HdB {
             this->lblCameraSpeed->AutoSize = true;
             this->lblCameraSpeed->Location = System::Drawing::Point(62, 13);
             this->lblCameraSpeed->Name = L"lblCameraSpeed";
-            this->lblCameraSpeed->Size = System::Drawing::Size(74, 13);
+            this->lblCameraSpeed->Size = System::Drawing::Size(128, 13);
             this->lblCameraSpeed->TabIndex = 1;
-            this->lblCameraSpeed->Text = L"CameraSpeed";
+            this->lblCameraSpeed->Text = L"Rotationsgeschwindigkeit";
             // 
             // btnOK
             // 

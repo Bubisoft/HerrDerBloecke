@@ -9,10 +9,13 @@ namespace HdB {
         /** Create a new camera at the supplied position which will look at the
          *  given lookAt position.
          */
-        Camera(const Vector3& pos, const Vector3& lookAt);
+        Camera(const Vector3% pos, const Vector3% lookAt);
 
         /** Moves the Camera */
-        void Move(const Vector3& change);
+        void Move(const Vector2% oldPos, const Vector2% newPos, const Vector2% window);
+
+        /** Rotate the Camera */
+        void Rotate(const Vector2% change);
 
         /** Calculate the View Matrix for our Transform State in the Renderer. */
         Matrix ViewMatrix();
