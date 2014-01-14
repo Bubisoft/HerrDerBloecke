@@ -3,7 +3,9 @@
 #include "Renderer.h"
 #include "Options.h"
 #include "Camera.h"
-
+#include "Player.h"
+#include "NavigationStrip.h"
+#include "NotificationBox.h"
 namespace HdB {
 
     using namespace System;
@@ -30,6 +32,10 @@ namespace HdB {
                 Close();
                 return;
             }
+			mPlayer = gcnew Player();
+			mNotificationBox=gcnew NotificationBox(this,this->Width*0.4,410);
+            mNotificationBox->SendMessage("Wasserkraftwerk fertiggestellt");
+            mNavi=gcnew NavigationStrip(this,mRenderFrame->Location.X,mNotificationBox->_Location.Y);
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
         }
@@ -46,7 +52,10 @@ namespace HdB {
 
     private:
         System::Windows::Forms::PictureBox^  mRenderFrame;
-        System::ComponentModel::Container^ components;
+    private: System::ComponentModel::IContainer^  components;
+        NavigationStrip^ mNavi;
+        NotificationBox^ mNotificationBox;
+        Player^ mPlayer;
         Renderer^ mRenderer;
         Point mMousePos;
         Options^ mOptions;
@@ -55,8 +64,10 @@ namespace HdB {
     private: System::Windows::Forms::Label^  lblResGold;
     private: System::Windows::Forms::Label^  lblResBlockterie;
     private: System::Windows::Forms::Label^  lblResNahrung;
-    private: System::Windows::Forms::TextBox^  boxNotifications;
-    private: System::Windows::Forms::Label^  lblBenachrichtigungen;
+
+
+    private: System::Windows::Forms::Timer^  labelTimer;
+
     private: System::Windows::Forms::Button^  btnGraph;
 
 #pragma region Windows Form Designer generated code
@@ -66,21 +77,21 @@ namespace HdB {
         /// </summary>
         void InitializeComponent(void)
         {
+            this->components = (gcnew System::ComponentModel::Container());
             this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
             this->btnMenu = (gcnew System::Windows::Forms::Button());
             this->lblResGold = (gcnew System::Windows::Forms::Label());
             this->lblResBlockterie = (gcnew System::Windows::Forms::Label());
             this->lblResNahrung = (gcnew System::Windows::Forms::Label());
-            this->boxNotifications = (gcnew System::Windows::Forms::TextBox());
-            this->lblBenachrichtigungen = (gcnew System::Windows::Forms::Label());
             this->btnGraph = (gcnew System::Windows::Forms::Button());
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->BeginInit();
+            this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
             this->SuspendLayout();
             // 
             // mRenderFrame
             // 
-            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-                | System::Windows::Forms::AnchorStyles::Left)
+            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+                | System::Windows::Forms::AnchorStyles::Left) 
                 | System::Windows::Forms::AnchorStyles::Right));
             this->mRenderFrame->Location = System::Drawing::Point(12, 43);
             this->mRenderFrame->Name = L"mRenderFrame";
@@ -96,7 +107,7 @@ namespace HdB {
             // btnMenu
             // 
             this->btnMenu->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->btnMenu->Location = System::Drawing::Point(992, 423);
+            this->btnMenu->Location = System::Drawing::Point(1000, 423);
             this->btnMenu->Name = L"btnMenu";
             this->btnMenu->Size = System::Drawing::Size(100, 53);
             this->btnMenu->TabIndex = 1;
@@ -107,7 +118,7 @@ namespace HdB {
             // lblResGold
             // 
             this->lblResGold->AutoSize = true;
-            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(0)));
             this->lblResGold->Location = System::Drawing::Point(379, 11);
             this->lblResGold->Name = L"lblResGold";
@@ -118,7 +129,7 @@ namespace HdB {
             // lblResBlockterie
             // 
             this->lblResBlockterie->AutoSize = true;
-            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(0)));
             this->lblResBlockterie->Location = System::Drawing::Point(516, 11);
             this->lblResBlockterie->Name = L"lblResBlockterie";
@@ -129,40 +140,13 @@ namespace HdB {
             // lblResNahrung
             // 
             this->lblResNahrung->AutoSize = true;
-            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(0)));
             this->lblResNahrung->Location = System::Drawing::Point(670, 11);
             this->lblResNahrung->Name = L"lblResNahrung";
             this->lblResNahrung->Size = System::Drawing::Size(70, 17);
             this->lblResNahrung->TabIndex = 4;
             this->lblResNahrung->Text = L"Nahrung";
-            // 
-            // boxNotifications
-            // 
-            this->boxNotifications->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->boxNotifications->BackColor = System::Drawing::SystemColors::Menu;
-            this->boxNotifications->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-            this->boxNotifications->Cursor = System::Windows::Forms::Cursors::Arrow;
-            this->boxNotifications->ImeMode = System::Windows::Forms::ImeMode::NoControl;
-            this->boxNotifications->Location = System::Drawing::Point(574, 423);
-            this->boxNotifications->Multiline = true;
-            this->boxNotifications->Name = L"boxNotifications";
-            this->boxNotifications->ReadOnly = true;
-            this->boxNotifications->ShortcutsEnabled = false;
-            this->boxNotifications->Size = System::Drawing::Size(412, 53);
-            this->boxNotifications->TabIndex = 5;
-            this->boxNotifications->TabStop = false;
-            this->boxNotifications->Enter += gcnew System::EventHandler(this, &MainWindow::boxNotifications_Enter);
-            // 
-            // lblBenachrichtigungen
-            // 
-            this->lblBenachrichtigungen->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->lblBenachrichtigungen->AutoSize = true;
-            this->lblBenachrichtigungen->Location = System::Drawing::Point(571, 407);
-            this->lblBenachrichtigungen->Name = L"lblBenachrichtigungen";
-            this->lblBenachrichtigungen->Size = System::Drawing::Size(102, 13);
-            this->lblBenachrichtigungen->TabIndex = 6;
-            this->lblBenachrichtigungen->Text = L"Benachrichtigungen";
             // 
             // btnGraph
             // 
@@ -174,14 +158,18 @@ namespace HdB {
             this->btnGraph->Text = L"Graph";
             this->btnGraph->UseVisualStyleBackColor = true;
             // 
+            // labelTimer
+            // 
+            this->labelTimer->Enabled = true;
+            this->labelTimer->Tick += gcnew System::EventHandler(this, &MainWindow::labelTimer_Tick);
+            // 
             // MainWindow
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+            this->BackColor = System::Drawing::SystemColors::Menu;
             this->ClientSize = System::Drawing::Size(1104, 488);
             this->Controls->Add(this->btnGraph);
-            this->Controls->Add(this->lblBenachrichtigungen);
-            this->Controls->Add(this->boxNotifications);
             this->Controls->Add(this->lblResNahrung);
             this->Controls->Add(this->lblResBlockterie);
             this->Controls->Add(this->lblResGold);
@@ -191,6 +179,7 @@ namespace HdB {
             this->MinimumSize = System::Drawing::Size(640, 480);
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
+            this->Load += gcnew System::EventHandler(this, &MainWindow::MainWindow_Load);
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
             this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
@@ -206,6 +195,8 @@ namespace HdB {
              lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
              lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
              lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
+             mNavi->Resize(this);
+             mNotificationBox->Resize(this);
          }
 
     // mRenderFrame Events
@@ -262,6 +253,18 @@ private: System::Void MainWindow_MouseEnter(System::Object^  sender, System::Eve
          }
 private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
              mRenderFrame->Focus();
+         }
+
+           /** Updates the ressources labels
+           */
+private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+           
+           mPlayer->GetRessources();
+           lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->mRes->Blockterie);
+           lblResNahrung->Text="Nahrung " + System::Convert::ToString(mPlayer->mRes->Food);
+           lblResGold->Text="Gold " + System::Convert::ToString(mPlayer->mRes->Gold);
+         }
+private: System::Void MainWindow_Load(System::Object^  sender, System::EventArgs^  e) {
          }
 };
 }
