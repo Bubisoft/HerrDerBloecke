@@ -38,7 +38,7 @@ ref struct HdB::Submesh
     Texture^ texture;
     Material material;
 
-    ~Submesh()
+    virtual ~Submesh()
     {
         delete texture;
         delete indices;

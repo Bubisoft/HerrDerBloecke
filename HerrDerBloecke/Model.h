@@ -22,7 +22,7 @@ namespace HdB {
         Model(String^ name, Device^ device);
 
         /** Destructor */
-        ~Model();
+        virtual ~Model();
 
         /** Spawn a new model instance */
         void AddInstance(Unit^ unit);

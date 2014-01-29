@@ -19,7 +19,7 @@ namespace HdB {
         Renderer();
 
         /** Destroy the whole world! */
-        ~Renderer();
+        virtual ~Renderer();
 
         /** Initialize a Renderer that will render into the supplied Form Control Handle. */
         bool Init(Control^ target);

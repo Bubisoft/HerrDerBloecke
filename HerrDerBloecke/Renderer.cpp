@@ -121,6 +121,13 @@ void HdB::Renderer::ResetDevice() {
     mDevice->SetRenderState(RenderState::Lighting, true);
     mDevice->SetRenderState(RenderState::Ambient, Color4(1.f, 1.f, 1.f).ToArgb());
 
+    // Static fog environment, can be enabled later
+    mDevice->SetRenderState(RenderState::FogEnable, false);
+    mDevice->SetRenderState(RenderState::FogTableMode, FogMode::Exponential);
+    mDevice->SetRenderState(RenderState::FogVertexMode, FogMode::None);
+    mDevice->SetRenderState(RenderState::FogDensity, .02f);
+    mDevice->SetRenderState(RenderState::FogColor, Color4(.9f, .9f, .8f).ToArgb());
+
     mDevice->SetSamplerState(0, SamplerState::MinFilter, TextureFilter::Linear);
     mDevice->SetSamplerState(0, SamplerState::MagFilter, TextureFilter::Linear);
     mDevice->SetSamplerState(0, SamplerState::MipFilter, TextureFilter::Linear);

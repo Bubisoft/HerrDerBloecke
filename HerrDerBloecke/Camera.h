@@ -15,19 +15,19 @@ namespace HdB {
         /** Calculate the View Matrix for our Transform State in the Renderer. */
         Matrix ViewMatrix();
 
-        /** Calculate the Projection Matrix */
+        /** Calculate the Projection Matrix. */
         Matrix ProjectionMatrix();
 
         /** Project the 2D mouse pointer location onto our ground plane. */
         Vector3 Unproject2D(System::Drawing::Point pos);
 
-        /** Move the Camera by the given direction */
+        /** Move the Camera by the given direction. */
         void Move(const Vector3% change);
 
         /** Rotate the Camera according to the change of the cursor position */
         void Rotate(const Vector2% change);
 
-        /** Zoom the Camera */
+        /** Zoom the Camera. */
         void Zoom(const int% delta);
 
         /** Defines the camera rotation speed. */

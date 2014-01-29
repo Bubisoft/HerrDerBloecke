@@ -64,7 +64,7 @@ void NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
 {
     Image^ temp1=mPBNavi[0]->BackgroundImage;
     Image^ temp2;
-    if(sender == mBtnLeft)
+    if(sender == mBtnRight)
     {
         temp2=mPBNavi[0]->BackgroundImage;
         for(int i=NUM_PB-1;i>=0;i--)

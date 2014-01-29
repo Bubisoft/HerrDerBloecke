@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NavigationStrip.cpp" />
     <ClCompile Include="NotificationBox.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="MainWindow.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Map.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="NavigationStrip.h" />
     <ClInclude Include="NotificationBox.h" />
