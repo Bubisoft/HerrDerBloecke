@@ -1,12 +1,10 @@
 #include "Model.h"
 #include "Unit.h"
+#include "Globals.h"
 
 using namespace System::IO;
 using namespace System::Diagnostics;
 using namespace System::Globalization;
-
-#define MODEL_PATH "models" + Path::DirectorySeparatorChar
-#define TEXTURE_PATH "textures" + Path::DirectorySeparatorChar
 
 #define StrToFloat(x) Convert::ToSingle(x, CultureInfo::InvariantCulture)
 #define StrToInt(x) Convert::ToInt32(x, CultureInfo::InvariantCulture)

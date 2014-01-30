@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="IDrawable.h" />
     <ClInclude Include="MainWindow.h">
       <FileType>CppForm</FileType>
