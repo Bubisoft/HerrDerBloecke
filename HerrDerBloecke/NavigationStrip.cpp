@@ -98,7 +98,7 @@ void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
             Debug::WriteLine("ERROR: Could not load file!");
         focused=pb;
     }
-    else    //unfocusing the allready focused
+    else    //unfocusing the already focused
         focused=nullptr;
 }
 

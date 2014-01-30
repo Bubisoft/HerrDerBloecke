@@ -156,6 +156,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BuildingRessources.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="IDrawable.h" />

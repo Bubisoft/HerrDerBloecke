@@ -33,7 +33,7 @@ namespace HdB {
                 return;
             }
 			mPlayer = gcnew Player();
-			mNotificationBox=gcnew NotificationBox(this,this->Width*0.4,410);
+			mNotificationBox=gcnew NotificationBox(this,this->Width*0.4,this->btnMenu->Location.Y-13);
             mNotificationBox->SendMessage("Wasserkraftwerk fertiggestellt");
             mNavi=gcnew NavigationStrip(this,mRenderFrame->Location.X,mNotificationBox->_Location.Y);
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
@@ -67,6 +67,7 @@ namespace HdB {
 
 
     private: System::Windows::Forms::Timer^  labelTimer;
+    private: System::Windows::Forms::StatusStrip^  statusStrip1;
 
     private: System::Windows::Forms::Button^  btnGraph;
 
@@ -85,6 +86,7 @@ namespace HdB {
             this->lblResNahrung = (gcnew System::Windows::Forms::Label());
             this->btnGraph = (gcnew System::Windows::Forms::Button());
             this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
+            this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
             this->SuspendLayout();
             // 
@@ -95,7 +97,7 @@ namespace HdB {
                 | System::Windows::Forms::AnchorStyles::Right));
             this->mRenderFrame->Location = System::Drawing::Point(12, 43);
             this->mRenderFrame->Name = L"mRenderFrame";
-            this->mRenderFrame->Size = System::Drawing::Size(1080, 356);
+            this->mRenderFrame->Size = System::Drawing::Size(923, 396);
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
             this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
@@ -107,7 +109,7 @@ namespace HdB {
             // btnMenu
             // 
             this->btnMenu->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-            this->btnMenu->Location = System::Drawing::Point(1000, 423);
+            this->btnMenu->Location = System::Drawing::Point(835, 451);
             this->btnMenu->Name = L"btnMenu";
             this->btnMenu->Size = System::Drawing::Size(100, 53);
             this->btnMenu->TabIndex = 1;
@@ -151,7 +153,7 @@ namespace HdB {
             // btnGraph
             // 
             this->btnGraph->Anchor = System::Windows::Forms::AnchorStyles::Top;
-            this->btnGraph->Location = System::Drawing::Point(785, 11);
+            this->btnGraph->Location = System::Drawing::Point(706, 11);
             this->btnGraph->Name = L"btnGraph";
             this->btnGraph->Size = System::Drawing::Size(75, 23);
             this->btnGraph->TabIndex = 7;
@@ -163,12 +165,21 @@ namespace HdB {
             this->labelTimer->Enabled = true;
             this->labelTimer->Tick += gcnew System::EventHandler(this, &MainWindow::labelTimer_Tick);
             // 
+            // statusStrip1
+            // 
+            this->statusStrip1->Location = System::Drawing::Point(0, 516);
+            this->statusStrip1->Name = L"statusStrip1";
+            this->statusStrip1->Size = System::Drawing::Size(947, 22);
+            this->statusStrip1->TabIndex = 8;
+            this->statusStrip1->Text = L"statusStrip1";
+            // 
             // MainWindow
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->BackColor = System::Drawing::SystemColors::Menu;
-            this->ClientSize = System::Drawing::Size(1104, 488);
+            this->ClientSize = System::Drawing::Size(947, 538);
+            this->Controls->Add(this->statusStrip1);
             this->Controls->Add(this->btnGraph);
             this->Controls->Add(this->lblResNahrung);
             this->Controls->Add(this->lblResBlockterie);
@@ -183,7 +194,7 @@ namespace HdB {
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
             this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 
