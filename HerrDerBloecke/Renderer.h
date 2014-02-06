@@ -11,6 +11,7 @@ namespace HdB {
     // Forward Declarations
     ref class Camera;
     ref class Unit;
+    ref class Map;
 
     ref class Renderer
     {
@@ -48,5 +49,6 @@ namespace HdB {
         Direct3D^ m3D;
         Device^ mDevice;
         List<IDrawable^>^ mDrawables;
+        Map^ mMap;
     };
 }

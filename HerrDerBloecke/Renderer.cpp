@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Unit.h"
+#include "Map.h"
 
 HdB::Renderer::Renderer()
 {
@@ -13,6 +14,7 @@ HdB::Renderer::~Renderer()
     for each (IDrawable^ d in mDrawables)
         delete d;
     mDrawables->Clear();
+    delete mMap;
 
     delete mDevice;
     delete m3D;
@@ -79,6 +81,9 @@ bool HdB::Renderer::Init(Control^ target)
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, -5.f, 0.f)));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, 5.f, 0.f)));
 
+    // TEMP Test: Load Map
+    mMap = gcnew Map(mDevice);
+
     return true;
 }
 
@@ -100,6 +105,8 @@ void HdB::Renderer::Draw()
     mDevice->BeginScene();
     mDevice->SetTransform(TransformState::View, Camera->ViewMatrix());
     mDevice->SetTransform(TransformState::Projection, Camera->ProjectionMatrix());
+
+    mMap->Draw();
 
     for each (IDrawable^ d in mDrawables) {
         d->Draw();
