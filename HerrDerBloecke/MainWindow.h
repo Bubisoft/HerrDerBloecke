@@ -32,10 +32,10 @@ namespace HdB {
                 Close();
                 return;
             }
-			mPlayer = gcnew Player();
-			mNotificationBox=gcnew NotificationBox(this,this->Width*0.4,this->btnMenu->Location.Y-13);
+            mPlayer = gcnew Player();
+            mNotificationBox = gcnew NotificationBox(this, Width * 0.4f, btnMenu->Location.Y - 13);
             mNotificationBox->SendMessage("Wasserkraftwerk fertiggestellt");
-            mNavi=gcnew NavigationStrip(this,mRenderFrame->Location.X,mNotificationBox->_Location.Y);
+            mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
         }

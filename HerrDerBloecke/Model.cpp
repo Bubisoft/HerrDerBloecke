@@ -78,7 +78,7 @@ void HdB::Model::Draw()
         mDevice->SetTexture(0, m->texture);
 
         for each (Unit^ u in mInstances) {
-            mDevice->SetTransform(TransformState::World, Matrix::Translation(u->Position));
+            mDevice->SetTransform(TransformState::World, u->GetTransform());
             mDevice->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,
                 m->numVertices, 0, m->numFaces);
         }
