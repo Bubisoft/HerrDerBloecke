@@ -6,8 +6,10 @@
 #include "Player.h"
 #include "NavigationStrip.h"
 #include "NotificationBox.h"
-namespace HdB {
+#include "Resources.h"
+#include "Unit.h"
 
+namespace HdB {
     using namespace System;
     using namespace System::ComponentModel;
     using namespace System::Collections;
@@ -33,9 +35,16 @@ namespace HdB {
                 return;
             }
             mPlayer = gcnew Player();
+            mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
             mNotificationBox = gcnew NotificationBox(this, Width * 0.4f, btnMenu->Location.Y - 13);
             mNotificationBox->SendMessage("Wasserkraftwerk fertiggestellt");
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
+
+            /** FOR TESTING */
+            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, -5.f, 0.f)), 10);
+            mNotificationBox->SendMessage("TEST: Einheit wird ausgebildet");
+            /** END TESTING */
+
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
         }
@@ -190,7 +199,6 @@ namespace HdB {
             this->MinimumSize = System::Drawing::Size(640, 480);
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
-            this->Load += gcnew System::EventHandler(this, &MainWindow::MainWindow_Load);
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
             this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
@@ -208,6 +216,10 @@ namespace HdB {
              lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
              mNavi->Resize(this);
              mNotificationBox->Resize(this);
+         }
+    private: System::Void MainWindow_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+             // give the Focus to something else, so the Render Frame looses the focus
+             lblResGold->Focus();
          }
 
     // mRenderFrame Events
@@ -244,6 +256,10 @@ namespace HdB {
             if(mRenderFrame->Focused)
                 mRenderer->Camera->Zoom(e->Delta);
         }
+    private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+             mRenderFrame->Focus();
+         }
+
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
             mRenderer->Paused = true;
@@ -258,24 +274,19 @@ namespace HdB {
             // prevents the notification box from being focused (flashing mouse in the box)
             lblResGold->Focus();
          }
-private: System::Void MainWindow_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
-             // give the Focus to something else, so the Render Frame looses the focus
-             lblResGold->Focus();
-         }
-private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
-             mRenderFrame->Focus();
+
+    // mPlayer Events
+    private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
+            mNotificationBox->SendMessage(unit->ModelName + " ausgebildet");
+            mRenderer->SpawnUnit(unit);
          }
 
-           /** Updates the ressources labels
-           */
-private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-           
-           mPlayer->GetRessources();
-           lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->mRes->Blockterie);
-           lblResNahrung->Text="Nahrung " + System::Convert::ToString(mPlayer->mRes->Food);
-           lblResGold->Text="Gold " + System::Convert::ToString(mPlayer->mRes->Gold);
-         }
-private: System::Void MainWindow_Load(System::Object^  sender, System::EventArgs^  e) {
+    // Updates the ressources labels
+    private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+           mPlayer->ProcessResources();
+           lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->Res->Blockterie);
+           lblResNahrung->Text="Nahrung " + System::Convert::ToString(mPlayer->Res->Food);
+           lblResGold->Text="Gold " + System::Convert::ToString(mPlayer->Res->Gold);
          }
 };
 }

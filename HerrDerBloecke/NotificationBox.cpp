@@ -37,8 +37,8 @@ void NotificationBox::Resize(Control^ hwnd)
 
 void NotificationBox::SendMessage(String^ msg)
 {
-    DateTime^ now=DateTime::Now;
-    this->AppendText("[" + now->Hour.ToString() + ":" + now->Minute.ToString() + "]" + " " + msg + Environment::NewLine);
+    DateTime^ now = DateTime::Now;
+    this->AppendText("[" + now->ToString("H:mm:ss") + "] " + msg + Environment::NewLine);
 }
 
 

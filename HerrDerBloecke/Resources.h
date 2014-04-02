@@ -1,24 +1,16 @@
 #pragma once
+
 namespace HdB {
-
-    #define STD_GOLD 10
-    #define STD_BLOCKTERIE 6
-    #define STD_FOOD 8
-
-    #define STD_MAX_GOLD 1000   // Maybe expandable with store units
-    #define STD_MAX_BLOCKTERIE 1000
-    #define STD_MAX_FOOD 1000
-
-    ref class Ressources
+    ref class Resources
     {
     public:
-        Ressources(void);
+        Resources(void);
   
-        /** Adds the Ressources depending on the amount of buildings
+        /** Adds the Resources depending on the amount of buildings
         */
-        void AddRessources(short _GoldUnits, short _BlockterieUnits, short _FoodUnits);
+        void AddResources(short _GoldUnits, short _BlockterieUnits, short _FoodUnits);
 
-        /** Pays the passed amount of the ressources 
+        /** Pays the passed amount of the resources 
         */
         void Pay(int _gold,int _blockterie, int _food);
 
@@ -54,6 +46,4 @@ namespace HdB {
         int mFoodCapacity;
         int mBlockterieCapacity;
     };
-
 }
-
