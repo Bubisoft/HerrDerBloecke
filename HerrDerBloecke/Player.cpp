@@ -35,7 +35,7 @@ void HdB::Player::ProcessResources()
 
 void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds)
 {
-    BuildTask^ task = gcnew BuildTask;
+    BuildTask^ task = gcnew BuildTask();
     task->unit = unit;
     task->seconds = seconds;
     mBuildTasks->Add(task);

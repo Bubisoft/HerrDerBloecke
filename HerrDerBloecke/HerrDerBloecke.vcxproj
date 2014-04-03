@@ -143,6 +143,8 @@
     <ClCompile Include="NotificationBox.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Resources.cpp" />
+    <ClCompile Include="AudioSystem.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Unit.cpp" />
@@ -169,6 +171,8 @@
     <ClInclude Include="NotificationBox.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resources.h" />
+    <ClInclude Include="AudioSystem.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Options.h">
       <FileType>CppForm</FileType>

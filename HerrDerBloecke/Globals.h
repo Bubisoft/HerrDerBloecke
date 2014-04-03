@@ -5,3 +5,4 @@
 // Paths
 #define MODEL_PATH "models" + Path::DirectorySeparatorChar
 #define TEXTURE_PATH "textures" + Path::DirectorySeparatorChar
+#define SOUND_PATH "sounds" + Path::DirectorySeparatorChar

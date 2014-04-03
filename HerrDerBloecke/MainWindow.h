@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer.h"
+#include "AudioSystem.h"
 #include "Options.h"
 #include "Camera.h"
 #include "Player.h"
@@ -34,6 +35,8 @@ namespace HdB {
                 Close();
                 return;
             }
+            mAudioSystem = gcnew AudioSystem();
+            mAudioSystem->Init(mRenderFrame);
             mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
             mNotificationBox = gcnew NotificationBox(this, Width * 0.4f, btnMenu->Location.Y - 13);
@@ -41,8 +44,9 @@ namespace HdB {
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
 
             /** FOR TESTING */
-            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, -5.f, 0.f)), 10);
-            mNotificationBox->SendMessage("TEST: Einheit wird ausgebildet");
+            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, -5.f, 0.f)), 5);
+            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, 5.f, 0.f)), 10);
+            mNotificationBox->SendMessage("TEST: 2 Einheiten werden ausgebildet");
             /** END TESTING */
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
@@ -57,6 +61,7 @@ namespace HdB {
                 delete components;
             }
             delete mRenderer;
+            delete mAudioSystem;
         }
 
     private:
@@ -66,6 +71,7 @@ namespace HdB {
         NotificationBox^ mNotificationBox;
         Player^ mPlayer;
         Renderer^ mRenderer;
+        AudioSystem^ mAudioSystem;
         Point mMousePos;
         Options^ mOptions;
         bool mMousePosSet;
@@ -279,6 +285,7 @@ namespace HdB {
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->ModelName + " ausgebildet");
             mRenderer->SpawnUnit(unit);
+            mAudioSystem->PlaySound("test");
          }
 
     // Updates the ressources labels
