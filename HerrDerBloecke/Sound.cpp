@@ -7,12 +7,12 @@ using namespace SlimDX::Multimedia;
 HdB::Sound::Sound(DirectSound^ device, String^ file)
     : mFileName(file)
 {
+    Type = SoundType::SFX;
     SoundBufferDescription desc;
     WaveStream^ stream = gcnew WaveStream(SOUND_PATH + file + ".wav");
     desc.SizeInBytes = stream->Length;
     desc.Format = stream->Format;
     desc.Flags = BufferFlags::GlobalFocus | BufferFlags::ControlVolume;
-    //desc.AlgorithmFor3D = System::Guid::Empty;
     mBuffer = gcnew SecondarySoundBuffer(device, desc);
     array<Byte>^ data = gcnew array<Byte>(stream->Length);
     stream->Read(data, 0, stream->Length);

@@ -1,4 +1,6 @@
 #include "NavigationStrip.h"
+#include "Globals.h"
+
 using namespace HdB;
 using namespace Diagnostics;
 

@@ -12,7 +12,6 @@ namespace HdB {
     #define BTN_HEIGHT 60   //max Button heigth
     #define SPACE 5 //space between the Pictureboxes and buttons
     #define NUM_PB 5    //number of picturboxes
-    #define THUMB_PATH "thumbnails" + Path::DirectorySeparatorChar  //path of the thumbnails
     ref class NavigationStrip
     {
     public:

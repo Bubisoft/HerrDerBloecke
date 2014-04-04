@@ -285,7 +285,7 @@ namespace HdB {
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->ModelName + " ausgebildet");
             mRenderer->SpawnUnit(unit);
-            mAudioSystem->PlaySound("test");
+            mAudioSystem->PlaySFX("test");
          }
 
     // Updates the ressources labels
