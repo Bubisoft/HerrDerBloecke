@@ -29,8 +29,8 @@ HdB::Map::Map(Device^ device)
     dataStream->Seek(0, SeekOrigin::Begin);
     for each (Vector3% v in vectors) {
         dataStream->Position += Vector3::SizeInBytes;
-        dataStream->Write(v.X == box.Maximum.X ? FIELDS_X : 0.f);
-        dataStream->Write(v.Y == box.Maximum.Y ? 0.f : FIELDS_Y);
+        dataStream->Write(v.X == box.Maximum.X ? FIELDS_X / 16.f : 0.f);
+        dataStream->Write(v.Y == box.Maximum.Y ? 0.f : FIELDS_Y / 16.f);
     }
     dataStream->Close();
 
