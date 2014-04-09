@@ -4,10 +4,10 @@
 using namespace System::IO;
 using namespace System::Diagnostics;
 
-#define FIELDS_X 128 // Only for one side ==> total is double + 1 (center)
-#define FIELDS_Y 128 // Only for one side ==> total is double + 1 (center)
-#define FIELD_WIDTH 10.f
-#define FIELD_HEIGHT 10.f
+#define FIELDS_X 1280 // Only for one side ==> total is double + 1 (center)
+#define FIELDS_Y 1280 // Only for one side ==> total is double + 1 (center)
+#define FIELD_WIDTH 1.f
+#define FIELD_HEIGHT 1.f
 
 /************
  * MapField *
