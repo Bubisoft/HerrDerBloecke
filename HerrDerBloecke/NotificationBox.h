@@ -15,8 +15,6 @@ namespace HdB{
 
         void SendMessage(String^ msg);  //appends the message to the textbox
 
-        virtual void OnPaint(PaintEventArgs^ e) override;   //needed for drawing the text in black 
-
         void Resize(Control^ hwnd);
 
     public:

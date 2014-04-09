@@ -39,8 +39,7 @@ namespace HdB {
             mAudioSystem->Init(mRenderFrame);
             mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
-            mNotificationBox = gcnew NotificationBox(this, Width * 0.4f, btnMenu->Location.Y - 13);
-            mNotificationBox->SendMessage("Wasserkraftwerk fertiggestellt");
+            mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
 
             /** FOR TESTING */
@@ -220,7 +219,7 @@ namespace HdB {
              lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
              lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
              lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
-             mNavi->Resize(this);
+             mNavi->Resize();
              mNotificationBox->Resize(this);
          }
     private: System::Void MainWindow_MouseEnter(System::Object^  sender, System::EventArgs^  e) {

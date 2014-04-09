@@ -6,6 +6,7 @@ using namespace Diagnostics;
 
 NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
+	mParent=target;
      type=ViewType::gebäude;
      Location=Point(x,y);
 
@@ -47,7 +48,6 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
     {
         String^ path=THUMB_PATH + "test" + Convert::ToString(i+1) + ".jpg";
         PB->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * i,Location.Y + mTitle->Height);
-        PB->Size=Size(PB_WIDTH,PB_HEIGHT);
         PB->SizeMode=PictureBoxSizeMode::StretchImage;
         PB->BackgroundImageLayout=ImageLayout::Stretch;
         PB->BorderStyle=BorderStyle::FixedSingle;
@@ -60,6 +60,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
         target->Controls->Add(PB);
         ++i;
     }
+	Resize();
 }
 
 void NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
@@ -104,12 +105,12 @@ void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
         focused=nullptr;
 }
 
-void NavigationStrip::Resize(Control^ hwnd)
+void NavigationStrip::Resize()
 {
     int i=0;
-    if(((hwnd->Size.Width*0.4)-BTN_WIDHT*2 - SPACE*6 - Location.X)/NUM_PB <PB_WIDTH)
+    if(((mParent->Size.Width*0.4)-BTN_WIDHT*2 - SPACE*6 - Location.X)/NUM_PB <PB_WIDTH)
     {
-        int newSize=((hwnd->Size.Width*0.4) - BTN_WIDHT*2 - SPACE * 6 - Location.X)/NUM_PB;
+        int newSize=((mParent->Size.Width*0.4) - BTN_WIDHT*2 - SPACE * 6 - Location.X)/NUM_PB;
         for each(PictureBox^ PB in mPBNavi)
         {
             PB->Size=Size(newSize,newSize);
@@ -117,8 +118,8 @@ void NavigationStrip::Resize(Control^ hwnd)
     
             ++i;
         }
-        mBtnLeft->Size=Size(((hwnd->Size.Width*0.4) - NUM_PB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
-        mBtnRight->Size=Size(((hwnd->Size.Width*0.4) - NUM_PB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
+        mBtnLeft->Size=Size(((mParent->Size.Width*0.4) - NUM_PB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
+        mBtnRight->Size=Size(((mParent->Size.Width*0.4) - NUM_PB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
         mBtnRight->Location=Point(mPBNavi[NUM_PB-1]->Location.X + mPBNavi[NUM_PB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
     }
     else

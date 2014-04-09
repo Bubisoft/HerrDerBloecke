@@ -25,9 +25,10 @@ namespace HdB {
         */
         void ChangeFocus(Object^ sender, EventArgs^ e);
 
-        void Resize(Control^ hwnd);
+        void Resize();
     private:
         Point Location;
+		Control^ mParent;
         array<PictureBox^>^ mPBNavi;    
         Label^ mTitle;          
         PictureBox^ focused;    //currently focused picturbox

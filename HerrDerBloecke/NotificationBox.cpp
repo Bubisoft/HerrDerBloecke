@@ -3,6 +3,7 @@ using namespace HdB;
 
 NotificationBox::NotificationBox(Control^ target,int x,int y)
 {
+	Parent=target;
     _Location=Point(x,y);
 
     //init label
@@ -14,17 +15,18 @@ NotificationBox::NotificationBox(Control^ target,int x,int y)
     target->Controls->Add(mTitle);
 
     //setting up the Box
-    this->Enabled=false;    //disabling the box to avoid getting focused
+    this->Enabled=true;    //disabling the box to avoid getting focused
+	this->UseWaitCursor=false;
+	this->Cursor=Cursors::Arrow;
     this->ForeColor=Color::Black;
     this->BorderStyle=System::Windows::Forms::BorderStyle::FixedSingle;
     this->ReadOnly=true;
-    this->BackColor=SystemColors::Menu;
+    this->BackColor=this->Parent->BackColor;
     this->Location=Point(_Location.X,_Location.Y+mTitle->Height);
     this->Multiline=true;
     this->ScrollBars=System::Windows::Forms::ScrollBars::Vertical;
     this->Size=System::Drawing::Size(target->Size.Width*0.4,60);
     this->Anchor=AnchorStyles::Bottom;
-    this->SetStyle(ControlStyles::UserPaint,true);
     target->Controls->Add(this);
 }
 
@@ -42,9 +44,4 @@ void NotificationBox::SendMessage(String^ msg)
 }
 
 
-void NotificationBox::OnPaint(PaintEventArgs^ e)    //because the box is disabled we need to draw the text ourself if we want black font color
-{
-    SolidBrush^ br=gcnew SolidBrush(Color::Black);
-    e->Graphics->DrawString(Text,Font,br,0,0);
-    ControlPaint::DrawBorder(e->Graphics,this->ClientRectangle,System::Drawing::Color::Black,System::Windows::Forms::ButtonBorderStyle::Solid);
-}
+
