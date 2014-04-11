@@ -4,17 +4,30 @@ using namespace System;
 using namespace SlimDX;
 
 namespace HdB {
+    delegate void PositionEvent(const Vector3% pos);
+
     ref class Unit abstract
     {
     public:
         Unit(String^ model, const Vector3% pos);
         Matrix GetTransform();
         void Damage(int dmg);
+
         property String^ ModelName;
-        property Vector3 Position;
+        property Vector3 Position {
+            Vector3 get() { return mPosition; }
+            void set(Vector3 pos) {
+                mPosition = pos;
+                PositionChanged(pos);
+            }
+        }
         property Vector3 LookAt;
+
+        event PositionEvent^ PositionChanged;
+
     protected:
         int mHP;
+        Vector3 mPosition;
     };
 
     ref class Building abstract : Unit

@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Globals.h"
+#include "Unit.h"
 
 using namespace System::IO;
 using namespace System::Diagnostics;
@@ -53,4 +54,30 @@ void HdB::Map::Draw()
         
     mDevice->SetTransform(TransformState::World, Matrix::Translation(Vector3::Zero));
     mGroundMesh->DrawSubset(0);
+}
+
+Point HdB::Map::GetFieldCoordinate(const Vector3% posOnGround)
+{
+    return Point((int)(posOnGround.X - 0.5f), (int)(posOnGround.Y - 0.5f));
+}
+
+HdB::MapOccupation::MapOccupation(Unit^ unit)
+{
+    mUnit = unit;
+    mUnit->PositionChanged += gcnew PositionEvent(this, &MapOccupation::Update);
+    Update(unit->Position);
+}
+
+bool HdB::MapOccupation::Contains(Point pos)
+{
+    if (pos.X >= mMinField.X && pos.Y >= mMinField.Y && pos.X <= mMaxField.X && pos.Y <= mMaxField.Y)
+        return true;
+    return false;
+}
+
+void HdB::MapOccupation::Update(const Vector3% pos)
+{
+    // TODO: Calculate from Bounds
+    mMinField = Map::GetFieldCoordinate(pos);
+    mMaxField = Map::GetFieldCoordinate(pos);
 }
