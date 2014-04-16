@@ -36,6 +36,8 @@ namespace HdB {
             BoundingBox get() { return mBounds; }
         }
 
+        virtual String^ ToString() override { return Name; }
+
     private:
         void LoadFromHBMFile(String^ filename);
 

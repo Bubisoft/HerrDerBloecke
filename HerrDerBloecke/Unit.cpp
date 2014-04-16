@@ -1,8 +1,9 @@
 #include "Unit.h"
+#include "Model.h"
 
-HdB::Unit::Unit(String^ model, const Vector3% pos)
+HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
 {
-    ModelName = model;
+    mModel = model;
     Position = pos;
     LookAt = -Vector3::UnitY + Position;
 }
@@ -19,12 +20,12 @@ void HdB::Unit::Damage(int dmg) {
     mHP -= dmg;
 }
 
-HdB::Building::Building(String^ model, const Vector3% pos)
+HdB::Building::Building(HdB::Model^ model, const Vector3% pos)
     : Unit(model, pos)
 {
 }
 
-HdB::Soldier::Soldier(String^ model, const Vector3% pos)
+HdB::Soldier::Soldier(HdB::Model^ model, const Vector3% pos)
     : Unit(model, pos)
 {
 }
@@ -32,7 +33,7 @@ HdB::Soldier::Soldier(String^ model, const Vector3% pos)
 /********
  * TEMP *
  ********/
-HdB::TestUnit::TestUnit(String^ model, const Vector3% pos)
+HdB::TestUnit::TestUnit(HdB::Model^ model, const Vector3% pos)
     : Unit(model, pos)
 {
 }

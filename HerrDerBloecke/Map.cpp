@@ -1,6 +1,7 @@
 #include "Map.h"
 #include "Globals.h"
 #include "Unit.h"
+#include "Model.h"
 
 using namespace System::IO;
 using namespace System::Diagnostics;
@@ -30,9 +31,8 @@ bool HdB::MapOccupation::Contains(Point pos)
 
 void HdB::MapOccupation::Update(const Vector3% pos)
 {
-    // TODO: Calculate from Bounds
-    mMinField = Map::GetFieldCoordinate(pos);
-    mMaxField = Map::GetFieldCoordinate(pos);
+    mMinField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Minimum);
+    mMaxField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Maximum);
 }
 
 /*******
@@ -104,5 +104,7 @@ HdB::Unit^ HdB::Map::CheckOccupation(const Vector3% posOnGround)
 
 Point HdB::Map::GetFieldCoordinate(const Vector3% posOnGround)
 {
-    return Point((int)(posOnGround.X - 0.5f), (int)(posOnGround.Y - 0.5f));
+    int x = posOnGround.X > 0.f ? (int)(posOnGround.X + .5f) : (int)(posOnGround.X - .5f);
+    int y = posOnGround.Y > 0.f ? (int)(posOnGround.Y + .5f) : (int)(posOnGround.Y - .5f);
+    return Point(x, y);
 }

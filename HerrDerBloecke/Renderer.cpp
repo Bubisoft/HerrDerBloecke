@@ -73,14 +73,8 @@ bool HdB::Renderer::Init(Control^ target)
         CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -10.f, 10.f), Vector3::Zero);
+    mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -30.f, 30.f), Vector3::Zero);
     mMap = gcnew HdB::Map(mDevice);
-
-    // TEMP Test: Load Model
-    AddDrawable(gcnew Model("exampleUnit", mDevice));
-    SpawnUnit(gcnew TestUnit("exampleUnit", Vector3::Zero));
-    SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, -5.f, 0.f)));
-    SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, 5.f, 0.f)));
 
     return true;
 }
@@ -152,12 +146,21 @@ void HdB::Renderer::AddDrawable(IDrawable^ drawable)
     mDrawables->Add(drawable);
 }
 
+HdB::Model^ HdB::Renderer::GetModel(String^ name)
+{
+    Model^ m;
+    for each (IDrawable^ d in mDrawables) {
+        if (m = dynamic_cast<Model^>(d))
+            if (m->Name == name)
+                return m;
+    }
+    m = gcnew Model(name, mDevice);
+    mDrawables->Add(m);
+    return m;
+}
+
 void HdB::Renderer::SpawnUnit(Unit^ unit)
 {
-    for each (IDrawable^ d in mDrawables) {
-        if (Model^ m = dynamic_cast<Model^>(d))
-            if (m->Name == unit->ModelName)
-                m->AddInstance(unit);
-    }
+    unit->Model->AddInstance(unit);
     mMap->AddUnit(unit);
 }

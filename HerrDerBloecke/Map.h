@@ -48,7 +48,9 @@ namespace HdB {
         /** Add a unit that will occupy its "fields" (for collision detection). */
         void AddUnit(Unit^ unit);
 
-        /** Check whether a unit is occupying the given position's field. Returns a nullptr if nothing is found. */
+        /** Check whether a unit is occupying the given position's field. Returns a
+         *  nullptr if nothing is found.
+         */
         Unit^ CheckOccupation(const Vector3% posOnGround);
 
         /** Convert a position on the ground plane to a map field coordinate. */

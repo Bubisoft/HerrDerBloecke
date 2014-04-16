@@ -4,11 +4,13 @@
 #include "AudioSystem.h"
 #include "Options.h"
 #include "Camera.h"
+#include "Map.h"
 #include "Player.h"
 #include "NavigationStrip.h"
 #include "NotificationBox.h"
 #include "Resources.h"
 #include "Unit.h"
+#include "Model.h"
 
 namespace HdB {
     using namespace System;
@@ -43,8 +45,9 @@ namespace HdB {
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
 
             /** FOR TESTING */
-            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, -5.f, 0.f)), 5);
-            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, 5.f, 0.f)), 10);
+            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetModel("exampleUnit"), Vector3::Zero));
+            mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(15.f, -15.f, 0.f)), 5);
+            mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(-15.f, 15.f, 0.f)), 10);
             mNotificationBox->SendMessage("TEST: 2 Einheiten werden ausgebildet");
             /** END TESTING */
 
@@ -255,7 +258,9 @@ namespace HdB {
             mMousePosSet = false;
         }
     private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
-            // TODO
+            Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
+            if (u)
+                mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
             if(mRenderFrame->Focused)
@@ -282,7 +287,7 @@ namespace HdB {
 
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
-            mNotificationBox->SendMessage(unit->ModelName + " ausgebildet");
+            mNotificationBox->SendMessage(unit->Model + " ausgebildet");
             mRenderer->SpawnUnit(unit);
             mAudioSystem->PlaySFX("test");
          }
