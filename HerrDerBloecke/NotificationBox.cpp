@@ -27,6 +27,7 @@ NotificationBox::NotificationBox(Control^ target,int x,int y)
     this->ScrollBars=System::Windows::Forms::ScrollBars::Vertical;
     this->Size=System::Drawing::Size(target->Size.Width*0.4,60);
     this->Anchor=AnchorStyles::Bottom;
+	this->GotFocus +=gcnew System::EventHandler(this,&NotificationBox::BoxGotFocus);
     target->Controls->Add(this);
 }
 
@@ -41,6 +42,14 @@ void NotificationBox::SendMessage(String^ msg)
 {
     DateTime^ now = DateTime::Now;
     this->AppendText("[" + now->ToString("H:mm:ss") + "] " + msg + Environment::NewLine);
+}
+
+
+/** We need this to hide the caret when the box is getting the focus
+*/
+void NotificationBox::BoxGotFocus(Object^ sender,EventArgs^ e)
+{
+	this->mTitle->Focus();
 }
 
 

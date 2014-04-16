@@ -7,7 +7,6 @@ using namespace Diagnostics;
 NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
 	mParent=target;
-     type=ViewType::gebäude;
      Location=Point(x,y);
 
     //Label
@@ -90,19 +89,19 @@ void NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
 }
 void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 {
-    if(focused!=nullptr)
-        focused->Image=nullptr; //remove the focusing frame from old focus
+    if(mFocusedPb!=nullptr)
+        mFocusedPb->Image=nullptr; //remove the focusing frame from old focus
     PictureBox^ pb=(PictureBox^)sender;
-    if(focused!=pb)
+    if(mFocusedPb!=pb)
     {
         if(File::Exists(THUMB_PATH + "focused.png"))
             pb->Image=Image::FromFile(THUMB_PATH + "focused.png");  //set the focus frame
         else
             Debug::WriteLine("ERROR: Could not load file!");
-        focused=pb;
+        mFocusedPb=pb;
     }
     else    //unfocusing the already focused
-        focused=nullptr;
+        mFocusedPb=nullptr;
 }
 
 void NavigationStrip::Resize()
@@ -136,4 +135,25 @@ void NavigationStrip::Resize()
         mBtnRight->Location=Point(mPBNavi[NUM_PB-1]->Location.X + mPBNavi[NUM_PB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
     }
     
+}
+
+void NavigationStrip::Update()
+{
+	if(mViewType==ViewType::gebäude) //changing images of the PictureBoxes here
+	{
+
+	}
+	else if(mViewType==ViewType::einheiten)
+	{
+
+	}
+	else //forschung
+	{
+
+	}
+}
+
+void NavigationStrip::ChangeViewType(ViewType type)
+{
+	mViewType=type;
 }

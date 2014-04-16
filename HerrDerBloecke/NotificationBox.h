@@ -15,6 +15,8 @@ namespace HdB{
 
         void SendMessage(String^ msg);  //appends the message to the textbox
 
+		void BoxGotFocus(Object^ sender,EventArgs^ e);
+
         void Resize(Control^ hwnd);
 
     public:

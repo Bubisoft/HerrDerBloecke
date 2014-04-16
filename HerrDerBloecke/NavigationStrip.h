@@ -12,6 +12,8 @@ namespace HdB {
     #define BTN_HEIGHT 60   //max Button heigth
     #define SPACE 5 //space between the Pictureboxes and buttons
     #define NUM_PB 5    //number of picturboxes
+
+	enum ViewType{gebäude,einheiten,forschung};
     ref class NavigationStrip
     {
     public:
@@ -25,18 +27,28 @@ namespace HdB {
         */
         void ChangeFocus(Object^ sender, EventArgs^ e);
 
+		/**
+		*/
+		void ChangeViewType(ViewType type);
+
+		/**Updates the images of the PictureBoxes
+		*/
+		void Update();
+
+		/**Resizes the whole navigationstrip so it fills 40% of the window
+		*/
         void Resize();
     private:
         Point Location;
-		Control^ mParent;
-        array<PictureBox^>^ mPBNavi;    
-        Label^ mTitle;          
-        PictureBox^ focused;    //currently focused picturbox
-        enum ViewType type;
+		ViewType mViewType;
+		Control^ mParent;			
+        array<PictureBox^>^ mPBNavi;   
+        Label^ mTitle;           //titlelabel over the strip
+        PictureBox^ mFocusedPb;    //currently focused picturbox
         Button^ mBtnLeft;       //button at the left of the navigation
         Button^ mBtnRight;      //button at the right of the navigation
     };
-    enum ViewType{gebäude,einheiten,forschung};
+    
 }
 
 
