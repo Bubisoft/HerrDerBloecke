@@ -6,6 +6,8 @@ using namespace Diagnostics;
 
 NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
+
+	array<String^>^ buildings=gcnew array<String^>{"exampleUnit","test","test3","test4","test5"};
 	mParent=target;
      Location=Point(x,y);
 
@@ -45,14 +47,17 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
     int i=0;
     for each(PictureBox^ PB in mPBNavi)
     {
-        String^ path=THUMB_PATH + "test" + Convert::ToString(i+1) + ".jpg";
+        String^ path=THUMB_PATH + buildings[i] + ".jpg";
         PB->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * i,Location.Y + mTitle->Height);
         PB->SizeMode=PictureBoxSizeMode::StretchImage;
         PB->BackgroundImageLayout=ImageLayout::Stretch;
         PB->BorderStyle=BorderStyle::FixedSingle;
         PB->Click+=gcnew EventHandler(this,&NavigationStrip::ChangeFocus);
         if(File::Exists(path))
-            PB->BackgroundImage=Image::FromFile(path);
+        {
+			PB->BackgroundImage=Image::FromFile(path);
+			PB->Text=buildings[i];
+		}
         else
             Debug::WriteLine("ERROR: Could not load file!");
         PB->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
@@ -101,7 +106,10 @@ void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
         mFocusedPb=pb;
     }
     else    //unfocusing the already focused
-        mFocusedPb=nullptr;
+		mFocusedPb=nullptr;
+	
+
+	//Debug::WriteLine(mFocusedPb->Text);
 }
 
 void NavigationStrip::Resize()
@@ -139,21 +147,19 @@ void NavigationStrip::Resize()
 
 void NavigationStrip::Update()
 {
-	if(mViewType==ViewType::gebäude) //changing images of the PictureBoxes here
-	{
 
-	}
-	else if(mViewType==ViewType::einheiten)
-	{
-
-	}
-	else //forschung
-	{
-
-	}
 }
 
-void NavigationStrip::ChangeViewType(ViewType type)
+String^ NavigationStrip::GetModelString()
 {
-	mViewType=type;
+	if(mFocusedPb!=nullptr)
+		return mFocusedPb->Text;
+	else
+		return nullptr;
+}
+
+void NavigationStrip::Unfocus()
+{
+	if(mFocusedPb!=nullptr)
+		mFocusedPb->Image=nullptr;
 }

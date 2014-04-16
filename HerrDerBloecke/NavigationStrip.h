@@ -13,7 +13,7 @@ namespace HdB {
     #define SPACE 5 //space between the Pictureboxes and buttons
     #define NUM_PB 5    //number of picturboxes
 
-	enum ViewType{gebäude,einheiten,forschung};
+
     ref class NavigationStrip
     {
     public:
@@ -27,9 +27,13 @@ namespace HdB {
         */
         void ChangeFocus(Object^ sender, EventArgs^ e);
 
-		/**
+		/** Unfocus the PictureBoxes
 		*/
-		void ChangeViewType(ViewType type);
+		void Unfocus();
+
+		/** Returns the string to selected unit
+		*/
+		String^ GetModelString();
 
 		/**Updates the images of the PictureBoxes
 		*/
@@ -40,7 +44,6 @@ namespace HdB {
         void Resize();
     private:
         Point Location;
-		ViewType mViewType;
 		Control^ mParent;			
         array<PictureBox^>^ mPBNavi;   
         Label^ mTitle;           //titlelabel over the strip

@@ -140,7 +140,7 @@ namespace HdB {
 			this->lblResGold->AutoSize = true;
 			this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->lblResGold->Location = System::Drawing::Point(348, 11);
+			this->lblResGold->Location = System::Drawing::Point(210, 9);
 			this->lblResGold->Name = L"lblResGold";
 			this->lblResGold->Size = System::Drawing::Size(61, 17);
 			this->lblResGold->TabIndex = 2;
@@ -152,7 +152,7 @@ namespace HdB {
 			this->lblResBlockterie->AutoSize = true;
 			this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->lblResBlockterie->Location = System::Drawing::Point(442, 11);
+			this->lblResBlockterie->Location = System::Drawing::Point(304, 9);
 			this->lblResBlockterie->Name = L"lblResBlockterie";
 			this->lblResBlockterie->Size = System::Drawing::Size(99, 17);
 			this->lblResBlockterie->TabIndex = 3;
@@ -164,7 +164,7 @@ namespace HdB {
 			this->lblResNahrung->AutoSize = true;
 			this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->lblResNahrung->Location = System::Drawing::Point(555, 11);
+			this->lblResNahrung->Location = System::Drawing::Point(435, 9);
 			this->lblResNahrung->Name = L"lblResNahrung";
 			this->lblResNahrung->Size = System::Drawing::Size(89, 17);
 			this->lblResNahrung->TabIndex = 4;
@@ -265,6 +265,9 @@ namespace HdB {
             Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if (u)
                 mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
+			else if(mNavi->GetModelString()!=nullptr && e->Button==System::Windows::Forms::MouseButtons::Left)
+				mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel(mNavi->GetModelString()),mRenderer->Camera->Unproject2D(e->Location)),4);
+			
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
             if(mRenderFrame->Focused)
