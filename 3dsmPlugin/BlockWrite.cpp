@@ -20,7 +20,7 @@ void Blockporter::WriteHeader(const TCHAR* nodeName, int objNumber)
 	_ftprintf(mStream, _T("</Header>\n"));
 }
 
-void Blockporter::WriteMeshData(INode* objNode, int id)
+Box3 Blockporter::WriteMeshData(INode* objNode, int id)
 {
 	TriObject* tri;
 	Matrix3 tm = objNode->GetObjTMAfterWSM(0);
@@ -29,7 +29,7 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	if (obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0)))
 		tri = (TriObject*)obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID,0));
 	else
-		return;
+		return Box3();
 
     //now that we have the triobject write the start
 	_ftprintf(mStream, _T("\t<Mesh>\n"));
@@ -82,8 +82,13 @@ void Blockporter::WriteMeshData(INode* objNode, int id)
 	_ftprintf(mStream, _T("\t\t</Faces>\n"));
 	_ftprintf(mStream, _T("\t</Mesh>\n"));
 
+    mesh->buildBoundingBox();
+    Box3 boundBox = mesh->getBoundingBox();
+
 	delete[] vBuf;
 	delete[] iBuf;
+
+    return boundBox;
 }
 
 void Blockporter::WriteMaterialData(INode* objNode)

@@ -97,6 +97,7 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 	//group and export the meshes and lights
 
 	INode* child;
+    Point3 pMin(0,0,0), pMax(0,0,0);
 
 	for(int idx = 0; idx < root->NumberOfChildren(); idx++)
 	{
@@ -115,12 +116,18 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		if(!os.obj)
 			continue; //somehow this node doesn't have an object
 
+        Box3 boundBox;
+
 		switch(os.obj->SuperClassID())
 		{
 		case GEOMOBJECT_CLASS_ID:
 			_ftprintf(mStream, _T("<ObjectID=%i>\n"), idx);
 			i->PushPrompt(_T("Writing MeshData for Object %s", child->GetName()));
-			WriteMeshData(child, idx);
+			boundBox = WriteMeshData(child, idx);
+            pMin.x = (boundBox.Min().x < pMin.x) ? boundBox.Min().x : pMin.x;
+            pMin.y = (boundBox.Min().y < pMin.y) ? boundBox.Min().y : pMin.y;
+            pMax.x = (boundBox.Max().x > pMax.x) ? boundBox.Max().x : pMax.x;
+            pMax.y = (boundBox.Max().y > pMax.y) ? boundBox.Max().y : pMax.y;
 			i->PushPrompt(_T("Writing MaterialData for Object %s", child->GetName()));
 			WriteMaterialData(child);
 			_ftprintf(mStream, _T("</Object>\n"));
@@ -131,6 +138,11 @@ int Blockporter::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 		}
 	}
 
+    //Write the Bounding Box
+    _ftprintf(mStream, _T("<BoundingBox>\n"));
+    _ftprintf(mStream, _T("\t<Min=%f,%f>\n"), pMin.x, pMin.y);
+    _ftprintf(mStream, _T("\t<Max=%f,%f>\n"), pMax.x, pMax.y);
+    _ftprintf(mStream, _T("</BoundingBox>\n"));
 	//we are done exporting, so close the stream
 	i->PushPrompt(_T("Closing file..."));
 	fclose(mStream);
