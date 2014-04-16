@@ -10,9 +10,40 @@ using namespace System::Diagnostics;
 #define FIELD_WIDTH 1.f
 #define FIELD_HEIGHT 1.f
 
+/*****************
+ * MapOccupation *
+ *****************/
+
+HdB::MapOccupation::MapOccupation(HdB::Unit^ unit)
+{
+    mUnit = unit;
+    mUnit->PositionChanged += gcnew PositionEvent(this, &MapOccupation::Update);
+    Update(unit->Position);
+}
+
+bool HdB::MapOccupation::Contains(Point pos)
+{
+    if (pos.X >= mMinField.X && pos.Y >= mMinField.Y && pos.X <= mMaxField.X && pos.Y <= mMaxField.Y)
+        return true;
+    return false;
+}
+
+void HdB::MapOccupation::Update(const Vector3% pos)
+{
+    // TODO: Calculate from Bounds
+    mMinField = Map::GetFieldCoordinate(pos);
+    mMaxField = Map::GetFieldCoordinate(pos);
+}
+
+/*******
+ * Map *
+ *******/
+
 HdB::Map::Map(Device^ device)
 : mDevice(device)
 {
+    mOccupations = gcnew List<MapOccupation^>();
+
     String^ texture = "Grass.png";
     try {
         mTexture = Texture::FromFile(mDevice, TEXTURE_PATH + texture, Usage::None, Pool::Managed);
@@ -45,6 +76,7 @@ HdB::Map::~Map()
 {
     delete mGroundMesh;
     delete mTexture;
+    mOccupations->Clear();
 }
 
 void HdB::Map::Draw()
@@ -56,28 +88,21 @@ void HdB::Map::Draw()
     mGroundMesh->DrawSubset(0);
 }
 
+void HdB::Map::AddUnit(Unit^ unit)
+{
+    mOccupations->Add(gcnew MapOccupation(unit));
+}
+
+HdB::Unit^ HdB::Map::CheckOccupation(const Vector3% posOnGround)
+{
+    Point field = GetFieldCoordinate(posOnGround);
+    for each (MapOccupation^ occ in mOccupations)
+        if (occ->Contains(field))
+            return occ->Unit;
+    return nullptr;
+}
+
 Point HdB::Map::GetFieldCoordinate(const Vector3% posOnGround)
 {
     return Point((int)(posOnGround.X - 0.5f), (int)(posOnGround.Y - 0.5f));
-}
-
-HdB::MapOccupation::MapOccupation(Unit^ unit)
-{
-    mUnit = unit;
-    mUnit->PositionChanged += gcnew PositionEvent(this, &MapOccupation::Update);
-    Update(unit->Position);
-}
-
-bool HdB::MapOccupation::Contains(Point pos)
-{
-    if (pos.X >= mMinField.X && pos.Y >= mMinField.Y && pos.X <= mMaxField.X && pos.Y <= mMaxField.Y)
-        return true;
-    return false;
-}
-
-void HdB::MapOccupation::Update(const Vector3% pos)
-{
-    // TODO: Calculate from Bounds
-    mMinField = Map::GetFieldCoordinate(pos);
-    mMaxField = Map::GetFieldCoordinate(pos);
 }

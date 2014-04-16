@@ -73,16 +73,14 @@ bool HdB::Renderer::Init(Control^ target)
         CreateFlags::HardwareVertexProcessing, mParams);
     ResetDevice();
 
-    Camera = gcnew HdB::Camera(mDevice, Vector3(0.f, -10.f, 10.f), Vector3::Zero);
+    mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -10.f, 10.f), Vector3::Zero);
+    mMap = gcnew HdB::Map(mDevice);
 
     // TEMP Test: Load Model
     AddDrawable(gcnew Model("exampleUnit", mDevice));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3::Zero));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, -5.f, 0.f)));
     SpawnUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, 5.f, 0.f)));
-
-    // TEMP Test: Load Map
-    mMap = gcnew Map(mDevice);
 
     return true;
 }
@@ -161,4 +159,5 @@ void HdB::Renderer::SpawnUnit(Unit^ unit)
             if (m->Name == unit->ModelName)
                 m->AddInstance(unit);
     }
+    mMap->AddUnit(unit);
 }

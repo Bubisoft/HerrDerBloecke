@@ -4,6 +4,7 @@
 
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace SlimDX;
 using namespace SlimDX::Direct3D9;
 
 namespace HdB {
@@ -31,6 +32,9 @@ namespace HdB {
         virtual void Draw();
 
         property String^ Name;
+        property BoundingBox Bounds {
+            BoundingBox get() { return mBounds; }
+        }
 
     private:
         void LoadFromHBMFile(String^ filename);
@@ -38,5 +42,6 @@ namespace HdB {
         Device^ mDevice;
         List<Submesh^>^ mMeshes;
         List<Unit^>^ mInstances;
+        BoundingBox mBounds;
     };
 }

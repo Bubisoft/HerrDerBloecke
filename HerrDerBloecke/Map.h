@@ -11,6 +11,29 @@ using namespace SlimDX::Direct3D9;
 namespace HdB {
     ref class Unit;
 
+    ref class MapOccupation
+    {
+    public:
+        MapOccupation(HdB::Unit^ unit);
+        bool Contains(Point pos);
+
+        property HdB::Unit^ Unit {
+            HdB::Unit^ get() { return mUnit; }
+        }
+        property Point MinField {
+            Point get() { return mMinField; }
+        }
+        property Point MaxField {
+            Point get() { return mMaxField; }
+        }
+
+    protected:
+        void Update(const Vector3% pos);
+        HdB::Unit^ mUnit;
+        Point mMinField;
+        Point mMaxField;
+    };
+
     ref class Map : IDrawable
     {
     public:
@@ -22,6 +45,12 @@ namespace HdB {
         /** Render the map. */
         virtual void Draw();
 
+        /** Add a unit that will occupy its "fields" (for collision detection). */
+        void AddUnit(Unit^ unit);
+
+        /** Check whether a unit is occupying the given position's field. Returns a nullptr if nothing is found. */
+        Unit^ CheckOccupation(const Vector3% posOnGround);
+
         /** Convert a position on the ground plane to a map field coordinate. */
         static Point GetFieldCoordinate(const Vector3% posOnGround);
 
@@ -30,25 +59,6 @@ namespace HdB {
         Mesh^ mGroundMesh;
         Texture^ mTexture;
         Material mMaterial;
-    };
-
-    ref class MapOccupation
-    {
-    public:
-        MapOccupation(Unit^ unit);
-        bool Contains(Point pos);
-
-        property Point MinField {
-            Point get() { return mMinField; }
-        }
-        property Point MaxField {
-            Point get() { return mMaxField; }
-        }
-
-    protected:
-        void Update(const Vector3% pos);
-        Unit^ mUnit;
-        Point mMinField;
-        Point mMaxField;
+        List<MapOccupation^>^ mOccupations;
     };
 }

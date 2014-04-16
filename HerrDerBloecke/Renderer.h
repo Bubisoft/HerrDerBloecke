@@ -39,7 +39,12 @@ namespace HdB {
         /** Assign a unit to its model and spawn the instance. */
         void SpawnUnit(Unit^ unit);
 
-        property Camera^ Camera;
+        property HdB::Camera^ Camera {
+            HdB::Camera^ get() { return mCamera; }
+        }
+        property HdB::Map^ Map {
+            HdB::Map^ get() { return mMap; }
+        }
         property bool Paused;
 
     private:
@@ -49,6 +54,7 @@ namespace HdB {
         Direct3D^ m3D;
         Device^ mDevice;
         List<IDrawable^>^ mDrawables;
-        Map^ mMap;
+        HdB::Camera^ mCamera;
+        HdB::Map^ mMap;
     };
 }
