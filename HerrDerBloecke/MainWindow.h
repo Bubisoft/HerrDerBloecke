@@ -4,11 +4,13 @@
 #include "AudioSystem.h"
 #include "Options.h"
 #include "Camera.h"
+#include "Map.h"
 #include "Player.h"
 #include "NavigationStrip.h"
 #include "NotificationBox.h"
 #include "Resources.h"
 #include "Unit.h"
+#include "Model.h"
 
 namespace HdB {
     using namespace System;
@@ -43,9 +45,10 @@ namespace HdB {
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
 
             /** FOR TESTING */
-			mNotificationBox->SendMessage(this->Width.ToString());
-            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(5.f, -5.f, 0.f)), 5);
-            mPlayer->BuildUnit(gcnew TestUnit("exampleUnit", Vector3(-5.f, 5.f, 0.f)), 10);
+
+            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetModel("exampleUnit"), Vector3::Zero));
+            mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(15.f, -15.f, 0.f)), 5);
+            mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(-15.f, 15.f, 0.f)), 10);
             mNotificationBox->SendMessage("TEST: 2 Einheiten werden ausgebildet");
             /** END TESTING */
 
@@ -112,7 +115,7 @@ namespace HdB {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->mRenderFrame->Location = System::Drawing::Point(12, 43);
 			this->mRenderFrame->Name = L"mRenderFrame";
-			this->mRenderFrame->Size = System::Drawing::Size(924, 396);
+			this->mRenderFrame->Size = System::Drawing::Size(760, 419);
 			this->mRenderFrame->TabIndex = 0;
 			this->mRenderFrame->TabStop = false;
 			this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
@@ -124,7 +127,7 @@ namespace HdB {
 			// btnMenu
 			// 
 			this->btnMenu->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-			this->btnMenu->Location = System::Drawing::Point(836, 451);
+			this->btnMenu->Location = System::Drawing::Point(672, 474);
 			this->btnMenu->Name = L"btnMenu";
 			this->btnMenu->Size = System::Drawing::Size(100, 53);
 			this->btnMenu->TabIndex = 1;
@@ -137,11 +140,11 @@ namespace HdB {
 			this->lblResGold->AutoSize = true;
 			this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->lblResGold->Location = System::Drawing::Point(348, 14);
+			this->lblResGold->Location = System::Drawing::Point(348, 11);
 			this->lblResGold->Name = L"lblResGold";
-			this->lblResGold->Size = System::Drawing::Size(42, 17);
+			this->lblResGold->Size = System::Drawing::Size(61, 17);
 			this->lblResGold->TabIndex = 2;
-			this->lblResGold->Text = L"Gold";
+			this->lblResGold->Text = L"Gold: 0";
 			this->lblResGold->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResGold_TextChanged);
 			// 
 			// lblResBlockterie
@@ -151,9 +154,9 @@ namespace HdB {
 				static_cast<System::Byte>(0)));
 			this->lblResBlockterie->Location = System::Drawing::Point(442, 11);
 			this->lblResBlockterie->Name = L"lblResBlockterie";
-			this->lblResBlockterie->Size = System::Drawing::Size(80, 17);
+			this->lblResBlockterie->Size = System::Drawing::Size(99, 17);
 			this->lblResBlockterie->TabIndex = 3;
-			this->lblResBlockterie->Text = L"Blockterie";
+			this->lblResBlockterie->Text = L"Blockterie: 0";
 			this->lblResBlockterie->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResBlockterie_TextChanged);
 			// 
 			// lblResNahrung
@@ -161,16 +164,17 @@ namespace HdB {
 			this->lblResNahrung->AutoSize = true;
 			this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->lblResNahrung->Location = System::Drawing::Point(555, 9);
+			this->lblResNahrung->Location = System::Drawing::Point(555, 11);
 			this->lblResNahrung->Name = L"lblResNahrung";
-			this->lblResNahrung->Size = System::Drawing::Size(70, 17);
+			this->lblResNahrung->Size = System::Drawing::Size(89, 17);
 			this->lblResNahrung->TabIndex = 4;
-			this->lblResNahrung->Text = L"Nahrung";
+			this->lblResNahrung->Text = L"Nahrung: 0";
+			this->lblResNahrung->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResNahrung_TextChanged);
 			// 
 			// btnGraph
 			// 
-			this->btnGraph->Anchor = System::Windows::Forms::AnchorStyles::Top;
-			this->btnGraph->Location = System::Drawing::Point(861, 14);
+			this->btnGraph->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->btnGraph->Location = System::Drawing::Point(697, 14);
 			this->btnGraph->Name = L"btnGraph";
 			this->btnGraph->Size = System::Drawing::Size(75, 23);
 			this->btnGraph->TabIndex = 7;
@@ -184,9 +188,9 @@ namespace HdB {
 			// 
 			// statusStrip1
 			// 
-			this->statusStrip1->Location = System::Drawing::Point(0, 516);
+			this->statusStrip1->Location = System::Drawing::Point(0, 539);
 			this->statusStrip1->Name = L"statusStrip1";
-			this->statusStrip1->Size = System::Drawing::Size(948, 22);
+			this->statusStrip1->Size = System::Drawing::Size(784, 22);
 			this->statusStrip1->TabIndex = 8;
 			this->statusStrip1->Text = L"statusStrip1";
 			// 
@@ -195,7 +199,7 @@ namespace HdB {
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Menu;
-			this->ClientSize = System::Drawing::Size(948, 538);
+			this->ClientSize = System::Drawing::Size(784, 561);
 			this->Controls->Add(this->statusStrip1);
 			this->Controls->Add(this->btnGraph);
 			this->Controls->Add(this->lblResNahrung);
@@ -258,7 +262,9 @@ namespace HdB {
             mMousePosSet = false;
         }
     private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
-            // TODO
+            Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
+            if (u)
+                mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
             if(mRenderFrame->Focused)
@@ -280,7 +286,7 @@ namespace HdB {
 
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
-            mNotificationBox->SendMessage(unit->ModelName + " ausgebildet");
+            mNotificationBox->SendMessage(unit->Model + " ausgebildet");
             mRenderer->SpawnUnit(unit);
             mAudioSystem->PlaySFX("test");
          }
@@ -297,6 +303,9 @@ private: System::Void lblResBlockterie_TextChanged(System::Object^  sender, Syst
 		 }
 private: System::Void lblResGold_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
+		 }
+private: System::Void lblResNahrung_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
 		 }
 };
 }

@@ -2,6 +2,7 @@
 
 #include "IDrawable.h"
 
+using namespace System;
 using namespace System::Windows::Forms;
 using namespace System::Collections::Generic;
 using namespace SlimDX;
@@ -12,6 +13,7 @@ namespace HdB {
     ref class Camera;
     ref class Unit;
     ref class Map;
+    ref class Model;
 
     ref class Renderer
     {
@@ -36,10 +38,20 @@ namespace HdB {
         /** Add a drawable object to our list of things we have to draw. */
         void AddDrawable(IDrawable^ drawable);
 
+        /** Returns a Model with the given name, try to load it from a file if we
+         *  don't have it in our list of loaded drawables (load-on-demand).
+         */
+        Model^ GetModel(String^ name);
+
         /** Assign a unit to its model and spawn the instance. */
         void SpawnUnit(Unit^ unit);
 
-        property Camera^ Camera;
+        property HdB::Camera^ Camera {
+            HdB::Camera^ get() { return mCamera; }
+        }
+        property HdB::Map^ Map {
+            HdB::Map^ get() { return mMap; }
+        }
         property bool Paused;
 
     private:
@@ -49,6 +61,7 @@ namespace HdB {
         Direct3D^ m3D;
         Device^ mDevice;
         List<IDrawable^>^ mDrawables;
-        Map^ mMap;
+        HdB::Camera^ mCamera;
+        HdB::Map^ mMap;
     };
 }

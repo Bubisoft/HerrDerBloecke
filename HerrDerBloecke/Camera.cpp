@@ -1,5 +1,8 @@
 #include "Camera.h"
-#define ZOOM_SPEED 0.05
+
+#define ZOOM_DISTANCE_MIN 5.f
+#define ZOOM_DISTANCE_MAX 100.f
+#define ZOOM_SPEED 0.05f
 
 HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)
 : mDevice(device), mPosition(pos), mLookAt(lookAt)
@@ -65,8 +68,8 @@ void HdB::Camera::Zoom(const int% delta)
 {
     Vector3 v = Vector3::Subtract(mPosition, mLookAt);
 
-    if(delta > 0 && v.Length() > 5)
+    if(delta > 0 && v.Length() > ZOOM_DISTANCE_MIN)
         mPosition = mLookAt + v * (1 - ZOOM_SPEED);
-    if(delta < 0 && v.Length() < 40)
+    if(delta < 0 && v.Length() < ZOOM_DISTANCE_MAX)
         mPosition = mLookAt + v * (1 + ZOOM_SPEED);
 }

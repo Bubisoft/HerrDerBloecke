@@ -48,7 +48,7 @@ private:
 	void BuildVertexNormals(Point3* normals, Mesh* m);
 	//writer functions
 	void WriteHeader(const TCHAR* nodeName, int objNumber);
-	void WriteMeshData(INode* objNode, int id);
+	Box3 WriteMeshData(INode* objNode, int id);
 	void WriteMaterialData(INode* objNode);
 	//void WriteLightData(INode* objNode, int id);
 

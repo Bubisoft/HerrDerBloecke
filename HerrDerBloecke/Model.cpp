@@ -181,6 +181,18 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             line = reader->ReadLine(); // Close Object
             mMeshes->Add(mesh);
         }
+
+        line = reader->ReadLine(); // BoundingBox
+        line = reader->ReadLine(); // Min
+        parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
+        Vector3 min(StrToFloat(parts[1]), StrToFloat(parts[2]), 0.f);
+        mBounds.Minimum = min;
+        line = reader->ReadLine(); // Max
+        parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
+        Vector3 max(StrToFloat(parts[1]), StrToFloat(parts[2]), 0.f);
+        mBounds.Maximum = max;
+        line = reader->ReadLine(); // Close BoundingBox
+
         reader->Close();
     } catch (Exception^ e) {
         Debug::WriteLine("ERROR: " + e->Message);
