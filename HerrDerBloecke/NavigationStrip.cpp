@@ -1,5 +1,6 @@
 #include "NavigationStrip.h"
 #include "Globals.h"
+#include "Unit.h"
 
 using namespace HdB;
 using namespace Diagnostics;
@@ -8,6 +9,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
 
 	array<String^>^ buildings=gcnew array<String^>{"exampleUnit","test","test3","test4","test5"};
+    array<Type^>^ buildTypes = gcnew array<Type^>{TestUnit::typeid, TestUnit::typeid, TestUnit::typeid, TestUnit::typeid, TestUnit::typeid};
 	mParent=target;
      Location=Point(x,y);
 
@@ -19,11 +21,11 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
     target->Controls->Add(mTitle);
     mTitle->Location=Point(x + SPACE + BTN_WIDHT,y);
 
-    mPBNavi=gcnew array<PictureBox^>(NUM_PB);
+    mPBNavi = gcnew array<NavigationThumb^>(NUM_PB);
 
     for(int i=0;i<NUM_PB;++i)
     {
-        mPBNavi[i]=gcnew PictureBox;
+        mPBNavi[i] = gcnew NavigationThumb();
     }
     //left navigation button
     mBtnLeft=gcnew Button;
@@ -45,7 +47,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 
     //initialising the PictureBoxes
     int i=0;
-    for each(PictureBox^ PB in mPBNavi)
+    for each(NavigationThumb^ PB in mPBNavi)
     {
         String^ path=THUMB_PATH + buildings[i] + ".jpg";
         PB->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * i,Location.Y + mTitle->Height);
@@ -55,9 +57,10 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
         PB->Click+=gcnew EventHandler(this,&NavigationStrip::ChangeFocus);
         if(File::Exists(path))
         {
-			PB->BackgroundImage=Image::FromFile(path);
-			PB->Text=buildings[i];
-		}
+            PB->BackgroundImage=Image::FromFile(path);
+            PB->Text = buildings[i];
+            PB->UnitType = buildTypes[i];
+        }
         else
             Debug::WriteLine("ERROR: Could not load file!");
         PB->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
@@ -83,7 +86,7 @@ void NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
     }
     else
     {
-        for each(PictureBox^ PB in mPBNavi)
+        for each(NavigationThumb^ PB in mPBNavi)
         {
             temp1=PB->BackgroundImage;
             PB->BackgroundImage=temp2;
@@ -96,7 +99,7 @@ void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 {
     if(mFocusedPb!=nullptr)
         mFocusedPb->Image=nullptr; //remove the focusing frame from old focus
-    PictureBox^ pb=(PictureBox^)sender;
+    NavigationThumb^ pb=(NavigationThumb^)sender;
     if(mFocusedPb!=pb)
     {
         if(File::Exists(THUMB_PATH + "focused.png"))
@@ -118,7 +121,7 @@ void NavigationStrip::Resize()
     if(((mParent->Size.Width*0.4)-BTN_WIDHT*2 - SPACE*6 - Location.X)/NUM_PB <PB_WIDTH)
     {
         int newSize=((mParent->Size.Width*0.4) - BTN_WIDHT*2 - SPACE * 6 - Location.X)/NUM_PB;
-        for each(PictureBox^ PB in mPBNavi)
+        for each(NavigationThumb^ PB in mPBNavi)
         {
             PB->Size=Size(newSize,newSize);
             PB->Location=Point(BTN_WIDHT + SPACE + ( PB->Size.Width +SPACE ) * i + Location.X,PB->Location.Y );
@@ -131,7 +134,7 @@ void NavigationStrip::Resize()
     }
     else
     {
-        for each(PictureBox^ PB in mPBNavi)
+        for each(NavigationThumb^ PB in mPBNavi)
         {
         
             PB->Size=Size(PB_WIDTH,PB_HEIGHT);
@@ -152,14 +155,20 @@ void NavigationStrip::Update()
 
 String^ NavigationStrip::GetModelString()
 {
-	if(mFocusedPb!=nullptr)
-		return mFocusedPb->Text;
-	else
-		return nullptr;
+    if(mFocusedPb!=nullptr)
+        return mFocusedPb->Text;
+    return nullptr;
+}
+
+Type^ NavigationStrip::GetModelType()
+{
+    if (mFocusedPb != nullptr)
+        return mFocusedPb->UnitType;
+    return nullptr;
 }
 
 void NavigationStrip::Unfocus()
 {
-	if(mFocusedPb!=nullptr)
-		mFocusedPb->Image=nullptr;
+    if(mFocusedPb!=nullptr)
+        mFocusedPb->Image=nullptr;
 }

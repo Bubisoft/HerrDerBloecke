@@ -276,11 +276,18 @@ namespace HdB {
             Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if (u)
                 mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
-            else if(mNavi->GetModelString()!=nullptr && e->Button==System::Windows::Forms::MouseButtons::Left) {
-                mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel(mNavi->GetModelString()),mRenderer->Camera->Unproject2D(e->Location)),4);
-                mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel(mNavi->GetModelString()), mRenderer->Camera->Unproject2D(e->Location)));
+            else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
+                // What unit are we building?
+                Type^ unittype = mNavi->GetModelType();
+                // Start building unit
+                Unit^ finalUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
+                    mRenderer->Camera->Unproject2D(e->Location)}));
+                mPlayer->BuildUnit(finalUnit, finalUnit->BuildTime());
+                // Spawn placeholder unit
+                Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
+                    mRenderer->Camera->Unproject2D(e->Location)}));
+                mRenderer->SpawnUnit(placeholderUnit);
             }
-			
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
             if(mRenderFrame->Focused)

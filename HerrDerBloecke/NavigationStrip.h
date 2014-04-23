@@ -13,6 +13,11 @@ namespace HdB {
     #define SPACE 5 //space between the Pictureboxes and buttons
     #define NUM_PB 5    //number of picturboxes
 
+    ref class NavigationThumb : public PictureBox {
+    public:
+        NavigationThumb() : PictureBox() { }
+        property Type^ UnitType;
+    };
 
     ref class NavigationStrip
     {
@@ -35,6 +40,9 @@ namespace HdB {
 		*/
 		String^ GetModelString();
 
+        /** Returns the type of the selected unit */
+        Type^ GetModelType();
+
 		/**Updates the images of the PictureBoxes
 		*/
 		void Update();
@@ -45,9 +53,9 @@ namespace HdB {
     private:
         Point Location;
 		Control^ mParent;			
-        array<PictureBox^>^ mPBNavi;   
+        array<NavigationThumb^>^ mPBNavi;
         Label^ mTitle;           //titlelabel over the strip
-        PictureBox^ mFocusedPb;    //currently focused picturbox
+        NavigationThumb^ mFocusedPb;    //currently focused picturbox
         Button^ mBtnLeft;       //button at the left of the navigation
         Button^ mBtnRight;      //button at the right of the navigation
     };

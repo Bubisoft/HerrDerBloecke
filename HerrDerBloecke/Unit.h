@@ -15,6 +15,8 @@ namespace HdB {
         Matrix GetTransform();
         void Damage(int dmg);
 
+        virtual UInt16 BuildTime() { return 1; }
+
         property HdB::Model^ Model {
             HdB::Model^ get() { return mModel; }
         }
@@ -55,5 +57,7 @@ namespace HdB {
     {
     public:
         TestUnit(HdB::Model^ model, const Vector3% pos);
+
+        virtual UInt16 BuildTime() override { return 5; }
     };
 }
