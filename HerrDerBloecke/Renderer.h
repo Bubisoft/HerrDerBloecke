@@ -57,7 +57,6 @@ namespace HdB {
         property HdB::Map^ Map {
             HdB::Map^ get() { return mMap; }
         }
-        property bool Paused;
 
     private:
         void ResetDevice();

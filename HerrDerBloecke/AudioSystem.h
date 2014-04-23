@@ -15,12 +15,17 @@ namespace HdB {
         virtual ~AudioSystem();
         bool Init(Control^ target);
         void PlaySFX(String^ name);
+        void PlaySFX(String^ name, bool loop);
         void PlayMusic(String^ name);
+        void PlayMusic(String^ name, bool loop);
+        void Stop(String^ name);
 
+        // 0 Min, 100 Max
         property int VolumeSFX {
             void set(int volume);
             int get() { return mVolumeSFX; }
         }
+        // 0 Min, 100 Max
         property int VolumeMusic {
             void set(int volume);
             int get() { return mVolumeMusic; }

@@ -34,12 +34,17 @@ namespace HdB {
     private: System::Windows::Forms::TrackBar^  tbMusicVolume;
 
     private: System::Windows::Forms::Label^  label1;
-    private: System::Windows::Forms::TrackBar^  tbSXVolume;
+    private: System::Windows::Forms::TrackBar^  tbSFXVolume;
+
     private: System::Windows::Forms::Label^  label2;
 
     public:
         property int CameraSpeed
         {
+            void set(int speed)
+            {
+                tbCamSpeed->Value = speed;
+            }
             int get()
             {
                 return tbCamSpeed->Value;
@@ -48,16 +53,24 @@ namespace HdB {
 
         property int MusicVolume
         {
+            void set(int volume)
+            {
+                tbMusicVolume->Value = volume;
+            }
             int get()
             {
                 return tbMusicVolume->Value;
             }
         }
-        property int SXVolume
+        property int SFXVolume
         {
+            void set(int volume)
+            {
+                tbSFXVolume->Value = volume;
+            }
             int get()
             {
-                return tbSXVolume->Value;
+                return tbSFXVolume->Value;
             }
         }
 
@@ -78,11 +91,11 @@ namespace HdB {
             this->lblSpeed10th = (gcnew System::Windows::Forms::Label());
             this->tbMusicVolume = (gcnew System::Windows::Forms::TrackBar());
             this->label1 = (gcnew System::Windows::Forms::Label());
-            this->tbSXVolume = (gcnew System::Windows::Forms::TrackBar());
+            this->tbSFXVolume = (gcnew System::Windows::Forms::TrackBar());
             this->label2 = (gcnew System::Windows::Forms::Label());
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->BeginInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->BeginInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSXVolume))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->BeginInit();
             this->SuspendLayout();
             // 
             // tbCamSpeed
@@ -161,16 +174,16 @@ namespace HdB {
             this->label1->TabIndex = 7;
             this->label1->Text = L"Musiklautstärke";
             // 
-            // tbSXVolume
+            // tbSFXVolume
             // 
-            this->tbSXVolume->LargeChange = 20;
-            this->tbSXVolume->Location = System::Drawing::Point(68, 185);
-            this->tbSXVolume->Maximum = 100;
-            this->tbSXVolume->Name = L"tbSXVolume";
-            this->tbSXVolume->Size = System::Drawing::Size(238, 45);
-            this->tbSXVolume->SmallChange = 10;
-            this->tbSXVolume->TabIndex = 8;
-            this->tbSXVolume->Value = 50;
+            this->tbSFXVolume->LargeChange = 20;
+            this->tbSFXVolume->Location = System::Drawing::Point(68, 185);
+            this->tbSFXVolume->Maximum = 100;
+            this->tbSFXVolume->Name = L"tbSFXVolume";
+            this->tbSFXVolume->Size = System::Drawing::Size(238, 45);
+            this->tbSFXVolume->SmallChange = 10;
+            this->tbSFXVolume->TabIndex = 8;
+            this->tbSFXVolume->Value = 50;
             // 
             // label2
             // 
@@ -187,7 +200,7 @@ namespace HdB {
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(370, 289);
             this->Controls->Add(this->label2);
-            this->Controls->Add(this->tbSXVolume);
+            this->Controls->Add(this->tbSFXVolume);
             this->Controls->Add(this->label1);
             this->Controls->Add(this->tbMusicVolume);
             this->Controls->Add(this->lblSpeed10th);
@@ -198,9 +211,9 @@ namespace HdB {
             this->Controls->Add(this->tbCamSpeed);
             this->Name = L"Options";
             this->Text = L"Options";
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->EndInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->EndInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSXVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 

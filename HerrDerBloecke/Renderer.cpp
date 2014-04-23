@@ -95,8 +95,6 @@ void HdB::Renderer::Resize(const int% w, const int% h)
 
 void HdB::Renderer::Draw()
 {
-    if (Paused)
-        return;
 
     mDevice->Clear(ClearFlags::Target | ClearFlags::ZBuffer, Color4(0.f, 0.f, 0.f), 1.f, 0);
     mDevice->BeginScene();

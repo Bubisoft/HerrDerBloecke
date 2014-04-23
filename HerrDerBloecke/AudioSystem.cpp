@@ -30,24 +30,36 @@ bool HdB::AudioSystem::Init(Control^ target)
 
 void HdB::AudioSystem::PlaySFX(String^ name)
 {
+    PlaySFX(name, false);
+}
+
+void HdB::AudioSystem::PlaySFX(String^ name, bool loop)
+{
     // Load on demand
     if (Play(name))
         return;
     Sound^ sound = gcnew Sound(mSoundDev, name);
     sound->Type = SoundType::SFX;
+    sound->Volume = VolumeSFX;
     mLoadedSounds->Add(sound);
-    sound->Play(false);
+    sound->Play(loop);
 }
 
 void HdB::AudioSystem::PlayMusic(String^ name)
+{
+    PlayMusic(name, false);
+}
+
+void HdB::AudioSystem::PlayMusic(String^ name, bool loop)
 {
     // Load on demand
     if (Play(name))
         return;
     Sound^ sound = gcnew Sound(mSoundDev, name);
     sound->Type = SoundType::Music;
+    sound->Volume = VolumeMusic;
     mLoadedSounds->Add(sound);
-    sound->Play(false);
+    sound->Play(loop);
 }
 
 bool HdB::AudioSystem::Play(String^ name)
@@ -59,6 +71,16 @@ bool HdB::AudioSystem::Play(String^ name)
         }
     }
     return false;
+}
+
+void HdB::AudioSystem::Stop(String^ name)
+{
+    for each (Sound^ s in mLoadedSounds) {
+        if (s->Name == name) {
+            s->Stop();
+            return;
+        }
+    }
 }
 
 void HdB::AudioSystem::VolumeSFX::set(int volume)

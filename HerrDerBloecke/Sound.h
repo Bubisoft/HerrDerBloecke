@@ -15,8 +15,8 @@ namespace HdB {
         void Stop();
 
         property int Volume {
-            void set(int volume) { mBuffer->Volume = volume; }
-            int get() { return mBuffer->Volume; }
+            void set(int volume);
+            int get();
         }
 
         property String^ Name {

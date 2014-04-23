@@ -45,7 +45,6 @@ namespace HdB {
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
 
             /** FOR TESTING */
-
             mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetModel("exampleUnit"), Vector3::Zero));
             mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(15.f, -15.f, 0.f)), 5);
             mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel("test"), Vector3(15.f, -15.f, 0.f)));
@@ -299,13 +298,14 @@ namespace HdB {
 
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
-            mRenderer->Paused = true;
+            mOptions->CameraSpeed = (int)(mRenderer->Camera->Speed * 2000.f);
+            mOptions->MusicVolume = mAudioSystem->VolumeMusic;
+            mOptions->SFXVolume = mAudioSystem->VolumeSFX;
             if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 mRenderer->Camera->Speed = mOptions->CameraSpeed / 2000.f;
                 mAudioSystem->VolumeMusic= mOptions->MusicVolume;
-                mAudioSystem->VolumeSFX = mOptions->SXVolume;
+                mAudioSystem->VolumeSFX = mOptions->SFXVolume;
             }
-            mRenderer->Paused = false;
         }
 
 
