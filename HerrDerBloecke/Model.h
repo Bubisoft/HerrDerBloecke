@@ -31,6 +31,9 @@ namespace HdB {
         /** Draw all of our model instances */
         virtual void Draw();
 
+        /** Set Alpha */
+        void SetAlpha(float alpha);
+
         property String^ Name;
         property BoundingBox Bounds {
             BoundingBox get() { return mBounds; }

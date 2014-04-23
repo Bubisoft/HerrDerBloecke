@@ -48,7 +48,9 @@ namespace HdB {
 
             mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetModel("exampleUnit"), Vector3::Zero));
             mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(15.f, -15.f, 0.f)), 5);
+            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel("test"), Vector3(15.f, -15.f, 0.f)));
             mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(-15.f, 15.f, 0.f)), 10);
+            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel("test"), Vector3(-15.f, 15.f, 0.f)));
             mNotificationBox->SendMessage("TEST: 2 Einheiten werden ausgebildet");
             /** END TESTING */
 
@@ -265,8 +267,10 @@ namespace HdB {
             Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if (u)
                 mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
-			else if(mNavi->GetModelString()!=nullptr && e->Button==System::Windows::Forms::MouseButtons::Left)
-				mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel(mNavi->GetModelString()),mRenderer->Camera->Unproject2D(e->Location)),4);
+            else if(mNavi->GetModelString()!=nullptr && e->Button==System::Windows::Forms::MouseButtons::Left) {
+                mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel(mNavi->GetModelString()),mRenderer->Camera->Unproject2D(e->Location)),4);
+                mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel(mNavi->GetModelString()), mRenderer->Camera->Unproject2D(e->Location)));
+            }
 			
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {

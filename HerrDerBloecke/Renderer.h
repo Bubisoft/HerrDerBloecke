@@ -43,6 +43,11 @@ namespace HdB {
          */
         Model^ GetModel(String^ name);
 
+        /** Returns an Alphamodel with the given name, try to load it from a file if we
+         *  don't have it in our list of loaded drawables (load-on-demand).
+         */
+        Model^ GetAlphaModel(String^ name);
+
         /** Assign a unit to its model and spawn the instance. */
         void SpawnUnit(Unit^ unit);
 
@@ -61,6 +66,7 @@ namespace HdB {
         Direct3D^ m3D;
         Device^ mDevice;
         List<IDrawable^>^ mDrawables;
+        List<IDrawable^>^ mAlphaDrawables;
         HdB::Camera^ mCamera;
         HdB::Map^ mMap;
     };

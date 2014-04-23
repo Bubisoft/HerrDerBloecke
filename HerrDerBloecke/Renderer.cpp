@@ -7,13 +7,18 @@
 HdB::Renderer::Renderer()
 {
     mDrawables = gcnew List<IDrawable^>();
+    mAlphaDrawables = gcnew List<IDrawable^>();
 }
 
 HdB::Renderer::~Renderer()
 {
     for each (IDrawable^ d in mDrawables)
         delete d;
+    for each (IDrawable^ d in mAlphaDrawables)
+        delete d;
+
     mDrawables->Clear();
+    mAlphaDrawables->Clear();
     delete mMap;
 
     delete mDevice;
@@ -104,6 +109,9 @@ void HdB::Renderer::Draw()
         d->Draw();
     }
 
+    for each (IDrawable^ d in mAlphaDrawables)
+        d->Draw();
+
     mDevice->EndScene();
     mDevice->Present();
 }
@@ -156,6 +164,20 @@ HdB::Model^ HdB::Renderer::GetModel(String^ name)
     }
     m = gcnew Model(name, mDevice);
     mDrawables->Add(m);
+    return m;
+}
+
+HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)
+{
+    Model^ m;
+    for each (IDrawable^ d in mAlphaDrawables) {
+        if (m = dynamic_cast<Model^>(d))
+            if (m->Name == name)
+                return m;
+    }
+    m = gcnew Model(name, mDevice);
+    m->SetAlpha(0.5); //Hardcoded alpha
+    mAlphaDrawables->Add(m);
     return m;
 }
 
