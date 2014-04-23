@@ -1,12 +1,12 @@
 #include "Resources.h"
 
-#define STD_GOLD 10
-#define STD_BLOCKTERIE 6
-#define STD_FOOD 8
+#define STD_GOLD 2
+#define STD_BLOCKTERIE 3
+#define STD_FOOD 2
 
-#define STD_MAX_GOLD 1000   // Maybe expandable with store units
-#define STD_MAX_BLOCKTERIE 1000
-#define STD_MAX_FOOD 1000
+#define STD_MAX_GOLD 10000   // Maybe expandable with store units
+#define STD_MAX_BLOCKTERIE 10000
+#define STD_MAX_FOOD 10000
 
 HdB::Resources::Resources(void)
     : mGold(0), mFood(0), mBlockterie(0),

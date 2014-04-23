@@ -31,6 +31,11 @@ namespace HdB {
     private: System::Windows::Forms::Label^  lblSpeed4;
     private: System::Windows::Forms::Label^  lblSpeed1;
     private: System::Windows::Forms::Label^  lblSpeed10th;
+    private: System::Windows::Forms::TrackBar^  tbMusicVolume;
+
+    private: System::Windows::Forms::Label^  label1;
+    private: System::Windows::Forms::TrackBar^  tbSXVolume;
+    private: System::Windows::Forms::Label^  label2;
 
     public:
         property int CameraSpeed
@@ -38,6 +43,21 @@ namespace HdB {
             int get()
             {
                 return tbCamSpeed->Value;
+            }
+        }
+
+        property int MusicVolume
+        {
+            int get()
+            {
+                return tbMusicVolume->Value;
+            }
+        }
+        property int SXVolume
+        {
+            int get()
+            {
+                return tbSXVolume->Value;
             }
         }
 
@@ -56,7 +76,13 @@ namespace HdB {
             this->lblSpeed4 = (gcnew System::Windows::Forms::Label());
             this->lblSpeed1 = (gcnew System::Windows::Forms::Label());
             this->lblSpeed10th = (gcnew System::Windows::Forms::Label());
+            this->tbMusicVolume = (gcnew System::Windows::Forms::TrackBar());
+            this->label1 = (gcnew System::Windows::Forms::Label());
+            this->tbSXVolume = (gcnew System::Windows::Forms::TrackBar());
+            this->label2 = (gcnew System::Windows::Forms::Label());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSXVolume))->BeginInit();
             this->SuspendLayout();
             // 
             // tbCamSpeed
@@ -81,7 +107,7 @@ namespace HdB {
             // btnOK
             // 
             this->btnOK->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->btnOK->Location = System::Drawing::Point(474, 189);
+            this->btnOK->Location = System::Drawing::Point(283, 254);
             this->btnOK->Name = L"btnOK";
             this->btnOK->Size = System::Drawing::Size(75, 23);
             this->btnOK->TabIndex = 2;
@@ -115,11 +141,55 @@ namespace HdB {
             this->lblSpeed10th->TabIndex = 5;
             this->lblSpeed10th->Text = L"x1/10";
             // 
+            // tbMusicVolume
+            // 
+            this->tbMusicVolume->LargeChange = 20;
+            this->tbMusicVolume->Location = System::Drawing::Point(65, 116);
+            this->tbMusicVolume->Maximum = 100;
+            this->tbMusicVolume->Name = L"tbMusicVolume";
+            this->tbMusicVolume->Size = System::Drawing::Size(241, 45);
+            this->tbMusicVolume->SmallChange = 10;
+            this->tbMusicVolume->TabIndex = 6;
+            this->tbMusicVolume->Value = 100;
+            // 
+            // label1
+            // 
+            this->label1->AutoSize = true;
+            this->label1->Location = System::Drawing::Point(65, 97);
+            this->label1->Name = L"label1";
+            this->label1->Size = System::Drawing::Size(81, 13);
+            this->label1->TabIndex = 7;
+            this->label1->Text = L"Musiklautstärke";
+            // 
+            // tbSXVolume
+            // 
+            this->tbSXVolume->LargeChange = 20;
+            this->tbSXVolume->Location = System::Drawing::Point(68, 185);
+            this->tbSXVolume->Maximum = 100;
+            this->tbSXVolume->Name = L"tbSXVolume";
+            this->tbSXVolume->Size = System::Drawing::Size(238, 45);
+            this->tbSXVolume->SmallChange = 10;
+            this->tbSXVolume->TabIndex = 8;
+            this->tbSXVolume->Value = 50;
+            // 
+            // label2
+            // 
+            this->label2->AutoSize = true;
+            this->label2->Location = System::Drawing::Point(68, 166);
+            this->label2->Name = L"label2";
+            this->label2->Size = System::Drawing::Size(81, 13);
+            this->label2->TabIndex = 9;
+            this->label2->Text = L"Effektlautstärke";
+            // 
             // Options
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-            this->ClientSize = System::Drawing::Size(561, 224);
+            this->ClientSize = System::Drawing::Size(370, 289);
+            this->Controls->Add(this->label2);
+            this->Controls->Add(this->tbSXVolume);
+            this->Controls->Add(this->label1);
+            this->Controls->Add(this->tbMusicVolume);
             this->Controls->Add(this->lblSpeed10th);
             this->Controls->Add(this->lblSpeed1);
             this->Controls->Add(this->lblSpeed4);
@@ -129,10 +199,11 @@ namespace HdB {
             this->Name = L"Options";
             this->Text = L"Options";
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSXVolume))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 
         }
-#pragma endregion
-    };
+};
 }

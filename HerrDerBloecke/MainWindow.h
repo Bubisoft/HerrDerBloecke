@@ -88,6 +88,8 @@ namespace HdB {
 
     private: System::Windows::Forms::Timer^  labelTimer;
     private: System::Windows::Forms::StatusStrip^  statusStrip1;
+    private: System::Windows::Forms::Timer^  resourcesTimer;
+
 
     private: System::Windows::Forms::Button^  btnGraph;
 
@@ -98,129 +100,136 @@ namespace HdB {
         /// </summary>
         void InitializeComponent(void)
         {
-			this->components = (gcnew System::ComponentModel::Container());
-			this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
-			this->btnMenu = (gcnew System::Windows::Forms::Button());
-			this->lblResGold = (gcnew System::Windows::Forms::Label());
-			this->lblResBlockterie = (gcnew System::Windows::Forms::Label());
-			this->lblResNahrung = (gcnew System::Windows::Forms::Label());
-			this->btnGraph = (gcnew System::Windows::Forms::Button());
-			this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
-			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
-			this->SuspendLayout();
-			// 
-			// mRenderFrame
-			// 
-			this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->mRenderFrame->Location = System::Drawing::Point(12, 43);
-			this->mRenderFrame->Name = L"mRenderFrame";
-			this->mRenderFrame->Size = System::Drawing::Size(760, 419);
-			this->mRenderFrame->TabIndex = 0;
-			this->mRenderFrame->TabStop = false;
-			this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
-			this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
-			this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
-			this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
-			this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
-			// 
-			// btnMenu
-			// 
-			this->btnMenu->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-			this->btnMenu->Location = System::Drawing::Point(672, 474);
-			this->btnMenu->Name = L"btnMenu";
-			this->btnMenu->Size = System::Drawing::Size(100, 53);
-			this->btnMenu->TabIndex = 1;
-			this->btnMenu->Text = L"Menü";
-			this->btnMenu->UseVisualStyleBackColor = true;
-			this->btnMenu->Click += gcnew System::EventHandler(this, &MainWindow::btnMenu_Click);
-			// 
-			// lblResGold
-			// 
-			this->lblResGold->AutoSize = true;
-			this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->lblResGold->Location = System::Drawing::Point(210, 9);
-			this->lblResGold->Name = L"lblResGold";
-			this->lblResGold->Size = System::Drawing::Size(61, 17);
-			this->lblResGold->TabIndex = 2;
-			this->lblResGold->Text = L"Gold: 0";
-			this->lblResGold->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResGold_TextChanged);
-			// 
-			// lblResBlockterie
-			// 
-			this->lblResBlockterie->AutoSize = true;
-			this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->lblResBlockterie->Location = System::Drawing::Point(304, 9);
-			this->lblResBlockterie->Name = L"lblResBlockterie";
-			this->lblResBlockterie->Size = System::Drawing::Size(99, 17);
-			this->lblResBlockterie->TabIndex = 3;
-			this->lblResBlockterie->Text = L"Blockterie: 0";
-			this->lblResBlockterie->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResBlockterie_TextChanged);
-			// 
-			// lblResNahrung
-			// 
-			this->lblResNahrung->AutoSize = true;
-			this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->lblResNahrung->Location = System::Drawing::Point(435, 9);
-			this->lblResNahrung->Name = L"lblResNahrung";
-			this->lblResNahrung->Size = System::Drawing::Size(89, 17);
-			this->lblResNahrung->TabIndex = 4;
-			this->lblResNahrung->Text = L"Nahrung: 0";
-			this->lblResNahrung->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResNahrung_TextChanged);
-			// 
-			// btnGraph
-			// 
-			this->btnGraph->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->btnGraph->Location = System::Drawing::Point(697, 14);
-			this->btnGraph->Name = L"btnGraph";
-			this->btnGraph->Size = System::Drawing::Size(75, 23);
-			this->btnGraph->TabIndex = 7;
-			this->btnGraph->Text = L"Graph";
-			this->btnGraph->UseVisualStyleBackColor = true;
-			// 
-			// labelTimer
-			// 
-			this->labelTimer->Enabled = true;
-			this->labelTimer->Tick += gcnew System::EventHandler(this, &MainWindow::labelTimer_Tick);
-			// 
-			// statusStrip1
-			// 
-			this->statusStrip1->Location = System::Drawing::Point(0, 539);
-			this->statusStrip1->Name = L"statusStrip1";
-			this->statusStrip1->Size = System::Drawing::Size(784, 22);
-			this->statusStrip1->TabIndex = 8;
-			this->statusStrip1->Text = L"statusStrip1";
-			// 
-			// MainWindow
-			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::SystemColors::Menu;
-			this->ClientSize = System::Drawing::Size(784, 561);
-			this->Controls->Add(this->statusStrip1);
-			this->Controls->Add(this->btnGraph);
-			this->Controls->Add(this->lblResNahrung);
-			this->Controls->Add(this->lblResBlockterie);
-			this->Controls->Add(this->lblResGold);
-			this->Controls->Add(this->btnMenu);
-			this->Controls->Add(this->mRenderFrame);
-			this->DoubleBuffered = true;
-			this->MinimumSize = System::Drawing::Size(640, 480);
-			this->Name = L"MainWindow";
-			this->Text = L"Herr der Blöcke";
-			this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
-			this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
-			this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
-			this->ResumeLayout(false);
-			this->PerformLayout();
+            this->components = (gcnew System::ComponentModel::Container());
+            this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
+            this->btnMenu = (gcnew System::Windows::Forms::Button());
+            this->lblResGold = (gcnew System::Windows::Forms::Label());
+            this->lblResBlockterie = (gcnew System::Windows::Forms::Label());
+            this->lblResNahrung = (gcnew System::Windows::Forms::Label());
+            this->btnGraph = (gcnew System::Windows::Forms::Button());
+            this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
+            this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
+            this->resourcesTimer = (gcnew System::Windows::Forms::Timer(this->components));
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
+            this->SuspendLayout();
+            // 
+            // mRenderFrame
+            // 
+            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+                | System::Windows::Forms::AnchorStyles::Left) 
+                | System::Windows::Forms::AnchorStyles::Right));
+            this->mRenderFrame->Location = System::Drawing::Point(12, 43);
+            this->mRenderFrame->Name = L"mRenderFrame";
+            this->mRenderFrame->Size = System::Drawing::Size(760, 419);
+            this->mRenderFrame->TabIndex = 0;
+            this->mRenderFrame->TabStop = false;
+            this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
+            this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
+            this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
+            this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
+            this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
+            // 
+            // btnMenu
+            // 
+            this->btnMenu->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+            this->btnMenu->Location = System::Drawing::Point(672, 474);
+            this->btnMenu->Name = L"btnMenu";
+            this->btnMenu->Size = System::Drawing::Size(100, 53);
+            this->btnMenu->TabIndex = 1;
+            this->btnMenu->Text = L"Menü";
+            this->btnMenu->UseVisualStyleBackColor = true;
+            this->btnMenu->Click += gcnew System::EventHandler(this, &MainWindow::btnMenu_Click);
+            // 
+            // lblResGold
+            // 
+            this->lblResGold->AutoSize = true;
+            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+                static_cast<System::Byte>(0)));
+            this->lblResGold->Location = System::Drawing::Point(210, 9);
+            this->lblResGold->Name = L"lblResGold";
+            this->lblResGold->Size = System::Drawing::Size(61, 17);
+            this->lblResGold->TabIndex = 2;
+            this->lblResGold->Text = L"Gold: 0";
+            this->lblResGold->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResGold_TextChanged);
+            // 
+            // lblResBlockterie
+            // 
+            this->lblResBlockterie->AutoSize = true;
+            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+                static_cast<System::Byte>(0)));
+            this->lblResBlockterie->Location = System::Drawing::Point(304, 9);
+            this->lblResBlockterie->Name = L"lblResBlockterie";
+            this->lblResBlockterie->Size = System::Drawing::Size(99, 17);
+            this->lblResBlockterie->TabIndex = 3;
+            this->lblResBlockterie->Text = L"Blockterie: 0";
+            this->lblResBlockterie->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResBlockterie_TextChanged);
+            // 
+            // lblResNahrung
+            // 
+            this->lblResNahrung->AutoSize = true;
+            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+                static_cast<System::Byte>(0)));
+            this->lblResNahrung->Location = System::Drawing::Point(435, 9);
+            this->lblResNahrung->Name = L"lblResNahrung";
+            this->lblResNahrung->Size = System::Drawing::Size(89, 17);
+            this->lblResNahrung->TabIndex = 4;
+            this->lblResNahrung->Text = L"Nahrung: 0";
+            this->lblResNahrung->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResNahrung_TextChanged);
+            // 
+            // btnGraph
+            // 
+            this->btnGraph->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+            this->btnGraph->Location = System::Drawing::Point(697, 14);
+            this->btnGraph->Name = L"btnGraph";
+            this->btnGraph->Size = System::Drawing::Size(75, 23);
+            this->btnGraph->TabIndex = 7;
+            this->btnGraph->Text = L"Graph";
+            this->btnGraph->UseVisualStyleBackColor = true;
+            // 
+            // labelTimer
+            // 
+            this->labelTimer->Enabled = true;
+            this->labelTimer->Tick += gcnew System::EventHandler(this, &MainWindow::labelTimer_Tick);
+            // 
+            // statusStrip1
+            // 
+            this->statusStrip1->Location = System::Drawing::Point(0, 539);
+            this->statusStrip1->Name = L"statusStrip1";
+            this->statusStrip1->Size = System::Drawing::Size(784, 22);
+            this->statusStrip1->TabIndex = 8;
+            this->statusStrip1->Text = L"statusStrip1";
+            // 
+            // resourcesTimer
+            // 
+            this->resourcesTimer->Enabled = true;
+            this->resourcesTimer->Interval = 1500;
+            this->resourcesTimer->Tick += gcnew System::EventHandler(this, &MainWindow::resourcesTimer_Tick);
+            // 
+            // MainWindow
+            // 
+            this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+            this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+            this->BackColor = System::Drawing::SystemColors::Menu;
+            this->ClientSize = System::Drawing::Size(784, 561);
+            this->Controls->Add(this->statusStrip1);
+            this->Controls->Add(this->btnGraph);
+            this->Controls->Add(this->lblResNahrung);
+            this->Controls->Add(this->lblResBlockterie);
+            this->Controls->Add(this->lblResGold);
+            this->Controls->Add(this->btnMenu);
+            this->Controls->Add(this->mRenderFrame);
+            this->DoubleBuffered = true;
+            this->MinimumSize = System::Drawing::Size(640, 480);
+            this->Name = L"MainWindow";
+            this->Text = L"Herr der Blöcke";
+            this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
+            this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
+            this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
+            this->ResumeLayout(false);
+            this->PerformLayout();
 
-		}
+        }
 #pragma endregion
 
     // MainWindow Events
@@ -286,6 +295,8 @@ namespace HdB {
             mRenderer->Paused = true;
             if (mOptions->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 mRenderer->Camera->Speed = mOptions->CameraSpeed / 2000.f;
+                mAudioSystem->VolumeMusic= mOptions->MusicVolume;
+                mAudioSystem->VolumeSFX = mOptions->SXVolume;
             }
             mRenderer->Paused = false;
         }
@@ -300,11 +311,11 @@ namespace HdB {
 
     // Updates the ressources labels
     private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-           mPlayer->ProcessResources();
            lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->Res->Blockterie);
            lblResNahrung->Text="Nahrung " + System::Convert::ToString(mPlayer->Res->Food);
            lblResGold->Text="Gold " + System::Convert::ToString(mPlayer->Res->Gold);
          }
+             // Replace the labels at the mid
 private: System::Void lblResBlockterie_TextChanged(System::Object^  sender, System::EventArgs^  e) {
              lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
 		 }
@@ -314,5 +325,9 @@ private: System::Void lblResGold_TextChanged(System::Object^  sender, System::Ev
 private: System::Void lblResNahrung_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
 		 }
+private: System::Void resourcesTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+                 mPlayer->ProcessResources();
+         }
+
 };
 }
