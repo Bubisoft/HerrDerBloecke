@@ -37,13 +37,20 @@ void HdB::Sound::Stop()
 
 void HdB::Sound::Volume::set(int volume) {
     // Convert so that 0 is Minimum and 100 Maximum
-    mBuffer->Volume = ((int)SlimDX::DirectSound::Volume::Maximum - (int)SlimDX::DirectSound::Volume::Minimum) / 100 * volume
-        + (int)SlimDX::DirectSound::Volume::Minimum;
+    if(volume == 0)
+        mBuffer->Volume = (int)SlimDX::DirectSound::Volume::Minimum;
+    else
+        mBuffer->Volume = int(Math::Log(volume/100.f, Math::Exp(1))*1000.f);
 }
 
 int HdB::Sound::Volume::get()
 {
     // Invert conversion (see setter)
-    return (mBuffer->Volume - (int)SlimDX::DirectSound::Volume::Minimum) /
-        (((int)SlimDX::DirectSound::Volume::Maximum - (int)SlimDX::DirectSound::Volume::Minimum) / 100);
+    int r;
+    if(mBuffer->Volume == (int)SlimDX::DirectSound::Volume::Minimum)
+        r = 0;
+    else
+        r = 100*Math::Exp(mBuffer->Volume/1000.f);
+
+    return r;
 }
