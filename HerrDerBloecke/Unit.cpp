@@ -30,6 +30,25 @@ HdB::Soldier::Soldier(HdB::Model^ model, const Vector3% pos)
 {
 }
 
+HdB::ProductionBuilding::ProductionBuilding(HdB::Model^ model, const Vector3% pos)
+    : Building(model, pos)
+{
+}
+
+
+/*************
+ * BUILDINGS *
+ *************/
+
+HdB::Blockhuette::Blockhuette(HdB::Model^ model, const Vector3% pos)
+    : ProductionBuilding(model, pos)
+{
+}
+
+
+
+
+
 /********
  * TEMP *
  ********/

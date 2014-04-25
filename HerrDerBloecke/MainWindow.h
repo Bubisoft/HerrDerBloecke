@@ -281,11 +281,17 @@ namespace HdB {
                 // Start building unit
                 Unit^ finalUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
                     mRenderer->Camera->Unproject2D(e->Location)}));
-                mPlayer->BuildUnit(finalUnit, finalUnit->BuildTime());
-                // Spawn placeholder unit
-                Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
-                    mRenderer->Camera->Unproject2D(e->Location)}));
-                mRenderer->SpawnUnit(placeholderUnit);
+                //only build the unit if the player can pay the costs
+                if(mPlayer->Res->CheckAmount(finalUnit->GetCost()))
+                {    
+                    mPlayer->BuildUnit(finalUnit, finalUnit->BuildTime());
+                    // Spawn placeholder unit
+                    Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
+                        mRenderer->Camera->Unproject2D(e->Location)}));
+                    mRenderer->SpawnUnit(placeholderUnit);
+                    //Pay resources for building
+                    mPlayer->Res->Pay(finalUnit->GetCost());
+                }
             }
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {

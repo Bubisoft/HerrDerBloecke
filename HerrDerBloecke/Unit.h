@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Resources.h"
 using namespace System;
 using namespace SlimDX;
 
@@ -16,6 +16,8 @@ namespace HdB {
         void Damage(int dmg);
 
         virtual UInt16 BuildTime() { return 1; }
+
+        virtual Cost GetCost(){Cost ret={-1,-1,-1}; return ret;}
 
         property HdB::Model^ Model {
             HdB::Model^ get() { return mModel; }
@@ -41,6 +43,9 @@ namespace HdB {
     {
     public:
         Building(HdB::Model^ model, const Vector3% pos);
+
+        virtual UInt16 BuildTime() override { return 5; }
+        virtual Cost GetCost() override {Cost ret={3,6,8}; return ret;}
     };
 
     ref class Soldier abstract : Unit
@@ -48,6 +53,14 @@ namespace HdB {
     public:
         Soldier(HdB::Model^ model, const Vector3% pos);
         static const int Attack = 0;
+    };
+
+    ref class ProductionBuilding : Building
+    {
+    public:
+        ProductionBuilding(HdB::Model^ model, const Vector3% pos);
+
+        virtual ProductionType GetProductionType()=0;
     };
 
     /********
@@ -59,5 +72,18 @@ namespace HdB {
         TestUnit(HdB::Model^ model, const Vector3% pos);
 
         virtual UInt16 BuildTime() override { return 5; }
+        virtual Cost GetCost() override {Cost ret={3,6,8}; return ret;}
     };
+
+    ref class Blockhuette : ProductionBuilding
+    {
+    public:
+        Blockhuette(HdB::Model^ model, const Vector3% pos);
+
+        virtual UInt16 BuildTime() override { return 10; }
+        virtual Cost GetCost() override {Cost ret={3,6,8}; return ret;}
+        virtual ProductionType GetProductionType() override {return ProductionType::eGold;}
+    };
+
+
 }

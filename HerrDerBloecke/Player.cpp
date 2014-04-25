@@ -11,13 +11,14 @@ ref struct HdB::BuildTask
 HdB::Player::Player()
     : mBlockterieUnits(0), mFoodUnits(0), mGoldUnits(0)
 {
-    Res = gcnew Resources();
+    Res = gcnew Resources(100,300,80); //setting up start resources
     mUnits = gcnew List<Unit^>();
     mBuildTasks = gcnew List<BuildTask^>();
     mBuildTimer = gcnew Timer();
     mBuildTimer->Interval = 1000;
     mBuildTimer->Tick += gcnew EventHandler(this, &Player::BuildTimerCallback);
     mBuildTimer->Enabled = true;
+
 
     /* *********
        * TEMP  *

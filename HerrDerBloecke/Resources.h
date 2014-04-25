@@ -1,18 +1,33 @@
 #pragma once
 
 namespace HdB {
+
+    typedef struct cost{
+        int Gold;
+        int Blockterie;
+        int Food;
+    }Cost;
+
+    enum ProductionType{eGold,eBlockterie,eFood};
+
     ref class Resources
     {
     public:
-        Resources(void);
-  
+        /** setting up the start resources and capacity
+        */
+        Resources(int startGold, int startBlockterie, int startFood);
+        
         /** Adds the Resources depending on the amount of buildings
         */
         void AddResources(short _GoldUnits, short _BlockterieUnits, short _FoodUnits);
 
         /** Pays the passed amount of the resources 
         */
-        void Pay(int _gold,int _blockterie, int _food);
+        void Pay(Cost Costs);
+
+        /** Returns true if the player has the passed amount of the resources
+        */
+        bool CheckAmount(Cost Costs);
 
         property int Gold
         {
