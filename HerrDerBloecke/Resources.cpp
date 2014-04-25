@@ -32,19 +32,16 @@ void HdB::Resources::AddResources(short _GoldUnits, short _BlockterieUnits, shor
         mFood=mFoodCapacity;
 }
 
-void HdB::Resources::Pay(Cost Costs)
+void HdB::Resources::Pay(Costs costs)
 {
-    mGold-=Costs.Gold;
-    mBlockterie-=Costs.Blockterie;
-    mFood-=Costs.Food;
+    mGold-=costs.Gold;
+    mBlockterie-=costs.Blockterie;
+    mFood-=costs.Food;
 }
 
-bool HdB::Resources::CheckAmount(Cost Costs)
+bool HdB::Resources::CheckAmount(Costs costs)
 {
-    if(mGold>=Costs.Gold)
-        if(mFood>=Costs.Food)
-            if(mBlockterie>=Costs.Blockterie)
-                return true;    
-
+    if (mGold >= costs.Gold && mFood >= costs.Food && mBlockterie >= costs.Blockterie)
+        return true;
     return false;
 }

@@ -2,11 +2,12 @@
 
 namespace HdB {
 
-    typedef struct cost{
+    value struct Costs {
+        Costs(int gold, int blockterie, int food) : Gold(gold), Blockterie(blockterie), Food(food) { }
         int Gold;
         int Blockterie;
         int Food;
-    }Cost;
+    };
 
     enum ProductionType{eGold,eBlockterie,eFood};
 
@@ -23,11 +24,11 @@ namespace HdB {
 
         /** Pays the passed amount of the resources 
         */
-        void Pay(Cost Costs);
+        void Pay(Costs costs);
 
         /** Returns true if the player has the passed amount of the resources
         */
-        bool CheckAmount(Cost Costs);
+        bool CheckAmount(Costs costs);
 
         property int Gold
         {

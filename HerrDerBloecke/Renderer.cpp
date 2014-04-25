@@ -182,5 +182,4 @@ HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)
 void HdB::Renderer::SpawnUnit(Unit^ unit)
 {
     unit->Model->AddInstance(unit);
-    mMap->AddUnit(unit);
 }

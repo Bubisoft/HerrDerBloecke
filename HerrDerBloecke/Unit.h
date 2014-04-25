@@ -11,14 +11,12 @@ namespace HdB {
     ref class Unit abstract
     {
     public:
+        // General
         Unit(HdB::Model^ model, const Vector3% pos);
         Matrix GetTransform();
         void Damage(int dmg);
 
-        virtual UInt16 BuildTime() { return 1; }
-
-        virtual Cost GetCost(){Cost ret={-1,-1,-1}; return ret;}
-
+        // Properties
         property HdB::Model^ Model {
             HdB::Model^ get() { return mModel; }
         }
@@ -31,7 +29,12 @@ namespace HdB {
         }
         property Vector3 LookAt;
 
+        // Events
         event PositionEvent^ PositionChanged;
+
+        // Abstract Unit Attributes
+        virtual const UInt16 BuildTime() = 0;
+        virtual const Costs GetCosts() = 0;
 
     protected:
         HdB::Model^ mModel;
@@ -43,24 +46,24 @@ namespace HdB {
     {
     public:
         Building(HdB::Model^ model, const Vector3% pos);
-
-        virtual UInt16 BuildTime() override { return 5; }
-        virtual Cost GetCost() override {Cost ret={3,6,8}; return ret;}
     };
 
     ref class Soldier abstract : Unit
     {
     public:
         Soldier(HdB::Model^ model, const Vector3% pos);
-        static const int Attack = 0;
+
+        // Abstract Unit Attributes
+        virtual const int Attack() = 0;
     };
 
-    ref class ProductionBuilding : Building
+    ref class ProductionBuilding abstract : Building
     {
     public:
         ProductionBuilding(HdB::Model^ model, const Vector3% pos);
 
-        virtual ProductionType GetProductionType()=0;
+        // Abstract Unit Attributes
+        virtual const ProductionType GetProductionType() = 0;
     };
 
     /********
@@ -71,8 +74,8 @@ namespace HdB {
     public:
         TestUnit(HdB::Model^ model, const Vector3% pos);
 
-        virtual UInt16 BuildTime() override { return 5; }
-        virtual Cost GetCost() override {Cost ret={3,6,8}; return ret;}
+        virtual const UInt16 BuildTime() override { return 5; }
+        virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
     };
 
     ref class Blockhuette : ProductionBuilding
@@ -80,9 +83,9 @@ namespace HdB {
     public:
         Blockhuette(HdB::Model^ model, const Vector3% pos);
 
-        virtual UInt16 BuildTime() override { return 10; }
-        virtual Cost GetCost() override {Cost ret={3,6,8}; return ret;}
-        virtual ProductionType GetProductionType() override {return ProductionType::eGold;}
+        virtual const UInt16 BuildTime() override { return 10; }
+        virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
+        virtual const ProductionType GetProductionType() override { return ProductionType::eGold; }
     };
 
 

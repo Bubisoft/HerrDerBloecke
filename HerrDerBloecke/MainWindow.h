@@ -45,12 +45,9 @@ namespace HdB {
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
 
             /** FOR TESTING */
-            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetModel("exampleUnit"), Vector3::Zero));
-            mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(15.f, -15.f, 0.f)), 5);
-            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel("test"), Vector3(15.f, -15.f, 0.f)));
-            mPlayer->BuildUnit(gcnew TestUnit(mRenderer->GetModel("test"), Vector3(-15.f, 15.f, 0.f)), 10);
-            mRenderer->SpawnUnit(gcnew TestUnit(mRenderer->GetAlphaModel("test"), Vector3(-15.f, 15.f, 0.f)));
-            mNotificationBox->SendMessage("TEST: 2 Einheiten werden ausgebildet");
+            Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
+            mRenderer->SpawnUnit(u);
+            mRenderer->Map->AddUnit(u);
             /** END TESTING */
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
@@ -278,20 +275,27 @@ namespace HdB {
             else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
                 // What unit are we building?
                 Type^ unittype = mNavi->GetModelType();
-                // Start building unit
-                Unit^ finalUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
+                Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                    gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
                     mRenderer->Camera->Unproject2D(e->Location)}));
-                //only build the unit if the player can pay the costs
-                if(mPlayer->Res->CheckAmount(finalUnit->GetCost()))
-                {    
-                    mPlayer->BuildUnit(finalUnit, finalUnit->BuildTime());
-                    // Spawn placeholder unit
-                    Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype, gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
-                        mRenderer->Camera->Unproject2D(e->Location)}));
-                    mRenderer->SpawnUnit(placeholderUnit);
-                    //Pay resources for building
-                    mPlayer->Res->Pay(finalUnit->GetCost());
-                }
+
+                // Do not build the unit if the player can pay the costs
+                if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
+                    return;
+                // Do not build if there is no space
+                if (!mRenderer->Map->CanBuild(unit))
+                    return;
+
+                // Start building the unit
+                mPlayer->BuildUnit(unit, unit->BuildTime());
+                mRenderer->Map->AddUnit(unit);
+                // Spawn a placeholder unit
+                Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                    gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
+                    mRenderer->Camera->Unproject2D(e->Location)}));
+                mRenderer->SpawnUnit(placeholderUnit);
+                // Pay resources for building
+                mPlayer->Res->Pay(unit->GetCosts());
             }
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
