@@ -15,23 +15,18 @@ namespace HdB {
     {
     public:
         MapOccupation(HdB::Unit^ unit);
-        bool Contains(Point pos);
 
         property HdB::Unit^ Unit {
             HdB::Unit^ get() { return mUnit; }
         }
-        property Point MinField {
-            Point get() { return mMinField; }
-        }
-        property Point MaxField {
-            Point get() { return mMaxField; }
+        property Rectangle Area {
+            Rectangle get() { return mArea; }
         }
 
     protected:
         void Update(const Vector3% pos);
         HdB::Unit^ mUnit;
-        Point mMinField;
-        Point mMaxField;
+        Rectangle mArea;
     };
 
     ref class Map : IDrawable
@@ -52,6 +47,14 @@ namespace HdB {
          *  nullptr if nothing is found.
          */
         Unit^ CheckOccupation(const Vector3% posOnGround);
+
+        /** Check whether units are occupying the given positions area. Returns a
+         *  list of the units in that area.
+         */
+        List<Unit^>^ CheckOccupation(const Vector3% minPos, const Vector3% maxPos);
+
+        /** Check whether we can build a unit or if it would collide with other units. */
+        bool CanBuild(Unit^ unit);
 
         /** Convert a position on the ground plane to a map field coordinate. */
         static Point GetFieldCoordinate(const Vector3% posOnGround);

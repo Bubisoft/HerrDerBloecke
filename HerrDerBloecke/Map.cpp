@@ -22,17 +22,11 @@ HdB::MapOccupation::MapOccupation(HdB::Unit^ unit)
     Update(unit->Position);
 }
 
-bool HdB::MapOccupation::Contains(Point pos)
-{
-    if (pos.X >= mMinField.X && pos.Y >= mMinField.Y && pos.X <= mMaxField.X && pos.Y <= mMaxField.Y)
-        return true;
-    return false;
-}
-
 void HdB::MapOccupation::Update(const Vector3% pos)
 {
-    mMinField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Minimum);
-    mMaxField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Maximum);
+    Point mMinField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Minimum);
+    Point mMaxField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Maximum);
+    mArea = Rectangle(mMinField.X, mMinField.Y, mMaxField.X - mMinField.X, mMaxField.Y - mMinField.Y);
 }
 
 /*******
@@ -97,9 +91,30 @@ HdB::Unit^ HdB::Map::CheckOccupation(const Vector3% posOnGround)
 {
     Point field = GetFieldCoordinate(posOnGround);
     for each (MapOccupation^ occ in mOccupations)
-        if (occ->Contains(field))
+        if (occ->Area.Contains(field))
             return occ->Unit;
     return nullptr;
+}
+
+List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% corner1, const Vector3% corner2)
+{
+    Point minField = GetFieldCoordinate(Vector3(Math::Min(corner1.X, corner2.X), Math::Min(corner1.Y, corner2.Y), 0.f));
+    Point maxField = GetFieldCoordinate(Vector3(Math::Max(corner1.X, corner2.X), Math::Max(corner1.Y, corner2.Y), 0.f));
+    Rectangle area(minField.X, minField.Y, maxField.X - minField.X, maxField.Y - minField.Y);
+    List<HdB::Unit^>^ units = gcnew List<HdB::Unit^>();
+    for each (MapOccupation^ occ in mOccupations)
+        if (occ->Area.IntersectsWith(area))
+            units->Add(occ->Unit);
+    return units;
+}
+
+bool HdB::Map::CanBuild(Unit^ unit)
+{
+    Vector3 min = unit->Position + unit->Model->Bounds.Minimum;
+    Vector3 max = unit->Position + unit->Model->Bounds.Maximum;
+    if (CheckOccupation(min, max)->Count > 0)
+        return false;
+    return true;
 }
 
 Point HdB::Map::GetFieldCoordinate(const Vector3% posOnGround)
