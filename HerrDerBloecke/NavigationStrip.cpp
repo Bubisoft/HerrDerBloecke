@@ -3,15 +3,23 @@
 #include "Unit.h"
 
 using namespace HdB;
+using namespace System;
 using namespace Diagnostics;
-
-NavigationStrip::NavigationStrip(Control^ target,int x, int y)
+HdB::NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
-
-	array<String^>^ buildings=gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
-    array<Type^>^ buildTypes = gcnew array<Type^>{TestUnit::typeid, Blockstatt::typeid, Blockwerk::typeid, Kastenfarm::typeid};
+    mNumPB=NUM_PB;
+    const array<String^>^ initBuildings= gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
+    const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Kastenfarm::typeid};
+	List<String^>^ buildings=gcnew List<String^>();
+    List<Type^>^ buildTypes = gcnew List<Type^>(); 
+    //init the string and type list with the arrays
+    for(int i=0;i<mNumPB;++i)
+    {
+        buildings->Add(initBuildings[i]);
+        buildTypes->Add(initTypes[i]);
+    }
 	mParent=target;
-     Location=Point(x,y);
+    Location=Point(x,y);
 
     //Label
     mTitle=gcnew Label;
@@ -21,12 +29,13 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
     target->Controls->Add(mTitle);
     mTitle->Location=Point(x + SPACE + BTN_WIDHT,y);
 
-    mPBNavi = gcnew array<NavigationThumb^>(NUM_PB);
+    mPBNavi = gcnew List<NavigationThumb^>();
 
-    for(int i=0;i<NUM_PB;++i)
+    for(int i=0;i<mNumPB;++i)
     {
-        mPBNavi[i] = gcnew NavigationThumb();
+        mPBNavi->Add(gcnew NavigationThumb());
     }
+    /*
     //left navigation button
     mBtnLeft=gcnew Button;
     mBtnLeft->Location=Point(Location.X,Location.Y + mTitle->Height);
@@ -38,13 +47,13 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 
     //right navigation button
     mBtnRight=gcnew Button;
-    mBtnRight->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * NUM_PB, Location.Y + mTitle->Height);
+    mBtnRight->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * mNumPB, Location.Y + mTitle->Height);
     mBtnRight->Size=Size(BTN_WIDHT, BTN_HEIGHT);
     mBtnRight->Text=">";
     mBtnRight->Anchor=( AnchorStyles::Bottom | AnchorStyles::Left );
     mBtnRight->Click+=gcnew System::EventHandler(this, &NavigationStrip::Scroll);
     target->Controls->Add(mBtnRight);
-
+    */
     //initialising the PictureBoxes
     int i=0;
     for each(NavigationThumb^ PB in mPBNavi)
@@ -62,7 +71,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
             PB->UnitType = buildTypes[i];
         }
         else
-            Debug::WriteLine("ERROR: Could not load file!");
+            Debug::WriteLine("ERROR:NavigationStrip Could not load file!");
         PB->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
         target->Controls->Add(PB);
         ++i;
@@ -70,7 +79,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 	Resize();
 }
 
-void NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
+void HdB::NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
 {
     Image^ temp1=mPBNavi[0]->BackgroundImage;
     Image^ temp2;
@@ -95,7 +104,7 @@ void NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
         mPBNavi[0]->BackgroundImage=temp2;
     }
 }
-void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
+void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 {
     if(mFocusedPb!=nullptr)
         mFocusedPb->Image=nullptr; //remove the focusing frame from old focus
@@ -105,22 +114,20 @@ void NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
         if(File::Exists(THUMB_PATH + "focused.png"))
             pb->Image=Image::FromFile(THUMB_PATH + "focused.png");  //set the focus frame
         else
-            Debug::WriteLine("ERROR: Could not load file!");
+            Debug::WriteLine("ERROR:NavigationStrip Could not load file!");
         mFocusedPb=pb;
     }
     else    //unfocusing the already focused
 		mFocusedPb=nullptr;
-	
-
-	//Debug::WriteLine(mFocusedPb->Text);
 }
 
-void NavigationStrip::Resize()
+void HdB::NavigationStrip::Resize()
 {
+    /*
     int i=0;
-    if(((mParent->Size.Width*0.4)-BTN_WIDHT*2 - SPACE*6 - Location.X)/NUM_PB <PB_WIDTH)
+    if(((mParent->Size.Width*0.4)-BTN_WIDHT*2 - SPACE*6 - Location.X)/mNumPB <PB_WIDTH)
     {
-        int newSize=((mParent->Size.Width*0.4) - BTN_WIDHT*2 - SPACE * 6 - Location.X)/NUM_PB;
+        int newSize=((mParent->Size.Width*0.4) - BTN_WIDHT*2 - SPACE * 6 - Location.X)/mNumPB;
         for each(NavigationThumb^ PB in mPBNavi)
         {
             PB->Size=Size(newSize,newSize);
@@ -128,9 +135,9 @@ void NavigationStrip::Resize()
     
             ++i;
         }
-        mBtnLeft->Size=Size(((mParent->Size.Width*0.4) - NUM_PB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
-        mBtnRight->Size=Size(((mParent->Size.Width*0.4) - NUM_PB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
-        mBtnRight->Location=Point(mPBNavi[NUM_PB-1]->Location.X + mPBNavi[NUM_PB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
+        //mBtnLeft->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
+        //mBtnRight->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
+        //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
     }
     else
     {
@@ -141,34 +148,113 @@ void NavigationStrip::Resize()
             PB->Location=Point(BTN_WIDHT + SPACE + ( PB->Size.Width +SPACE ) * i + Location.X,PB->Location.Y );
             ++i;
         }
-        mBtnLeft->Size=Size(BTN_WIDHT,BTN_HEIGHT);
-        mBtnRight->Size=Size(BTN_WIDHT,BTN_HEIGHT);
-        mBtnRight->Location=Point(mPBNavi[NUM_PB-1]->Location.X + mPBNavi[NUM_PB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
+        //mBtnLeft->Size=Size(BTN_WIDHT,BTN_HEIGHT);
+        //mBtnRight->Size=Size(BTN_WIDHT,BTN_HEIGHT);
+        //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y); 
+    } */
+    int i=1;
+    int z=1;
+    double factor=0.5;
+
+    if(mNumPB%2==0)
+    {
+        i=0;
+        z=0;
+        factor=1;
     }
+    if(((mParent->Size.Width*0.4)-BTN_WIDHT*2 - SPACE*6 - Location.X)/mNumPB <PB_WIDTH)
+    {
+        int newSize=((mParent->Size.Width*0.4) - BTN_WIDHT*2 - SPACE * 6 - Location.X)/mNumPB;
+        for each(NavigationThumb^ PB in mPBNavi)
+        {
+            PB->Size=Size(newSize,newSize);
+            PB->Location=Point((mParent->Size.Width*0.4)/2 + (PB->Size.Width*factor*z*Math::Pow(-1,i)) + (SPACE/2*z*Math::Pow(-1,i))-Location.X,PB->Location.Y );
     
+            ++i;
+            if(i%2==1)
+                ++z;
+        }
+        mTitle->Location=Point((mParent->Size.Width*0.4/2)-mTitle->Size.Width/2 - Location.X,mTitle->Location.Y);
+        //mBtnLeft->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
+        //mBtnRight->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
+        //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
+    }
+    else
+    {
+        for each(NavigationThumb^ PB in mPBNavi)
+        {
+        
+            PB->Size=Size(PB_WIDTH,PB_HEIGHT);
+            PB->Location=Point((mParent->Size.Width*0.4)/2 + (PB->Size.Width*factor*z*Math::Pow(-1,i)) + (SPACE/2*z*Math::Pow(-1,i))-Location.X,PB->Location.Y );
+    
+            ++i;
+            if(i%2==1)
+                ++z;
+        }
+        mTitle->Location=Point((mParent->Size.Width*0.4/2)-mTitle->Size.Width/2 - Location.X,mTitle->Location.Y);
+        //mBtnLeft->Size=Size(BTN_WIDHT,BTN_HEIGHT);
+        //mBtnRight->Size=Size(BTN_WIDHT,BTN_HEIGHT);
+        //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y); 
+    }
 }
 
-void NavigationStrip::Update()
+void HdB::NavigationStrip::Update()
 {
 
 }
 
-String^ NavigationStrip::GetModelString()
+String^ HdB::NavigationStrip::GetModelString()
 {
     if(mFocusedPb!=nullptr)
         return mFocusedPb->Text;
     return nullptr;
 }
 
-Type^ NavigationStrip::GetModelType()
+Type^ HdB::NavigationStrip::GetModelType()
 {
     if (mFocusedPb != nullptr)
         return mFocusedPb->UnitType;
     return nullptr;
 }
 
-void NavigationStrip::Unfocus()
+void HdB::NavigationStrip::Unfocus()
 {
     if(mFocusedPb!=nullptr)
         mFocusedPb->Image=nullptr;
+}
+
+void HdB::NavigationStrip::BlockhausViewClick(Object^  sender, EventArgs^  e)
+{
+    NavigationThumb^ pb=(NavigationThumb^)sender;
+    if(pb->Image!=nullptr)
+        pb->Image=nullptr;
+    else
+        pb->Image=Image::FromFile(THUMB_PATH+"cross.png");
+
+    // Adding "gold switch" 
+}
+
+void HdB::NavigationStrip::BlockhausView()
+{
+    mNumPB=1;
+    for each(NavigationThumb^ PB in mPBNavi)
+        mParent->Controls->Remove(PB);
+    mPBNavi->Clear();
+
+    mPBNavi->Add(gcnew NavigationThumb());
+    mPBNavi[0]->BackgroundImage=Image::FromFile(THUMB_PATH+"test3.jpg");
+    mPBNavi[0]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
+    mPBNavi[0]->Size=Size(PB_WIDTH,PB_HEIGHT);
+    mPBNavi[0]->SizeMode=PictureBoxSizeMode::StretchImage;
+    mPBNavi[0]->BackgroundImageLayout=ImageLayout::Stretch;
+    mPBNavi[0]->BorderStyle=BorderStyle::FixedSingle;
+    mPBNavi[0]->Click+=gcnew EventHandler(this,&NavigationStrip::BlockhausViewClick);
+    mPBNavi[0]->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
+    mParent->Controls->Add(mPBNavi[0]);
+    Resize();
+}
+
+void HdB::NavigationStrip::BuildingMenuView()
+{
+
 }

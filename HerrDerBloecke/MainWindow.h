@@ -271,7 +271,12 @@ namespace HdB {
     private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
             Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if (u)
+            {
                 mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
+                if(dynamic_cast<Blockhuette^>(u))
+                    mNavi->BlockhausView();
+
+            }
             else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
                 // What unit are we building?
                 Type^ unittype = mNavi->GetModelType();
@@ -279,7 +284,7 @@ namespace HdB {
                     gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
                     mRenderer->Camera->Unproject2D(e->Location)}));
 
-                // Do not build the unit if the player can pay the costs
+                // Do not build the unit if the player can't pay the costs
                 if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
                     return;
                 // Do not build if there is no space
@@ -296,6 +301,11 @@ namespace HdB {
                 mRenderer->Map->AddUnit(unit);
                 // Pay resources for building
                 mPlayer->Res->Pay(unit->GetCosts());
+            }
+            else
+            {
+                //switch to normal navigationstrip view if player clicked on the ground
+                mNavi->BuildingMenuView();
             }
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
