@@ -46,7 +46,7 @@ namespace HdB {
 
             /** FOR TESTING */
             Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
-            mRenderer->SpawnUnit(u);
+            u->Spawn();
             mRenderer->Map->AddUnit(u);
             /** END TESTING */
 
@@ -287,13 +287,11 @@ namespace HdB {
                     return;
 
                 // Start building the unit
-                mPlayer->BuildUnit(unit, unit->BuildTime());
-                mRenderer->Map->AddUnit(unit);
-                // Spawn a placeholder unit
                 Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
                     gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
                     mRenderer->Camera->Unproject2D(e->Location)}));
-                mRenderer->SpawnUnit(placeholderUnit);
+                mPlayer->BuildUnit(unit, unit->BuildTime(), placeholderUnit);
+                mRenderer->Map->AddUnit(unit);
                 // Pay resources for building
                 mPlayer->Res->Pay(unit->GetCosts());
             }
@@ -322,7 +320,6 @@ namespace HdB {
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->Model + " ausgebildet");
-            mRenderer->SpawnUnit(unit);
             mAudioSystem->PlaySFX("test");
          }
 

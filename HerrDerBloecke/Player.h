@@ -20,7 +20,7 @@ namespace HdB {
         void ProcessResources();
 
         /** Start a BuildTask for a new unit */
-        void BuildUnit(Unit^ unit, UInt16 seconds);
+        void BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder);
         event UnitEvent^ UnitBuilt;
 
         /** Manages all of the resources of each player */

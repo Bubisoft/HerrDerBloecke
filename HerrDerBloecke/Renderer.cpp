@@ -174,12 +174,7 @@ HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)
                 return m;
     }
     m = gcnew Model(name, mDevice);
-    m->SetAlpha(0.5); //Hardcoded alpha
+    m->SetAlpha(0.5f); //Hardcoded alpha
     mAlphaDrawables->Add(m);
     return m;
-}
-
-void HdB::Renderer::SpawnUnit(Unit^ unit)
-{
-    unit->Model->AddInstance(unit);
 }

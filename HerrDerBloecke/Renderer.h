@@ -48,9 +48,6 @@ namespace HdB {
          */
         Model^ GetAlphaModel(String^ name);
 
-        /** Assign a unit to its model and spawn the instance. */
-        void SpawnUnit(Unit^ unit);
-
         property HdB::Camera^ Camera {
             HdB::Camera^ get() { return mCamera; }
         }

@@ -6,6 +6,7 @@ ref struct HdB::BuildTask
 {
     UInt16 seconds;
     Unit^ unit;
+    Unit^ placeholder;
 };
 
 HdB::Player::Player()
@@ -34,11 +35,14 @@ void HdB::Player::ProcessResources()
     Res->AddResources(mGoldUnits, mBlockterieUnits, mFoodUnits);
 }
 
-void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds)
+void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
 {
     BuildTask^ task = gcnew BuildTask();
     task->unit = unit;
     task->seconds = seconds;
+    task->placeholder = placeholder;
+    if (placeholder)
+        placeholder->Spawn();
     mBuildTasks->Add(task);
 }
 
@@ -47,7 +51,10 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
     // Runs every second and decrements remaining time
     for (int i = 0; i < mBuildTasks->Count; i++) {
         if (--mBuildTasks[i]->seconds == 0) {
+            if (mBuildTasks[i]->placeholder)
+                mBuildTasks[i]->placeholder->Despawn();
             mUnits->Add(mBuildTasks[i]->unit);
+            mBuildTasks[i]->unit->Spawn();
             UnitBuilt(mBuildTasks[i]->unit);
             mBuildTasks->Remove(mBuildTasks[i]);
         }

@@ -8,6 +8,16 @@ HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
     LookAt = -Vector3::UnitY + Position;
 }
 
+void HdB::Unit::Spawn()
+{
+    Model->AddInstance(this);
+}
+
+void HdB::Unit::Despawn()
+{
+    Model->RemoveInstance(this);
+}
+
 Matrix HdB::Unit::GetTransform()
 {
     if (LookAt == Position) // Failsafe

@@ -68,6 +68,11 @@ void HdB::Model::AddInstance(Unit^ unit)
     mInstances->Add(unit);
 }
 
+void HdB::Model::RemoveInstance(Unit^ unit)
+{
+    mInstances->Remove(unit);
+}
+
 void HdB::Model::Draw()
 {
     for each (Submesh^ m in mMeshes) {

@@ -13,6 +13,8 @@ namespace HdB {
     public:
         // General
         Unit(HdB::Model^ model, const Vector3% pos);
+        void Spawn();
+        void Despawn();
         Matrix GetTransform();
         void Damage(int dmg);
 
