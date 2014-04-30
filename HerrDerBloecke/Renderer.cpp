@@ -138,7 +138,7 @@ void HdB::Renderer::ResetDevice() {
     mDevice->SetSamplerState(0, SamplerState::MipFilter, TextureFilter::Linear);
 
     Light l;
-    l.Position = Vector3(100.f, 100.f, 100.f);
+    l.Position = Vector3(100.f, 100.f, -100.f);
     l.Type = LightType::Point;
     l.Direction = Vector3::Zero;
     l.Diffuse = Color4(1.f, 1.f, 1.f);

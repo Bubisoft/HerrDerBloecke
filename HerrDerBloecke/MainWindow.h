@@ -283,8 +283,10 @@ namespace HdB {
                 if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
                     return;
                 // Do not build if there is no space
-                if (!mRenderer->Map->CanBuild(unit))
+                if (!mRenderer->Map->CanBuild(unit)) {
+                    mNotificationBox->SendMessage("Dieser Platz ist bereits belegt.");
                     return;
+                }
 
                 // Start building the unit
                 Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
