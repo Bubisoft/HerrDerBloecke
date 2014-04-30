@@ -1,4 +1,6 @@
 #pragma once
+#include "Unit.h"
+#include "Globals.h"
 using namespace System::Windows::Forms;
 using namespace System::Collections::Generic;
 namespace HdB {
@@ -45,9 +47,9 @@ namespace HdB {
         /** Returns the type of the selected unit */
         Type^ GetModelType();
 
-		/**Updates the images of the PictureBoxes
-		*/
-		void Update();
+        /** removes the pictureboxes from the parent window and cleares the lists
+        */
+        void ClearThumbnails();
 
         /** Switches to the Blockhaus View (switching gold production)
         */
@@ -57,6 +59,7 @@ namespace HdB {
         /** Standart View
         */
         void BuildingMenuView();
+
 		/**Resizes the whole navigationstrip so it fills 40% of the window
 		*/
         void Resize();
@@ -74,6 +77,9 @@ namespace HdB {
         Button^ mBtnLeft;       //button at the left of the navigation
         Button^ mBtnRight;      //button at the right of the navigation
         UInt16 mNumPB;
+
+    static const array<String^>^ initBuildings= gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
+    static const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Kastenfarm::typeid};
     };
     
 }
