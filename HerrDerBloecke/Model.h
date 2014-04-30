@@ -25,10 +25,13 @@ namespace HdB {
         /** Destructor */
         virtual ~Model();
 
-        /** Spawn a new model instance */
+        /** Spawn a new model instance. */
         void AddInstance(Unit^ unit);
 
-        /** Draw all of our model instances */
+        /** Despawn an existing model instance. */
+        void RemoveInstance(Unit^ unit);
+
+        /** Draw all of our model instances. */
         virtual void Draw();
 
         /** Set Alpha */
