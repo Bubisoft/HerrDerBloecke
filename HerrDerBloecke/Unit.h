@@ -88,5 +88,31 @@ namespace HdB {
         virtual const ProductionType GetProductionType() override { return ProductionType::eGold; }
     };
 
+    ref class Blockstatt : Building
+    {
+    public:
+        Blockstatt(HdB::Model^ model, const Vector3% pos);
 
+        virtual const UInt16 BuildTime() override { return 8; }
+        virtual const Costs GetCosts() override { return Costs(3, 3, 3); }
+    };
+
+    ref class Blockwerk : ProductionBuilding
+    {
+    public:
+        Blockwerk(HdB::Model^ model, const Vector3% pos);
+
+        virtual const UInt16 BuildTime() override { return 8; }
+        virtual const Costs GetCosts() override { return Costs(1,2,3); }
+    };
+
+    ref class Blockfarm : ProductionBuilding
+    {
+    public:
+        Blockfarm(HdB::Model^ model, const Vector3% pos);
+
+        virtual const UInt16 Building() override { return 11; }
+        virtual const Costs GetCosts() override { return Costs(4,5,6); }
+        virtual const ProductionType GetProductionType() override { return ProductionType::eFood; }
+    };
 }

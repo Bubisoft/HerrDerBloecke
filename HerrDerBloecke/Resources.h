@@ -30,6 +30,10 @@ namespace HdB {
         */
         bool CheckAmount(Costs costs);
 
+        /** Expands the capacity about the passed amount
+        */
+        void ExpandCapacity(int Gold, int Blockterie, int Food);
+
         property int Gold
         {
             int get()
@@ -61,5 +65,6 @@ namespace HdB {
         int mGoldCapacity;
         int mFoodCapacity;
         int mBlockterieCapacity;
+        bool GoldProductionEnabled; 
     };
 }

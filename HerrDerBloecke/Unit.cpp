@@ -45,7 +45,20 @@ HdB::Blockhuette::Blockhuette(HdB::Model^ model, const Vector3% pos)
 {
 }
 
+HdB::Blockstatt::Blockstatt(HdB::Model^ model, const Vector3% pos)
+    : Building(model, pos)
+{
+}
 
+HdB::Blockwerk::Blockwerk(HdB::Model^ model, const Vector3% pos)
+    : ProductionBuilding(model, pos)
+{
+}
+
+HdB::Blockfarm::Blockfarm(HdB::Model^ model, const Vector3% pos)
+    : ProductionBuilding(model, pos)
+{
+}
 
 
 
