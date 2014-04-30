@@ -11,7 +11,7 @@ namespace HdB {
     #define BTN_WIDHT 30    //max button width
     #define BTN_HEIGHT 60   //max Button heigth
     #define SPACE 5 //space between the Pictureboxes and buttons
-    #define NUM_PB 5    //number of picturboxes
+    #define NUM_PB 4    //number of picturboxes
 
     ref class NavigationThumb : public PictureBox {
     public:

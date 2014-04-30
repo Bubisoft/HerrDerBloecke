@@ -8,8 +8,8 @@ using namespace Diagnostics;
 NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
 
-	array<String^>^ buildings=gcnew array<String^>{"exampleUnit","test","test3","test4","test5"};
-    array<Type^>^ buildTypes = gcnew array<Type^>{TestUnit::typeid, TestUnit::typeid, TestUnit::typeid, TestUnit::typeid, TestUnit::typeid};
+	array<String^>^ buildings=gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
+    array<Type^>^ buildTypes = gcnew array<Type^>{TestUnit::typeid, TestUnit::typeid, TestUnit::typeid, TestUnit::typeid};
 	mParent=target;
      Location=Point(x,y);
 
@@ -49,7 +49,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
     int i=0;
     for each(NavigationThumb^ PB in mPBNavi)
     {
-        String^ path=THUMB_PATH + buildings[i] + ".jpg";
+        String^ path=THUMB_PATH + buildings[i] + ".png";
         PB->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * i,Location.Y + mTitle->Height);
         PB->SizeMode=PictureBoxSizeMode::StretchImage;
         PB->BackgroundImageLayout=ImageLayout::Stretch;
