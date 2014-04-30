@@ -17,6 +17,8 @@ namespace HdB {
     #define SPACE 6 //space between the Pictureboxes and buttons
     #define NUM_PB 4    //number of picturboxes
 
+
+    delegate void GoldProductionEvent(UInt16 value);
     ref class NavigationThumb : public PictureBox {
     public:
         NavigationThumb() : PictureBox() { }
@@ -53,8 +55,9 @@ namespace HdB {
 
         /** Switches to the Blockhaus View (switching gold production)
         */
-        void BlockhausView();
+        void BlockhausView(Unit^ b);
         void BlockhausViewClick(Object^  sender, EventArgs^  e);
+        event GoldProductionEvent^ ProductionSwitched;
 
         /** Standart View
         */
@@ -77,6 +80,7 @@ namespace HdB {
         Button^ mBtnLeft;       //button at the left of the navigation
         Button^ mBtnRight;      //button at the right of the navigation
         UInt16 mNumPB;
+        Unit^ mFocusedUnit;
 
     static const array<String^>^ initBuildings= gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
     static const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Kastenfarm::typeid};

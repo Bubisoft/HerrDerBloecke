@@ -51,7 +51,7 @@ HdB::ProductionBuilding::ProductionBuilding(HdB::Model^ model, const Vector3% po
  *************/
 
 HdB::Blockhuette::Blockhuette(HdB::Model^ model, const Vector3% pos)
-    : ProductionBuilding(model, pos)
+    : ProductionBuilding(model, pos), enabled(true)
 {
 }
 

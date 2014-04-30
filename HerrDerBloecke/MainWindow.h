@@ -43,7 +43,7 @@ namespace HdB {
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
-
+            mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
             /** FOR TESTING */
             Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
             u->Spawn();
@@ -274,7 +274,7 @@ namespace HdB {
             {
                 mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
                 if(dynamic_cast<Blockhuette^>(u))
-                    mNavi->BlockhausView();
+                    mNavi->BlockhausView(u);
 
             }
             else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
@@ -336,14 +336,19 @@ namespace HdB {
             if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit))
             {
                 if(b->GetProductionType() == ProductionType::eBlockterie)
-                    mPlayer->AddBlockterieUnit();
+                    mPlayer->AddBlockterieUnit(1);
                 else if(b->GetProductionType() == ProductionType::eFood)
-                    mPlayer->AddFoodUnit();
+                    mPlayer->AddFoodUnit(1);
                 else
-                    mPlayer->AddGoldUnit();
+                    mPlayer->AddGoldUnit(1);
             }
          }
 
+    private: System::Void mNavi_GoldProductionSwitchedEvent(UInt16 value)
+             {
+                 mPlayer->AddGoldUnit(value);
+             }
+             
     // Updates the ressources labels
     private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
            lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->Res->Blockterie);

@@ -10,7 +10,6 @@ namespace HdB {
     ref class Resources;
 
     delegate void UnitEvent(Unit^ unit);
-
     ref class Player
     {
     public:
@@ -31,9 +30,9 @@ namespace HdB {
             List<Unit^>^ get() { return mUnits; }
         }
 
-        void AddGoldUnit();
-        void AddBlockterieUnit();
-        void AddFoodUnit();
+        void AddGoldUnit(UInt16 value);
+        void AddBlockterieUnit(UInt16 value);
+        void AddFoodUnit(UInt16 value);
 
     private:
         // Workers on the resources

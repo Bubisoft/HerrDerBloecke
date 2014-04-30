@@ -22,19 +22,17 @@ void HdB::Resources::AddResources(short _GoldUnits, short _BlockterieUnits, shor
         mFood+=STD_FOOD*_FoodUnits;
     if(mFood>mFoodCapacity)
         mFood=mFoodCapacity;
-    if(GoldProductionEnabled)
+
+    if(_GoldUnits * STD_BLOCKHUETTE_CONSUME <= mFood)
     {
-        if(_GoldUnits * STD_BLOCKHUETTE_CONSUME <= mFood)
-        {
         
-            if(mGold<mGoldCapacity)
-            {
-                mFood-=_GoldUnits * STD_BLOCKHUETTE_CONSUME;
-                mGold+=STD_GOLD*_GoldUnits;
-            }
-            if(mGold>mGoldCapacity)
-                mGold=mGoldCapacity;
+        if(mGold<mGoldCapacity)
+        {
+            mFood-=_GoldUnits * STD_BLOCKHUETTE_CONSUME;
+            mGold+=STD_GOLD*_GoldUnits;
         }
+        if(mGold>mGoldCapacity)
+            mGold=mGoldCapacity;
     }
 
     if(mBlockterie<mBlockterieCapacity)

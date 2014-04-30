@@ -88,6 +88,9 @@ namespace HdB {
         virtual const UInt16 BuildTime() override { return 10; }
         virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
         virtual const ProductionType GetProductionType() override { return ProductionType::eGold; }
+
+    public:
+        bool enabled;
     };
 
     ref class Blockstatt : Building

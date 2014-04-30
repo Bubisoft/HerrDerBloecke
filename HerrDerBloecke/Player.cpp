@@ -25,7 +25,7 @@ HdB::Player::Player()
        * TEMP  *
        ********* */
     mBlockterieUnits=1;
-    mGoldUnits=1;
+    mGoldUnits=0;
     mFoodUnits=1;
 
     //*********  TEMP END  ***
@@ -61,12 +61,12 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
     }
 }
 
-void HdB::Player::AddGoldUnit()
-{ mGoldUnits++; }
+void HdB::Player::AddGoldUnit(UInt16 value)
+{ mGoldUnits+=value; }
 
-void HdB::Player::AddBlockterieUnit()
-{ mBlockterieUnits++; }
+void HdB::Player::AddBlockterieUnit(UInt16 value)
+{ mBlockterieUnits+=value; }
 
-void HdB::Player::AddFoodUnit()
-{ mFoodUnits++; }
+void HdB::Player::AddFoodUnit(UInt16 value)
+{ mFoodUnits+=value; }
 

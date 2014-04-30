@@ -65,6 +65,5 @@ namespace HdB {
         int mGoldCapacity;
         int mFoodCapacity;
         int mBlockterieCapacity;
-        bool GoldProductionEnabled; 
     };
 }

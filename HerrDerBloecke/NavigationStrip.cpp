@@ -4,7 +4,7 @@
 
 using namespace HdB;
 using namespace System;
-using namespace Diagnostics;
+using namespace System::Diagnostics;
 HdB::NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
     mNumPB=NUM_PB;
@@ -187,12 +187,19 @@ void HdB::NavigationStrip::Unfocus()
 void HdB::NavigationStrip::BlockhausViewClick(Object^  sender, EventArgs^  e)
 {
     NavigationThumb^ pb=(NavigationThumb^)sender;
-    if(pb->Image!=nullptr)
-        pb->Image=nullptr;
-    else
-        pb->Image=Image::FromFile(THUMB_PATH+"cross.png");
 
-    // Adding "gold switch" 
+    if(pb->Image!=nullptr) //enabled production
+    {
+        pb->Image=nullptr;
+        dynamic_cast<Blockhuette^>(mFocusedUnit)->enabled=true;
+        ProductionSwitched(1);
+    }
+    else //Disabled Production
+    {
+        pb->Image=Image::FromFile(THUMB_PATH+"cross.png");
+        dynamic_cast<Blockhuette^>(mFocusedUnit)->enabled=false;
+        ProductionSwitched(-1);
+    }
 }
 
 void HdB::NavigationStrip::ClearThumbnails()
@@ -202,13 +209,23 @@ void HdB::NavigationStrip::ClearThumbnails()
     mPBNavi->Clear();
 }
 
-void HdB::NavigationStrip::BlockhausView()
+void HdB::NavigationStrip::BlockhausView(Unit^ u)
 {
+    mFocusedUnit=u;
     mNumPB=1;
     ClearThumbnails();
 
     mPBNavi->Add(gcnew NavigationThumb());
-    mPBNavi[0]->BackgroundImage=Image::FromFile(THUMB_PATH+"test3.jpg");
+    try
+    {
+        if(!dynamic_cast<Blockhuette^>(u)->enabled)
+            mPBNavi[0]->Image=Image::FromFile(THUMB_PATH+"cross.png");
+        mPBNavi[0]->BackgroundImage=Image::FromFile(THUMB_PATH+"goldcoin.png");
+    }
+    catch(Exception^ e)
+    {
+        Debug::WriteLine("ERROR: NavigationStrip Could not load file");
+    }
     mPBNavi[0]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
     mPBNavi[0]->Size=Size(PB_WIDTH,PB_HEIGHT);
     mPBNavi[0]->SizeMode=PictureBoxSizeMode::StretchImage;
