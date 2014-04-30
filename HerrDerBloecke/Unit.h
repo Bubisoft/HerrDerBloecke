@@ -108,10 +108,10 @@ namespace HdB {
         virtual const Costs GetCosts() override { return Costs(1,2,3); }
     };
 
-    ref class Blockfarm : ProductionBuilding
+    ref class Kastenfarm : ProductionBuilding
     {
     public:
-        Blockfarm(HdB::Model^ model, const Vector3% pos);
+        Kastenfarm(HdB::Model^ model, const Vector3% pos);
 
         virtual const UInt16 Building() override { return 11; }
         virtual const Costs GetCosts() override { return Costs(4,5,6); }

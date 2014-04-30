@@ -9,7 +9,7 @@ NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
 
 	array<String^>^ buildings=gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
-    array<Type^>^ buildTypes = gcnew array<Type^>{TestUnit::typeid, TestUnit::typeid, TestUnit::typeid, TestUnit::typeid};
+    array<Type^>^ buildTypes = gcnew array<Type^>{TestUnit::typeid, Blockstatt::typeid, Blockwerk::typeid, Kastenfarm::typeid};
 	mParent=target;
      Location=Point(x,y);
 

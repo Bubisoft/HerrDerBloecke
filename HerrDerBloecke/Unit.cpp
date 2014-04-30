@@ -65,7 +65,7 @@ HdB::Blockwerk::Blockwerk(HdB::Model^ model, const Vector3% pos)
 {
 }
 
-HdB::Blockfarm::Blockfarm(HdB::Model^ model, const Vector3% pos)
+HdB::Kastenfarm::Kastenfarm(HdB::Model^ model, const Vector3% pos)
     : ProductionBuilding(model, pos)
 {
 }
