@@ -323,6 +323,15 @@ namespace HdB {
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->Model + " ausgebildet");
             mAudioSystem->PlaySFX("test");
+            if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit))
+            {
+                if(b->GetProductionType() == ProductionType::eBlockterie)
+                    mPlayer->AddBlockterieUnit();
+                else if(b->GetProductionType() == ProductionType::eFood)
+                    mPlayer->AddFoodUnit();
+                else
+                    mPlayer->AddGoldUnit();
+            }
          }
 
     // Updates the ressources labels

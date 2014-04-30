@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 #define ZOOM_DISTANCE_MIN 5.f
-#define ZOOM_DISTANCE_MAX 100.f
+#define ZOOM_DISTANCE_MAX 1000.f
 #define ZOOM_SPEED 0.05f
 
 HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)

@@ -60,3 +60,13 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
         }
     }
 }
+
+void HdB::Player::AddGoldUnit()
+{ mGoldUnits++; }
+
+void HdB::Player::AddBlockterieUnit()
+{ mBlockterieUnits++; }
+
+void HdB::Player::AddFoodUnit()
+{ mFoodUnits++; }
+

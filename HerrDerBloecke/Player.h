@@ -31,6 +31,10 @@ namespace HdB {
             List<Unit^>^ get() { return mUnits; }
         }
 
+        void AddGoldUnit();
+        void AddBlockterieUnit();
+        void AddFoodUnit();
+
     private:
         // Workers on the resources
         UInt16 mGoldUnits;

@@ -106,6 +106,7 @@ namespace HdB {
 
         virtual const UInt16 BuildTime() override { return 8; }
         virtual const Costs GetCosts() override { return Costs(1,2,3); }
+        virtual const ProductionType GetProductionType() override { return ProductionType::eBlockterie; }
     };
 
     ref class Kastenfarm : ProductionBuilding
@@ -113,7 +114,7 @@ namespace HdB {
     public:
         Kastenfarm(HdB::Model^ model, const Vector3% pos);
 
-        virtual const UInt16 Building() override { return 11; }
+        virtual const UInt16 BuildTime() override { return 11; }
         virtual const Costs GetCosts() override { return Costs(4,5,6); }
         virtual const ProductionType GetProductionType() override { return ProductionType::eFood; }
     };
