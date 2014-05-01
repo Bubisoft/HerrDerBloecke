@@ -31,6 +31,9 @@ namespace HdB {
             }
         }
         property Vector3 LookAt;
+        property bool Spawned {
+            bool get() { return mSpawned; }
+        }
 
         // Events
         event PositionEvent^ PositionChanged;
@@ -44,6 +47,7 @@ namespace HdB {
         HdB::Model^ mModel;
         int mHP;
         Vector3 mPosition;
+        bool mSpawned;
     };
 
     ref class Building abstract : Unit

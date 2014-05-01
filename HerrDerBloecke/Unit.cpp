@@ -7,16 +7,19 @@ HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
     Position = pos;
     LookAt = -Vector3::UnitY + Position;
     mHP = MaxHP();
+    mSpawned = false;
 }
 
 void HdB::Unit::Spawn()
 {
     Model->AddInstance(this);
+    mSpawned = true;
 }
 
 void HdB::Unit::Despawn()
 {
     Model->RemoveInstance(this);
+    mSpawned = false;
 }
 
 Matrix HdB::Unit::GetTransform()

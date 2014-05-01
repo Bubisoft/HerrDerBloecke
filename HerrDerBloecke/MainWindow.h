@@ -271,16 +271,15 @@ namespace HdB {
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
                 Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
                 mRenderer->SelectedUnits->Clear();
-                if (u) {
-                    mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
+                if (u && u->Spawned) {
                     mRenderer->SelectedUnits->Add(u);
-                    if(dynamic_cast<Blockhuette^>(u))
+                    if(u->GetType() == Blockhuette::typeid)
                         mNavi->BlockhausView(u);
-                    else if(dynamic_cast<Blockstatt^>(u))
+                    else if (u->GetType() == Blockstatt::typeid)
                         mNavi->BlockstattView(u);
-                    else if(dynamic_cast<Blockwerk^>(u))
+                    else if (u->GetType() == Blockwerk::typeid)
                         mNavi->BlockwerkView(u);
-                    else if(dynamic_cast<Blockfarm^>(u))
+                    else if (u->GetType() == Blockfarm::typeid)
                         mNavi->BlockfarmView(u);
                 } else if (mNavi->GetModelString() && mNavi->GetModelType()) {
                     // What unit are we building?
