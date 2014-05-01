@@ -62,11 +62,17 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 }
 
 void HdB::Player::AddGoldUnit(UInt16 value)
-{ mGoldUnits+=value; }
+{
+    mGoldUnits+=value;
+}
 
 void HdB::Player::AddBlockterieUnit(UInt16 value)
-{ mBlockterieUnits+=value; }
+{
+    mBlockterieUnits += value;
+}
 
 void HdB::Player::AddFoodUnit(UInt16 value)
-{ mFoodUnits+=value; }
+{
+    mFoodUnits += value;
+}
 

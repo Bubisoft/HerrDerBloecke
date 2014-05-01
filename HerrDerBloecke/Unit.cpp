@@ -12,13 +12,13 @@ HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
 
 void HdB::Unit::Spawn()
 {
-    Model->AddInstance(this);
+    mModel->AddInstance(this);
     mSpawned = true;
 }
 
 void HdB::Unit::Despawn()
 {
-    Model->RemoveInstance(this);
+    mModel->RemoveInstance(this);
     mSpawned = false;
 }
 

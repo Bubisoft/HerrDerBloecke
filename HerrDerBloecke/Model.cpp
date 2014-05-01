@@ -93,7 +93,7 @@ void HdB::Model::Draw()
 void HdB::Model::SetAlpha(float alpha)
 {
     for each (Submesh^ m in mMeshes) {
-        Color4 color = Color4(m->material.Diffuse.Red, m->material.Diffuse.Green, m->material.Diffuse.Blue, alpha);
+        Color4 color = Color4(alpha, m->material.Diffuse.Red, m->material.Diffuse.Green, m->material.Diffuse.Blue);
         m->material.Diffuse = color;
     }
 }
@@ -165,15 +165,13 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
                 mesh->material.Ambient = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 line = reader->ReadLine(); // Diffuse
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                mesh->material.Diffuse = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
+                Color4 diffuse = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 line = reader->ReadLine(); // Specular
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
                 mesh->material.Specular = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 line = reader->ReadLine(); // Transparency
                 float alpha = 1.f - StrToFloat(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
-                mesh->material.Ambient.Alpha = alpha;
-                mesh->material.Diffuse.Alpha = alpha;
-                mesh->material.Specular.Alpha = alpha;
+                mesh->material.Diffuse = Color4(alpha, diffuse.Red, diffuse.Green, diffuse.Blue);
                 line = reader->ReadLine(); // TextureName
                 String^ texture = TEXTURE_PATH + line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1];
                 try {
@@ -185,8 +183,7 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             } else {
                 line = reader->ReadLine(); // Color
                 parts = line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries);
-                Color4 color = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
-                mesh->material.Diffuse = color;
+                mesh->material.Diffuse = Color4(StrToFloat(parts[1]), StrToFloat(parts[2]), StrToFloat(parts[3]));
                 mesh->material.Ambient = Color4(.5f, .5f, .5f); // Hardcoded default
                 mesh->material.Specular = Color4(.9f, .9f, .9f); // Hardcoded default
             }
