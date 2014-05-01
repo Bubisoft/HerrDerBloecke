@@ -44,6 +44,7 @@ namespace HdB {
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
+            mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             /** FOR TESTING */
             Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
             u->Spawn();
@@ -215,11 +216,12 @@ namespace HdB {
             this->Controls->Add(this->btnMenu);
             this->Controls->Add(this->mRenderFrame);
             this->DoubleBuffered = true;
+            this->KeyPreview = true;
             this->MinimumSize = System::Drawing::Size(640, 480);
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
-            this->MouseEnter += gcnew System::EventHandler(this, &MainWindow::MainWindow_MouseEnter);
+            this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainWindow::MainWindow_KeyPress);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
             this->ResumeLayout(false);
@@ -235,10 +237,6 @@ namespace HdB {
              lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
              mNavi->Resize();
              mNotificationBox->Resize(this);
-         }
-    private: System::Void MainWindow_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
-             // give the Focus to something else, so the Render Frame looses the focus
-             lblResGold->Focus();
          }
 
     // mRenderFrame Events
@@ -343,10 +341,27 @@ namespace HdB {
                     mPlayer->AddGoldUnit(1);
             }
          }
-
+    // mNavi Events
     private: System::Void mNavi_GoldProductionSwitchedEvent(UInt16 value)
              {
                  mPlayer->AddGoldUnit(value);
+             }
+
+             System::Void mNavi_TearOffEvent(Unit^ u)
+             {
+                 if(ProductionBuilding^ b=dynamic_cast<ProductionBuilding^>(u))
+                 {
+                     if(b->GetProductionType()==ProductionType::eGold)
+                     {
+                        if(dynamic_cast<Blockhuette^>(b)->enabled==true)
+                            mPlayer->AddGoldUnit(-1);
+                     }
+                     else if(b->GetProductionType()==ProductionType::eFood)
+                         mPlayer->AddFoodUnit(-1);
+                     else
+                        mPlayer->AddBlockterieUnit(-1);
+                 }
+                 u->Despawn();
              }
              
     // Updates the ressources labels
@@ -369,5 +384,13 @@ private: System::Void resourcesTimer_Tick(System::Object^  sender, System::Event
                  mPlayer->ProcessResources();
          }
 
+private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+             //pressing escape will get the Navi to lose its focused PictureBox
+             if(e->KeyChar == (char)Keys::Escape)
+             {
+                 mNavi->Unfocus();
+                 mNavi->BuildingMenuView();
+             }
+         }
 };
 }

@@ -181,7 +181,11 @@ Type^ HdB::NavigationStrip::GetModelType()
 void HdB::NavigationStrip::Unfocus()
 {
     if(mFocusedPb!=nullptr)
+    {
         mFocusedPb->Image=nullptr;
+        mFocusedPb=nullptr;
+        mFocusedUnit=nullptr;
+    }
 }
 
 void HdB::NavigationStrip::BlockhausViewClick(Object^  sender, EventArgs^  e)
@@ -212,10 +216,11 @@ void HdB::NavigationStrip::ClearThumbnails()
 void HdB::NavigationStrip::BlockhausView(Unit^ u)
 {
     mFocusedUnit=u;
-    mNumPB=1;
+    mNumPB=2;
+    Unfocus();
     ClearThumbnails();
-
-    mPBNavi->Add(gcnew NavigationThumb());
+    for(int i=0;i<mNumPB;++i)
+        mPBNavi->Add(gcnew NavigationThumb());
     try
     {
         if(!dynamic_cast<Blockhuette^>(u)->enabled)
@@ -233,7 +238,15 @@ void HdB::NavigationStrip::BlockhausView(Unit^ u)
     mPBNavi[0]->BorderStyle=BorderStyle::FixedSingle;
     mPBNavi[0]->Click+=gcnew EventHandler(this,&NavigationStrip::BlockhausViewClick);
     mPBNavi[0]->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
+    mPBNavi[1]->Image=Image::FromFile(THUMB_PATH+"tearoff.png");
+    mPBNavi[1]->Click+=gcnew EventHandler(this,&NavigationStrip::TearOffCall);
+    mPBNavi[1]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
+    mPBNavi[1]->Size=Size(PB_WIDTH,PB_HEIGHT);
+    mPBNavi[1]->SizeMode=PictureBoxSizeMode::StretchImage;
+    mPBNavi[1]->BackgroundImageLayout=ImageLayout::Stretch;
+    mPBNavi[1]->BorderStyle=BorderStyle::FixedSingle;
     mParent->Controls->Add(mPBNavi[0]);
+    mParent->Controls->Add(mPBNavi[1]);
     Resize();
 }
 
@@ -275,4 +288,11 @@ void HdB::NavigationStrip::BuildingMenuView()
     }
 	Resize();
 
+}
+
+void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
+{
+    TearOffEvent(mFocusedUnit);
+    Unfocus();
+    BuildingMenuView();
 }

@@ -24,9 +24,9 @@ HdB::Player::Player()
     /* *********
        * TEMP  *
        ********* */
-    mBlockterieUnits=1;
+    mBlockterieUnits=0;
     mGoldUnits=0;
-    mFoodUnits=1;
+    mFoodUnits=0;
 
     //*********  TEMP END  ***
 }
