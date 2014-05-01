@@ -90,50 +90,45 @@ void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 void HdB::NavigationStrip::Resize()
 {
     //variables for properly centering depending on the number of boxes ( odd or straight )
-    int i=1; //for 
-    int z=1;
-    double factor=0.5;
 
+    //odd setup
+    int i=1; 
+    int z=0;
+
+    //straigth setup
     if(mPBNavi->Count%2==0) 
     {
         i=0;
         z=0;
-        factor=1;
     }
+    int newSize=0;
     if(((mParent->Size.Width*0.4) - SPACE*mPBNavi->Count - Location.X)/mPBNavi->Count <PB_WIDTH)
+    {    
+        newSize=((mParent->Size.Width*0.4) - SPACE * mPBNavi->Count - Location.X)/mPBNavi->Count; 
+    }
+    for each(NavigationThumb^ PB in mPBNavi)
     {
-        int newSize=((mParent->Size.Width*0.4) - SPACE * mPBNavi->Count - Location.X)/mPBNavi->Count;
-        for each(NavigationThumb^ PB in mPBNavi)
-        {
+        if(newSize!=0)
             PB->Size=Size(newSize,newSize);
-            PB->Location=Point((mParent->Size.Width*0.4-Location.X)/2 + (PB->Size.Width*factor*z*Math::Pow(-1,i)) + (SPACE/2*z*Math::Pow(-1,i))+Location.X,PB->Location.Y );
-    
-            ++i;
-            if(i%2==1)
-                ++z;
+        if(mPBNavi->Count % 2== 0 ) //straigth
+            PB->Location=Point((mParent->Size.Width*0.4-Location.X)/2 + (PB->Size.Width*z*Math::Pow(-1,i)) + (SPACE/2*z*Math::Pow(-1,i)) + Location.X,PB->Location.Y );
+        else//odd
+        {
+            PB->Location=Point((mParent->Size.Width*0.4-Location.X)/2 + (PB->Size.Width/2+(z*PB->Size.Width))*Math::Pow(-1,i)  + (SPACE/2*(i-(z+1))*Math::Pow(-1,i)) + Location.X,PB->Location.Y );
         }
-        mTitle->Location=Point((mParent->Size.Width*0.4/2-Location.X)-mTitle->Size.Width/2 + Location.X,mTitle->Location.Y);
+        ++i;
+        if(i%2==1)
+            ++z;
+    }
+    mTitle->Location=Point((mParent->Size.Width*0.4/2-Location.X)-mTitle->Size.Width/2 + Location.X,mTitle->Location.Y);
         //mBtnLeft->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
         //mBtnRight->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
         //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
-    }
-    else
-    {
-        for each(NavigationThumb^ PB in mPBNavi)
-        {
-        
-            PB->Size=Size(PB_WIDTH,PB_HEIGHT);
-            PB->Location=Point((mParent->Size.Width*0.4-Location.X)/2 + (PB->Size.Width*factor*z*Math::Pow(-1,i)) + (SPACE/2*z*Math::Pow(-1,i))+Location.X,PB->Location.Y );
-    
-            ++i;
-            if(i%2==1)
-                ++z;
-        }
-        mTitle->Location=Point((mParent->Size.Width*0.4/2-Location.X)-mTitle->Size.Width/2 + Location.X,mTitle->Location.Y);
+
         //mBtnLeft->Size=Size(BTN_WIDHT,BTN_HEIGHT);
         //mBtnRight->Size=Size(BTN_WIDHT,BTN_HEIGHT);
         //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y); 
-    }
+    
 }
 
 String^ HdB::NavigationStrip::GetModelString()
@@ -236,6 +231,9 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     Unfocus();
     mFocusedUnit=u;
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
+    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
+    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
+
     Resize();
 }
 
