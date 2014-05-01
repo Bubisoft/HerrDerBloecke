@@ -3,15 +3,20 @@
 #include "Model.h"
 #include "Unit.h"
 #include "Map.h"
+#include "HealthBar.h"
 
 HdB::Renderer::Renderer()
 {
     mDrawables = gcnew List<IDrawable^>();
     mAlphaDrawables = gcnew List<IDrawable^>();
+    mSelectedUnits = gcnew List<Unit^>();
 }
 
 HdB::Renderer::~Renderer()
 {
+    delete mHealthBar;
+    mSelectedUnits->Clear();
+
     for each (IDrawable^ d in mDrawables)
         delete d;
     for each (IDrawable^ d in mAlphaDrawables)
@@ -80,6 +85,7 @@ bool HdB::Renderer::Init(Control^ target)
 
     mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -30.f, 30.f), Vector3::Zero);
     mMap = gcnew HdB::Map(mDevice);
+    mHealthBar = gcnew HealthBar(mDevice);
 
     return true;
 }
@@ -103,12 +109,14 @@ void HdB::Renderer::Draw()
 
     mMap->Draw();
 
-    for each (IDrawable^ d in mDrawables) {
+    for each (IDrawable^ d in mDrawables)
         d->Draw();
-    }
 
     for each (IDrawable^ d in mAlphaDrawables)
         d->Draw();
+
+    for each (Unit^ u in mSelectedUnits)
+        mHealthBar->DrawForUnit(u);
 
     mDevice->EndScene();
     mDevice->Present();

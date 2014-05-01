@@ -6,6 +6,7 @@ HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
     mModel = model;
     Position = pos;
     LookAt = -Vector3::UnitY + Position;
+    mHP = MaxHP();
 }
 
 void HdB::Unit::Spawn()

@@ -14,6 +14,7 @@ namespace HdB {
     ref class Unit;
     ref class Map;
     ref class Model;
+    ref class HealthBar;
 
     ref class Renderer
     {
@@ -54,6 +55,9 @@ namespace HdB {
         property HdB::Map^ Map {
             HdB::Map^ get() { return mMap; }
         }
+        property List<Unit^>^ SelectedUnits {
+            List<Unit^>^ get() { return mSelectedUnits; }
+        }
 
     private:
         void ResetDevice();
@@ -65,5 +69,7 @@ namespace HdB {
         List<IDrawable^>^ mAlphaDrawables;
         HdB::Camera^ mCamera;
         HdB::Map^ mMap;
+        HealthBar^ mHealthBar;
+        List<Unit^>^ mSelectedUnits;
     };
 }

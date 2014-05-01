@@ -268,48 +268,47 @@ namespace HdB {
             mMousePosSet = false;
         }
     private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
-            Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
-            if (u)
-            {
-                mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
-                if(dynamic_cast<Blockhuette^>(u))
-                    mNavi->BlockhausView(u);
-                else if(dynamic_cast<Blockstatt^>(u))
-                    mNavi->BlockstattView(u);
-                else if(dynamic_cast<Blockwerk^>(u))
-                    mNavi->BlockwerkView(u);
-                else if(dynamic_cast<Blockfarm^>(u))
-                    mNavi->BlockfarmView(u);
-            }
-            else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
-                // What unit are we building?
-                Type^ unittype = mNavi->GetModelType();
-                Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                    gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
-                    mRenderer->Camera->Unproject2D(e->Location)}));
+            if (e->Button == System::Windows::Forms::MouseButtons::Left) {
+                Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
+                mRenderer->SelectedUnits->Clear();
+                if (u) {
+                    mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
+                    mRenderer->SelectedUnits->Add(u);
+                    if(dynamic_cast<Blockhuette^>(u))
+                        mNavi->BlockhausView(u);
+                    else if(dynamic_cast<Blockstatt^>(u))
+                        mNavi->BlockstattView(u);
+                    else if(dynamic_cast<Blockwerk^>(u))
+                        mNavi->BlockwerkView(u);
+                    else if(dynamic_cast<Blockfarm^>(u))
+                        mNavi->BlockfarmView(u);
+                } else if (mNavi->GetModelString() && mNavi->GetModelType()) {
+                    // What unit are we building?
+                    Type^ unittype = mNavi->GetModelType();
+                    Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                        gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
+                        mRenderer->Camera->Unproject2D(e->Location)}));
 
-                // Do not build the unit if the player can't pay the costs
-                if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
-                    return;
-                // Do not build if there is no space
-                if (!mRenderer->Map->CanBuild(unit)) {
-                    mNotificationBox->SendMessage("Dieser Platz ist bereits belegt.");
-                    return;
+                    // Do not build the unit if the player can't pay the costs
+                    if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
+                        return;
+                    // Do not build if there is no space
+                    if (!mRenderer->Map->CanBuild(unit)) {
+                        mNotificationBox->SendMessage("Dieser Platz ist bereits belegt.");
+                        return;
+                    }
+
+                    // Start building the unit
+                    Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                        gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
+                        mRenderer->Camera->Unproject2D(e->Location)}));
+                    mPlayer->BuildUnit(unit, unit->BuildTime(), placeholderUnit);
+                    mRenderer->Map->AddUnit(unit);
+                    // Pay resources for building
+                    mPlayer->Res->Pay(unit->GetCosts());
+                } else {
+                    mNavi->BuildingMenuView();
                 }
-
-                // Start building the unit
-                Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                    gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
-                    mRenderer->Camera->Unproject2D(e->Location)}));
-                mPlayer->BuildUnit(unit, unit->BuildTime(), placeholderUnit);
-                mRenderer->Map->AddUnit(unit);
-                // Pay resources for building
-                mPlayer->Res->Pay(unit->GetCosts());
-            }
-            else if(e->Button == System::Windows::Forms::MouseButtons::Left)
-            {
-                //switch to normal navigationstrip view if player clicked on the ground
-                mNavi->BuildingMenuView();
             }
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
@@ -367,6 +366,7 @@ namespace HdB {
                      else
                         mPlayer->AddBlockterieUnit(-1);
                  }
+                 mRenderer->SelectedUnits->Clear();
                  mRenderer->Map->RemoveUnit(u);
                  u->Despawn();
              }

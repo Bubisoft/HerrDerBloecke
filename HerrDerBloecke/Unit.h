@@ -17,6 +17,7 @@ namespace HdB {
         void Despawn();
         Matrix GetTransform();
         void Damage(int dmg);
+        float PercentHP() { return mHP / MaxHP(); }
 
         // Properties
         property HdB::Model^ Model {
@@ -35,6 +36,7 @@ namespace HdB {
         event PositionEvent^ PositionChanged;
 
         // Abstract Unit Attributes
+        virtual const int MaxHP() = 0;
         virtual const UInt16 BuildTime() = 0;
         virtual const Costs GetCosts() = 0;
 
@@ -79,6 +81,7 @@ namespace HdB {
     public:
         TestUnit(HdB::Model^ model, const Vector3% pos);
 
+        virtual const int MaxHP() override { return 100; }
         virtual const UInt16 BuildTime() override { return 5; }
         virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
 
@@ -96,6 +99,7 @@ namespace HdB {
     public:
         Blockhuette(HdB::Model^ model, const Vector3% pos);
 
+        virtual const int MaxHP() override { return 100; }
         virtual const UInt16 BuildTime() override { return 10; }
         virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
         virtual const ProductionType GetProductionType() override { return ProductionType::eGold; }
@@ -109,6 +113,7 @@ namespace HdB {
     public:
         Blockstatt(HdB::Model^ model, const Vector3% pos);
 
+        virtual const int MaxHP() override { return 100; }
         virtual const UInt16 BuildTime() override { return 8; }
         virtual const Costs GetCosts() override { return Costs(3, 3, 3); }
     };
@@ -118,6 +123,7 @@ namespace HdB {
     public:
         Blockwerk(HdB::Model^ model, const Vector3% pos);
 
+        virtual const int MaxHP() override { return 100; }
         virtual const UInt16 BuildTime() override { return 8; }
         virtual const Costs GetCosts() override { return Costs(1,2,3); }
         virtual const ProductionType GetProductionType() override { return ProductionType::eBlockterie; }
@@ -128,6 +134,7 @@ namespace HdB {
     public:
         Blockfarm(HdB::Model^ model, const Vector3% pos);
 
+        virtual const int MaxHP() override { return 100; }
         virtual const UInt16 BuildTime() override { return 11; }
         virtual const Costs GetCosts() override { return Costs(4,5,6); }
         virtual const ProductionType GetProductionType() override { return ProductionType::eFood; }
