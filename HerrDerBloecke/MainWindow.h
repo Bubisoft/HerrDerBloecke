@@ -278,7 +278,7 @@ namespace HdB {
                     mNavi->BlockstattView(u);
                 else if(dynamic_cast<Blockwerk^>(u))
                     mNavi->BlockwerkView(u);
-                else
+                else if(dynamic_cast<Blockfarm^>(u))
                     mNavi->BlockfarmView(u);
             }
             else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
@@ -306,7 +306,7 @@ namespace HdB {
                 // Pay resources for building
                 mPlayer->Res->Pay(unit->GetCosts());
             }
-            else
+            else if(e->Button == System::Windows::Forms::MouseButtons::Left)
             {
                 //switch to normal navigationstrip view if player clicked on the ground
                 mNavi->BuildingMenuView();
@@ -367,6 +367,7 @@ namespace HdB {
                      else
                         mPlayer->AddBlockterieUnit(-1);
                  }
+                 mRenderer->Map->RemoveUnit(u);
                  u->Despawn();
              }
 

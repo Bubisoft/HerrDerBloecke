@@ -87,6 +87,16 @@ void HdB::Map::AddUnit(Unit^ unit)
     mOccupations->Add(gcnew MapOccupation(unit));
 }
 
+void HdB::Map::RemoveUnit(Unit^ unit)
+{
+    for each (MapOccupation^ occ in mOccupations) {
+        if (occ->Unit == unit) {
+            mOccupations->Remove(occ);
+            break;
+        }
+    }
+}
+
 HdB::Unit^ HdB::Map::CheckOccupation(const Vector3% posOnGround)
 {
     Point field = GetFieldCoordinate(posOnGround);

@@ -12,10 +12,10 @@ namespace HdB {
 
     #define PB_WIDTH 60     //max picturebox width
     #define PB_HEIGHT 60    //max Picturebox height
-    #define BTN_WIDHT 0    //max button width 30
-    #define BTN_HEIGHT 0   //max Button heigth 60
-    #define SPACE 6 //space between the Pictureboxes and buttons
-    #define NUM_PB 4    //number of picturboxes
+    #define BTN_WIDHT 0     //max button width 30
+    #define BTN_HEIGHT 0    //max Button heigth 60
+    #define SPACE 6         //space between the Pictureboxes and buttons
+    #define NUM_PB 4        //number of picturboxes
 
 
     delegate void GoldProductionEvent(UInt16 value);
@@ -49,7 +49,8 @@ namespace HdB {
 		*/
 		String^ GetModelString();
 
-        /** Returns the type of the selected unit */
+        /** Returns the type of the selected unit 
+        */
         Type^ GetModelType();
 
         /** removes the pictureboxes from the parent window and cleares the lists
@@ -78,19 +79,19 @@ namespace HdB {
         */
         void BuildingMenuView();
 
-		/**Resizes the whole navigationstrip so it fills 40% of the window
+		/** Resizes the whole navigationstrip so it fills 40% of the window
 		*/
         void Resize();
+
+        /**  
+        */
+        void AddPictureBox(String^ Background,String^ ForeGround,EventHandler^ CalledFunction,Type^ unittype);
 
         void TearOffCall(Object^  sender, EventArgs^  e);
 
         void BuildUnitCall(Object^ sender, EventArgs^ e);
         event TearOff^ TearOffEvent;
         event BuildUnit^ UnitBuildEvent;
-    public:
-        property UInt16 NumPB{
-            void set(UInt16 _num){ mNumPB=_num; }
-        }
     private:
         Point Location;
 		Control^ mParent;			
@@ -103,7 +104,7 @@ namespace HdB {
         Unit^ mFocusedUnit;
 
     static const array<String^>^ initBuildings= gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
-    static const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Kastenfarm::typeid};
+    static const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Blockfarm::typeid};
     };
     
 }
