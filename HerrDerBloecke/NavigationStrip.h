@@ -56,9 +56,21 @@ namespace HdB {
 
         /** Switches to the Blockhaus View (switching gold production)
         */
-        void BlockhausView(Unit^ b);
+        void BlockhausView(Unit^ u);
         void BlockhausViewClick(Object^  sender, EventArgs^  e);
         event GoldProductionEvent^ ProductionSwitched;
+
+        /** Menu for Blockfarm
+        */
+        void BlockfarmView(Unit^ u);
+
+        /** Menu for Blockstatt
+        */
+        void BlockstattView(Unit^ u);
+
+        /** Menu for Blockwerk
+        */
+        void BlockwerkView(Unit^ u);
 
         /** Standart View
         */

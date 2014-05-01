@@ -273,7 +273,12 @@ namespace HdB {
                 mNotificationBox->SendMessage("TEST: Clicked on Unit of Type " + u->Model);
                 if(dynamic_cast<Blockhuette^>(u))
                     mNavi->BlockhausView(u);
-
+                else if(dynamic_cast<Blockstatt^>(u))
+                    mNavi->BlockstattView(u);
+                else if(dynamic_cast<Blockwerk^>(u))
+                    mNavi->BlockwerkView(u);
+                else
+                    mNavi->BlockfarmView(u);
             }
             else if (mNavi->GetModelString() && mNavi->GetModelType() && e->Button == System::Windows::Forms::MouseButtons::Left) {
                 // What unit are we building?
