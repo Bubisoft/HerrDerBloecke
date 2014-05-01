@@ -7,7 +7,6 @@ using namespace System;
 using namespace System::Diagnostics;
 HdB::NavigationStrip::NavigationStrip(Control^ target,int x, int y)
 {
-    mNumPB=NUM_PB;
 	mParent=target;
     Location=Point(x,y); //upper left corner of the Strip
 
@@ -205,7 +204,6 @@ void HdB::NavigationStrip::BlockhausView(Unit^ u)
 void HdB::NavigationStrip::BuildingMenuView()
 {
     ClearThumbnails();
-    Debug::WriteLine(initBuildings[0]->Length);
     List<String^>^ buildings=gcnew List<String^>();
     List<Type^>^ buildTypes = gcnew List<Type^>(); 
     int i=0;
