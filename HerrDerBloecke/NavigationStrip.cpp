@@ -316,7 +316,7 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
 {
     ClearThumbnails();
     Unfocus();
-    mNumPB=1;
+    mNumPB=2;
     mFocusedUnit=u;
     for(int i=0;i<mNumPB;++i)
         mPBNavi->Add(gcnew NavigationThumb());
@@ -329,7 +329,21 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     mPBNavi[0]->BackgroundImageLayout=ImageLayout::Stretch;
     mPBNavi[0]->BorderStyle=BorderStyle::FixedSingle;
     mPBNavi[0]->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
+
+    mPBNavi[1]->BackgroundImage=Image::FromFile(THUMB_PATH+"cross.png");
+    mPBNavi[1]->Click+=gcnew EventHandler(this, &NavigationStrip::ChangeFocus);
+    mPBNavi[1]->Click+=gcnew EventHandler(this, &NavigationStrip::BuildUnitCall);
+    mPBNavi[1]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
+    mPBNavi[1]->Size=Size(PB_WIDTH,PB_HEIGHT);
+    mPBNavi[1]->SizeMode=PictureBoxSizeMode::StretchImage;
+    mPBNavi[1]->BackgroundImageLayout=ImageLayout::Stretch;
+    mPBNavi[1]->BorderStyle=BorderStyle::FixedSingle;
+    mPBNavi[1]->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
+    mPBNavi[1]->UnitType = TestUnit::typeid;
+    mPBNavi[1]->Text = "exampleUnit";
+
     mParent->Controls->Add(mPBNavi[0]);
+    mParent->Controls->Add(mPBNavi[1]);
     Resize();
 }
 
@@ -359,4 +373,9 @@ void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
     TearOffEvent(mFocusedUnit);
     Unfocus();
     BuildingMenuView();
+}
+
+void HdB::NavigationStrip::BuildUnitCall(Object^  sender, EventArgs^  e)
+{
+    UnitBuildEvent();
 }

@@ -45,6 +45,7 @@ namespace HdB {
             mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
+            mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
             /** FOR TESTING */
             Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
             u->Spawn();
@@ -367,6 +368,14 @@ namespace HdB {
                         mPlayer->AddBlockterieUnit(-1);
                  }
                  u->Despawn();
+             }
+
+             System::Void mNavi_UnitBuildEvent()
+             {
+                 Type^ unittype = mNavi->GetModelType();
+                Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                    gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),Vector3(0,0,0)}));
+                mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
              }
              
     // Updates the ressources labels

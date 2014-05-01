@@ -57,6 +57,9 @@ namespace HdB {
 
         // Abstract Unit Attributes
         virtual const int Attack() = 0;
+        virtual const int Defense() = 0;
+        virtual const int Speed() = 0;
+        virtual const int Range() = 0;
     };
 
     ref class ProductionBuilding abstract : Building
@@ -71,15 +74,23 @@ namespace HdB {
     /********
      * TEMP *
      ********/
-    ref class TestUnit : Unit
+    ref class TestUnit : Soldier
     {
     public:
         TestUnit(HdB::Model^ model, const Vector3% pos);
 
         virtual const UInt16 BuildTime() override { return 5; }
         virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
+
+        virtual const int Attack() override { return 10; }
+        virtual const int Defense() override { return 10; }
+        virtual const int Speed() override { return 10; }
+        virtual const int Range() override { return 1; }
     };
 
+    /*************
+     * BUILDINGS *
+     *************/
     ref class Blockhuette : ProductionBuilding
     {
     public:

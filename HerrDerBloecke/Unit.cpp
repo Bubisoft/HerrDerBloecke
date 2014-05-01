@@ -76,6 +76,6 @@ HdB::Kastenfarm::Kastenfarm(HdB::Model^ model, const Vector3% pos)
  * TEMP *
  ********/
 HdB::TestUnit::TestUnit(HdB::Model^ model, const Vector3% pos)
-    : Unit(model, pos)
+    : Soldier(model, pos)
 {
 }

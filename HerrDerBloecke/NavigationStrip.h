@@ -20,6 +20,8 @@ namespace HdB {
 
     delegate void GoldProductionEvent(UInt16 value);
     delegate void TearOff(Unit^ u);
+    delegate void BuildUnit();
+
     ref class NavigationThumb : public PictureBox {
     public:
         NavigationThumb() : PictureBox() { }
@@ -81,7 +83,10 @@ namespace HdB {
         void Resize();
 
         void TearOffCall(Object^  sender, EventArgs^  e);
+
+        void BuildUnitCall(Object^ sender, EventArgs^ e);
         event TearOff^ TearOffEvent;
+        event BuildUnit^ UnitBuildEvent;
     public:
         property UInt16 NumPB{
             void set(UInt16 _num){ mNumPB=_num; }
