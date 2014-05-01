@@ -43,7 +43,7 @@ namespace HdB {
         /** Add a unit that will occupy its "fields" (for collision detection). */
         void AddUnit(Unit^ unit);
 
-        /** Removing a unit will free theyr occupied "fields" */
+        /** Removing a unit will free its occupied "fields". */
         void RemoveUnit(Unit^ unit);
 
         /** Check whether a unit is occupying the given position's field. Returns a

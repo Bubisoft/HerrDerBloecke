@@ -131,6 +131,7 @@ void HdB::Renderer::ResetDevice() {
     mDevice->SetRenderState(RenderState::AlphaBlendEnable, true);
     mDevice->SetRenderState(RenderState::SourceBlend, Blend::SourceAlpha);
     mDevice->SetRenderState(RenderState::DestinationBlend, Blend::InverseSourceAlpha);
+    mDevice->SetRenderState(RenderState::DiffuseMaterialSource, ColorSource::Material);
     mDevice->SetRenderState(RenderState::Lighting, true);
     mDevice->SetRenderState(RenderState::Ambient, Color4(1.f, 1.f, 1.f).ToArgb());
 
@@ -153,11 +154,6 @@ void HdB::Renderer::ResetDevice() {
     l.Range = 500.f;
     mDevice->SetLight(0, l);
     mDevice->EnableLight(0, true);
-}
-
-void HdB::Renderer::AddDrawable(IDrawable^ drawable)
-{
-    mDrawables->Add(drawable);
 }
 
 HdB::Model^ HdB::Renderer::GetModel(String^ name)

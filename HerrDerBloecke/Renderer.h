@@ -36,9 +36,6 @@ namespace HdB {
          */
         void Draw();
 
-        /** Add a drawable object to our list of things we have to draw. */
-        void AddDrawable(IDrawable^ drawable);
-
         /** Returns a Model with the given name, try to load it from a file if we
          *  don't have it in our list of loaded drawables (load-on-demand).
          */
