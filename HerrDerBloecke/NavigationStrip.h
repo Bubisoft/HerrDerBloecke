@@ -100,9 +100,8 @@ namespace HdB {
         NavigationThumb^ mFocusedPb;    //currently focused picturbox
         Button^ mBtnLeft;       //button at the left of the navigation
         Button^ mBtnRight;      //button at the right of the navigation
-        UInt16 mNumPB;
         Unit^ mFocusedUnit;
-
+                                                           //Reihenfolge  3            2          4               1
     static const array<String^>^ initBuildings= gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
     static const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Blockfarm::typeid};
     };
