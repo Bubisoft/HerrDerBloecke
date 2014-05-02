@@ -230,10 +230,9 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     ClearThumbnails();
     Unfocus();
     mFocusedUnit=u;
+    array<EventHandler^>^ calledFunctions=gcnew array<EventHandler^>{gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus),gcnew EventHandler(this,&HdB::NavigationStrip::BuildUnitCall)};
+    this->AddPictureBox("Kastenfarm",nullptr,calledFunctions,TestUnit::typeid);
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
-    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
-    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
-
     Resize();
 }
 
@@ -257,6 +256,25 @@ void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
 void HdB::NavigationStrip::BuildUnitCall(Object^  sender, EventArgs^  e)
 {
     UnitBuildEvent();
+}
+
+void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,array<EventHandler^>^ CalledFunction,Type^ unittype)
+{
+    mPBNavi->Add(gcnew NavigationThumb());
+    mPBNavi[mPBNavi->Count-1]->BackgroundImage=Image::FromFile(THUMB_PATH + Background + ".png");
+    if(ForeGround!=nullptr)
+        mPBNavi[mPBNavi->Count-1]->Image=Image::FromFile(THUMB_PATH + ForeGround + ".png");
+    for each(EventHandler^ e in CalledFunction)
+        mPBNavi[mPBNavi->Count-1]->Click+=e;
+    mPBNavi[mPBNavi->Count-1]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
+    mPBNavi[mPBNavi->Count-1]->Size=Size(PB_WIDTH,PB_HEIGHT);
+    mPBNavi[mPBNavi->Count-1]->SizeMode=PictureBoxSizeMode::StretchImage;
+    mPBNavi[mPBNavi->Count-1]->BackgroundImageLayout=ImageLayout::Stretch;
+    mPBNavi[mPBNavi->Count-1]->BorderStyle=BorderStyle::FixedSingle;
+    mPBNavi[mPBNavi->Count-1]->Anchor=(AnchorStyles::Bottom | AnchorStyles::Left);
+    mPBNavi[mPBNavi->Count-1]->UnitType=unittype;
+    mPBNavi[mPBNavi->Count-1]->Text=Background;
+    mParent->Controls->Add(mPBNavi[mPBNavi->Count-1]);
 }
 
 void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,EventHandler^ CalledFunction,Type^ unittype)

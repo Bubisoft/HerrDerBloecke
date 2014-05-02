@@ -85,6 +85,7 @@ namespace HdB {
 
         /**  
         */
+        void AddPictureBox(String^ Background,String^ ForeGround,array<EventHandler^>^ CalledFunction,Type^ unittype);
         void AddPictureBox(String^ Background,String^ ForeGround,EventHandler^ CalledFunction,Type^ unittype);
 
         void TearOffCall(Object^  sender, EventArgs^  e);

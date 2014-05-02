@@ -372,7 +372,7 @@ namespace HdB {
 
              System::Void mNavi_UnitBuildEvent()
              {
-                 Type^ unittype = mNavi->GetModelType();
+                Type^ unittype = mNavi->GetModelType();
                 Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
                     gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),Vector3(0,0,0)}));
                 mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
