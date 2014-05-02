@@ -73,8 +73,6 @@ void HdB::NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
 
 void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 {
-    if(mFocusedPb!=nullptr)
-        mFocusedPb->Image=nullptr; //remove the focusing frame from old focus
     NavigationThumb^ pb=(NavigationThumb^)sender;
     if(mFocusedPb!=pb)
     {
@@ -85,7 +83,9 @@ void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
         mFocusedPb=pb;
     }
     else    //unfocusing the already focused
-		mFocusedPb=nullptr;
+	{
+        Unfocus();
+    }
 }
 
 void HdB::NavigationStrip::Resize()
@@ -261,7 +261,8 @@ void HdB::NavigationStrip::BuildUnitCall(Object^  sender, EventArgs^  e)
 
     pos += (vec * 1.5);
 
-    UnitBuildEvent(pos);
+    if(mFocusedPb!=nullptr)
+        UnitBuildEvent(pos);
 }
 
 void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,array<EventHandler^>^ CalledFunction,Type^ unittype)

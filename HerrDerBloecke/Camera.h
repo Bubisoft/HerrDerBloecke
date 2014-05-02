@@ -33,6 +33,10 @@ namespace HdB {
         /** Defines the camera rotation speed. */
         property float Speed;
 
+        property Vector3 LookAt{
+            Vector3 get(){ return mLookAt; }
+        };
+    
     private:
         Device^ mDevice;
         Vector3 mPosition;

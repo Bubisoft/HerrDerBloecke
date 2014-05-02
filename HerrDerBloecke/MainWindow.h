@@ -222,6 +222,7 @@ namespace HdB {
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
+            this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::MainWindow_KeyDown);
             this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainWindow::MainWindow_KeyPress);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
@@ -408,6 +409,10 @@ private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windo
                  mNavi->Unfocus();
                  mNavi->BuildingMenuView();
              }
+         }
+private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+            
+
          }
 };
 }
