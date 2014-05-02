@@ -10,7 +10,7 @@ HdB::Renderer::Renderer()
     mDrawables = gcnew List<IDrawable^>();
     mAlphaDrawables = gcnew List<IDrawable^>();
     mSelectedUnits = gcnew List<Unit^>();
-    mFrameTime = 0;
+    mFrameTime = Stopwatch::GetTimestamp();
 }
 
 HdB::Renderer::~Renderer()
