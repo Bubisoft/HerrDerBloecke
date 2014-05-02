@@ -377,6 +377,7 @@ namespace HdB {
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
                         gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),pos}));
                     mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
+                    mRenderer->Map->AddUnit(unit);
                 }
              }
              
