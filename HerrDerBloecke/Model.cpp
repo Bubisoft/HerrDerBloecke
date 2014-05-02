@@ -73,7 +73,7 @@ void HdB::Model::RemoveInstance(Unit^ unit)
     mInstances->Remove(unit);
 }
 
-void HdB::Model::Draw()
+void HdB::Model::Draw(long long timeSinceLastFrame)
 {
     for each (Submesh^ m in mMeshes) {
         mDevice->Material = m->material;

@@ -38,7 +38,7 @@ namespace HdB {
         virtual ~Map();
 
         /** Render the map. */
-        virtual void Draw();
+        virtual void Draw(long long timeSinceLastFrame);
 
         /** Add a unit that will occupy its "fields" (for collision detection). */
         void AddUnit(Unit^ unit);

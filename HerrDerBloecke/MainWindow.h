@@ -309,6 +309,14 @@ namespace HdB {
                 } else {
                     mNavi->BuildingMenuView();
                 }
+            } else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
+                for each (Unit^ u in mRenderer->SelectedUnits) {
+                    if (u->GetType()->IsSubclassOf(Soldier::typeid)) {
+                        Vector3 targetLocation = mRenderer->Camera->Unproject2D(e->Location);
+                        u->LookAt = targetLocation;
+                        u->MoveTo = targetLocation;
+                    }
+                }
             }
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {

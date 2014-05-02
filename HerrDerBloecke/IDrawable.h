@@ -3,6 +3,6 @@
 namespace HdB {
     interface class IDrawable
     {
-        void Draw();
+        void Draw(long long timeSinceLastFrame);
     };
 }

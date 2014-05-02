@@ -32,7 +32,7 @@ namespace HdB {
         void RemoveInstance(Unit^ unit);
 
         /** Draw all of our model instances. */
-        virtual void Draw();
+        virtual void Draw(long long timeSinceLastFrame);
 
         /** Set Alpha */
         void SetAlpha(float alpha);

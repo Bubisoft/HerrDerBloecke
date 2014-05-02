@@ -3,6 +3,7 @@
 #include "IDrawable.h"
 
 using namespace System;
+using namespace System::Diagnostics;
 using namespace System::Windows::Forms;
 using namespace System::Collections::Generic;
 using namespace SlimDX;
@@ -68,5 +69,6 @@ namespace HdB {
         HdB::Map^ mMap;
         HealthBar^ mHealthBar;
         List<Unit^>^ mSelectedUnits;
+        long long mFrameTime;
     };
 }

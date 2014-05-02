@@ -10,6 +10,7 @@ HdB::Renderer::Renderer()
     mDrawables = gcnew List<IDrawable^>();
     mAlphaDrawables = gcnew List<IDrawable^>();
     mSelectedUnits = gcnew List<Unit^>();
+    mFrameTime = 0;
 }
 
 HdB::Renderer::~Renderer()
@@ -101,19 +102,22 @@ void HdB::Renderer::Resize(const int% w, const int% h)
 
 void HdB::Renderer::Draw()
 {
+    long long time = Stopwatch::GetTimestamp();
+    long long timeSinceLastFrame = time - mFrameTime;
+    mFrameTime = time;
 
     mDevice->Clear(ClearFlags::Target | ClearFlags::ZBuffer, Color4(0.f, 0.f, 0.f), 1.f, 0);
     mDevice->BeginScene();
     mDevice->SetTransform(TransformState::View, Camera->ViewMatrix());
     mDevice->SetTransform(TransformState::Projection, Camera->ProjectionMatrix());
 
-    mMap->Draw();
+    mMap->Draw(timeSinceLastFrame);
 
     for each (IDrawable^ d in mDrawables)
-        d->Draw();
+        d->Draw(timeSinceLastFrame);
 
     for each (IDrawable^ d in mAlphaDrawables)
-        d->Draw();
+        d->Draw(timeSinceLastFrame);
 
     for each (Unit^ u in mSelectedUnits)
         mHealthBar->DrawForUnit(u);

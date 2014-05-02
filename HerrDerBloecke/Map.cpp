@@ -73,7 +73,7 @@ HdB::Map::~Map()
     mOccupations->Clear();
 }
 
-void HdB::Map::Draw()
+void HdB::Map::Draw(long long timeSinceLastFrame)
 {
     mDevice->Material = mMaterial;
     mDevice->SetTexture(0, mTexture);

@@ -31,6 +31,7 @@ namespace HdB {
             }
         }
         property Vector3 LookAt;
+        property Vector3 MoveTo;
         property bool Spawned {
             bool get() { return mSpawned; }
         }
