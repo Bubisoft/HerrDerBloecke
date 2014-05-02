@@ -20,7 +20,7 @@ namespace HdB {
 
     delegate void GoldProductionEvent(UInt16 value);
     delegate void TearOff(Unit^ u);
-    delegate void BuildUnit();
+    delegate void BuildUnit(Vector3 pos);
 
     ref class NavigationThumb : public PictureBox {
     public:

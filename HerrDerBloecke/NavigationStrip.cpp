@@ -1,4 +1,5 @@
 #include "NavigationStrip.h"
+#include "Model.h"
 
 
 
@@ -230,9 +231,9 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     ClearThumbnails();
     Unfocus();
     mFocusedUnit=u;
-    array<EventHandler^>^ calledFunctions=gcnew array<EventHandler^>{gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus),gcnew EventHandler(this,&HdB::NavigationStrip::BuildUnitCall)};
-    this->AddPictureBox("Kastenfarm",nullptr,calledFunctions,TestUnit::typeid);
+    array<EventHandler^>^ calledFunctions=gcnew array<EventHandler^>{gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus),gcnew EventHandler(this,&HdB::NavigationStrip::BuildUnitCall), gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus)}; //HACKS!!!!
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
+    this->AddPictureBox("Kastenfarm",nullptr,calledFunctions,TestUnit::typeid);
     Resize();
 }
 
@@ -255,7 +256,12 @@ void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
 
 void HdB::NavigationStrip::BuildUnitCall(Object^  sender, EventArgs^  e)
 {
-    UnitBuildEvent();
+    Vector3 pos = mFocusedUnit->Position;
+    Vector3 vec = Vector3::Subtract(mFocusedUnit->Model->Bounds.Minimum, pos);
+
+    pos += (vec * 1.5);
+
+    UnitBuildEvent(pos);
 }
 
 void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,array<EventHandler^>^ CalledFunction,Type^ unittype)

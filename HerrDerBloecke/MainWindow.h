@@ -370,12 +370,14 @@ namespace HdB {
                  u->Despawn();
              }
 
-             System::Void mNavi_UnitBuildEvent()
+             System::Void mNavi_UnitBuildEvent(Vector3 pos)
              {
                 Type^ unittype = mNavi->GetModelType();
-                Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                    gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),Vector3(0,0,0)}));
-                mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
+                if(mNavi->GetModelString()) {
+                    Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                        gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),pos}));
+                    mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
+                }
              }
              
     // Updates the ressources labels
