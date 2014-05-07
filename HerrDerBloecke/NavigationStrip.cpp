@@ -74,6 +74,8 @@ void HdB::NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
 void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 {
     NavigationThumb^ pb=(NavigationThumb^)sender;
+    if(mFocusedPb!=nullptr)
+        mFocusedPb->Image=nullptr;
     if(mFocusedPb!=pb)
     {
         if(File::Exists(THUMB_PATH + "focused.png"))
@@ -84,7 +86,7 @@ void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
     }
     else    //unfocusing the already focused
 	{
-        Unfocus();
+        mFocusedPb=nullptr;
     }
 }
 
