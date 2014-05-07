@@ -75,6 +75,10 @@ namespace HdB {
         */
         void BlockwerkView(Unit^ u);
 
+        /** Menu for Units
+        */
+        void UnitView(Unit^ u);
+
         /** Standart View
         */
         void BuildingMenuView();
@@ -89,8 +93,8 @@ namespace HdB {
         void AddPictureBox(String^ Background,String^ ForeGround,EventHandler^ CalledFunction,Type^ unittype);
 
         void TearOffCall(Object^  sender, EventArgs^  e);
-
         void BuildUnitCall(Object^ sender, EventArgs^ e);
+
         event TearOff^ TearOffEvent;
         event BuildUnit^ UnitBuildEvent;
     private:

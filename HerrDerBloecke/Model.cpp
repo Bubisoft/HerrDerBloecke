@@ -83,6 +83,25 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
         mDevice->SetTexture(0, m->texture);
 
         for each (Unit^ u in mInstances) {
+            if (u->GetType()->IsSubclassOf(Soldier::typeid) && (u->Position != u->MoveTo))
+            {
+                Soldier^ su = safe_cast<Soldier^>(u);
+                float v = su->Speed();
+                Vector3 mov = Vector3::Subtract(u->MoveTo, u->Position);
+                float x = mov.Length();
+                float xt = v * timeSinceLastFrame/10000000;
+                if(xt > x)
+                {
+                    u->Position += mov;
+                    u->LookAt += mov;
+                }
+                else
+                {
+                    mov *= (xt/x);
+                    u->Position += mov;
+                    u->LookAt += mov;
+                }
+            }
             mDevice->SetTransform(TransformState::World, u->GetTransform());
             mDevice->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,
                 m->numVertices, 0, m->numFaces);
