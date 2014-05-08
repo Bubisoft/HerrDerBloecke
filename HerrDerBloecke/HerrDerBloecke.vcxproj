@@ -136,7 +136,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="EscMenu.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="LoadSave.cpp" />
     <ClCompile Include="main.cpp" />
@@ -163,7 +162,6 @@
   <ItemGroup>
     <ClInclude Include="BuildingRessources.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="EscMenu.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="IDrawable.h" />
