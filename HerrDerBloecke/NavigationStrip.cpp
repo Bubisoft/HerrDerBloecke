@@ -250,6 +250,15 @@ void HdB::NavigationStrip::BlockwerkView(Unit^ u)
     Resize();
 }
 
+void HdB::NavigationStrip::UnitView(Unit^ u)
+{
+    ClearThumbnails();
+    Unfocus();
+    mFocusedUnit=u;
+    this->AddPictureBox("tearoff", nullptr, gcnew EventHandler(this, &HdB::NavigationStrip::TearOffCall), TestUnit::typeid);
+    Resize();
+}
+
 void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
 {
     TearOffEvent(mFocusedUnit);
@@ -261,9 +270,9 @@ void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
 void HdB::NavigationStrip::BuildUnitCall(Object^  sender, EventArgs^  e)
 {
     Vector3 pos = mFocusedUnit->Position;
-    Vector3 vec = Vector3::Subtract(mFocusedUnit->Model->Bounds.Minimum, pos);
+    //Vector3 vec = Vector3::Subtract(mFocusedUnit->Model->Bounds.Minimum, pos);
 
-    pos += (vec * 1.5);
+    pos += (mFocusedUnit->Model->Bounds.Minimum * 1.5);
 
     if(mFocusedPb!=nullptr)
         UnitBuildEvent(pos);

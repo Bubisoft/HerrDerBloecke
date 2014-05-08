@@ -284,6 +284,8 @@ namespace HdB {
                         mNavi->BlockwerkView(u);
                     else if (u->GetType() == Blockfarm::typeid)
                         mNavi->BlockfarmView(u);
+                    else if (u->GetType() == TestUnit::typeid)
+                        mNavi->UnitView(u);
                 } else if (mNavi->GetModelString() && mNavi->GetModelType()) {
                     // What unit are we building?
                     Type^ unittype = mNavi->GetModelType();
