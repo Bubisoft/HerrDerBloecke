@@ -76,3 +76,33 @@ void HdB::Player::AddFoodUnit(UInt16 value)
     mFoodUnits += value;
 }
 
+void HdB::Player::Save(BinaryWriter^ bw)
+{
+    Res->Save(bw);
+    bw->Write(mGoldUnits);
+    bw->Write(mBlockterieUnits);
+    bw->Write(mFoodUnits);
+    
+    bw->Write(mUnits->Count);
+    for each(Unit^ u in mUnits)
+        u->Save(bw);
+
+}
+
+void HdB::Player::Load(BinaryReader^ br,Renderer^ renderer)
+{
+    Res->Load(br,renderer);
+    mGoldUnits=br->ReadUInt16();
+    mBlockterieUnits=br->ReadUInt16();
+    mFoodUnits=br->ReadUInt16();
+
+    int UnitCount=br->ReadInt32();
+
+    for(int i=0;i<UnitCount;++i)
+    {
+        Unit^ LoadedUnit=Unit::Load(br,renderer);
+        LoadedUnit->Spawn();
+        mUnits->Add(LoadedUnit);
+    }
+}
+

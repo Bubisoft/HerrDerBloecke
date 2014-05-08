@@ -1,11 +1,11 @@
 #pragma once
 #include "Resources.h"
+#include "ISaveable.h"
 using namespace System;
 using namespace SlimDX;
-
 namespace HdB {
     ref class Model;
-
+    ref class Renderer;
     delegate void PositionEvent(const Vector3% pos);
 
     ref class Unit abstract
@@ -18,7 +18,7 @@ namespace HdB {
         Matrix GetTransform();
         void Damage(int dmg);
         float PercentHP() { return mHP / MaxHP(); }
-
+        
         // Properties
         property HdB::Model^ Model {
             HdB::Model^ get() { return mModel; }
@@ -38,6 +38,10 @@ namespace HdB {
 
         // Events
         event PositionEvent^ PositionChanged;
+
+        //ISaveable
+        virtual void Save(BinaryWriter^ bw);
+        static Unit^ Load(BinaryReader^ br, Renderer^ renderer);
 
         // Abstract Unit Attributes
         virtual const int MaxHP() = 0;
@@ -108,6 +112,7 @@ namespace HdB {
         virtual const UInt16 BuildTime() override { return 10; }
         virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
         virtual const ProductionType GetProductionType() override { return ProductionType::eGold; }
+        virtual void Save(BinaryWriter^ br) override;
 
     public:
         bool enabled;

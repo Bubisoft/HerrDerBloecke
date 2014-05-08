@@ -11,7 +11,7 @@
 #include "Resources.h"
 #include "Unit.h"
 #include "Model.h"
-
+#include "LoadSave.h"
 namespace HdB {
     using namespace System;
     using namespace System::ComponentModel;
@@ -30,6 +30,8 @@ namespace HdB {
             mMousePos = this->MousePosition;
             mMousePosSet = false;
             mOptions = gcnew Options();
+            mOptions->SaveEvent+=gcnew Options::SaveClick(this,&MainWindow::SaveGame);
+            mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
             mRenderer = gcnew Renderer();
             if (!mRenderer->Init(mRenderFrame)) {
                 MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
@@ -390,6 +392,19 @@ namespace HdB {
                 }
              }
              
+    //OptionsEvents
+    private: System::Void SaveGame()
+             {
+                 LoadSave^ save=gcnew LoadSave();
+                 save->SaveGame(mRenderer->Map,mPlayer);
+             }
+    private: System::Void LoadGame()
+             {
+                 LoadSave^ load=gcnew LoadSave();
+                 load->LoadGame(mRenderer->Map, mPlayer, mRenderer);
+             }
+
+
     // Updates the ressources labels
     private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
            lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->Res->Blockterie);
@@ -414,13 +429,12 @@ private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windo
              //pressing escape will get the Navi to lose its focused PictureBox
              if(e->KeyChar == (char)Keys::Escape)
              {
-                 mNavi->Unfocus();
+                 bool openMenu=mNavi->Unfocus();
                  mNavi->BuildingMenuView();
              }
          }
-private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-            
-
+private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {             
          }
+         
 };
 }

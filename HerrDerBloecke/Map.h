@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IDrawable.h"
-
+#include "ISaveable.h"
 using namespace System;
 using namespace System::Drawing;
 using namespace System::Collections::Generic;
@@ -62,6 +62,9 @@ namespace HdB {
         /** Convert a position on the ground plane to a map field coordinate. */
         static Point GetFieldCoordinate(const Vector3% posOnGround);
 
+
+        /** Saves the map with the passed StreamWriter*/
+        //virtual void Save(BinaryWriter^ bw);
     private:
         Device^ mDevice;
         Mesh^ mGroundMesh;

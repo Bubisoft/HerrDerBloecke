@@ -57,6 +57,12 @@
     <ClCompile Include="HealthBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EscMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadSave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWindow.h">
@@ -111,6 +117,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HealthBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EscMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadSave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISaveable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -148,14 +148,16 @@ Type^ HdB::NavigationStrip::GetModelType()
     return nullptr;
 }
 
-void HdB::NavigationStrip::Unfocus()
+bool HdB::NavigationStrip::Unfocus()
 {
     if(mFocusedPb!=nullptr)
     {
         mFocusedPb->Image=nullptr;
         mFocusedPb=nullptr;
         mFocusedUnit=nullptr;
+        return true;
     }
+    return false;
 }
 
 void HdB::NavigationStrip::BlockhausViewClick(Object^  sender, EventArgs^  e)

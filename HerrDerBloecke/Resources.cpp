@@ -61,3 +61,17 @@ void HdB::Resources::ExpandCapacity(int Gold, int Blockterie, int Food)
     mBlockterieCapacity+=Blockterie;
     mFood+=Food;
 }
+
+void HdB::Resources::Save(BinaryWriter^ bw)
+{
+    bw->Write(mGold);
+    bw->Write(mBlockterie);
+    bw->Write(mFood);
+}
+
+void HdB::Resources::Load(BinaryReader^ br,Renderer^ renderer)
+{
+    mGold=br->ReadInt32();
+    mBlockterie=br->ReadInt32();
+    mFood=br->ReadInt32();
+}

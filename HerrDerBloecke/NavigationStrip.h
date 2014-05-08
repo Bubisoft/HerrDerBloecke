@@ -41,9 +41,9 @@ namespace HdB {
         */
         void ChangeFocus(Object^ sender, EventArgs^ e);
 
-		/** Unfocus the PictureBoxes
+		/** Unfocus the PictureBoxes, returns true if something was focused
 		*/
-		void Unfocus();
+		bool Unfocus();
 
 		/** Returns the string to selected unit
 		*/
@@ -83,7 +83,7 @@ namespace HdB {
 		*/
         void Resize();
 
-        /**  
+        /**  Adds a new Picturebox with the default settings to the Strip
         */
         void AddPictureBox(String^ Background,String^ ForeGround,array<EventHandler^>^ CalledFunction,Type^ unittype);
         void AddPictureBox(String^ Background,String^ ForeGround,EventHandler^ CalledFunction,Type^ unittype);

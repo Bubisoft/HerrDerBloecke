@@ -65,6 +65,7 @@ namespace HdB {
         Device^ mDevice;
         List<IDrawable^>^ mDrawables;
         List<IDrawable^>^ mAlphaDrawables;
+        List<IDrawable^>^ mFonts;
         HdB::Camera^ mCamera;
         HdB::Map^ mMap;
         HealthBar^ mHealthBar;

@@ -37,6 +37,12 @@ namespace HdB {
     private: System::Windows::Forms::TrackBar^  tbSFXVolume;
 
     private: System::Windows::Forms::Label^  label2;
+    private: System::Windows::Forms::Button^  saveButton;
+    private: System::Windows::Forms::Button^  loadButton;
+
+
+    
+
 
     public:
         property int CameraSpeed
@@ -74,6 +80,13 @@ namespace HdB {
             }
         }
 
+    public:
+        delegate void SaveClick();
+        delegate void LoadClick();
+
+        event SaveClick^ SaveEvent;
+        event LoadClick^ LoadEvent;
+
     private: System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
@@ -93,9 +106,11 @@ namespace HdB {
             this->label1 = (gcnew System::Windows::Forms::Label());
             this->tbSFXVolume = (gcnew System::Windows::Forms::TrackBar());
             this->label2 = (gcnew System::Windows::Forms::Label());
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->BeginInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->BeginInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->BeginInit();
+            this->saveButton = (gcnew System::Windows::Forms::Button());
+            this->loadButton = (gcnew System::Windows::Forms::Button());
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSFXVolume))->BeginInit();
             this->SuspendLayout();
             // 
             // tbCamSpeed
@@ -194,11 +209,33 @@ namespace HdB {
             this->label2->TabIndex = 9;
             this->label2->Text = L"Effektlautstärke";
             // 
+            // saveButton
+            // 
+            this->saveButton->Location = System::Drawing::Point(12, 254);
+            this->saveButton->Name = L"saveButton";
+            this->saveButton->Size = System::Drawing::Size(75, 23);
+            this->saveButton->TabIndex = 10;
+            this->saveButton->Text = L"Save";
+            this->saveButton->UseVisualStyleBackColor = true;
+            this->saveButton->Click += gcnew System::EventHandler(this, &Options::saveButton_Click);
+            // 
+            // loadButton
+            // 
+            this->loadButton->Location = System::Drawing::Point(94, 254);
+            this->loadButton->Name = L"loadButton";
+            this->loadButton->Size = System::Drawing::Size(75, 23);
+            this->loadButton->TabIndex = 11;
+            this->loadButton->Text = L"Load";
+            this->loadButton->UseVisualStyleBackColor = true;
+            this->loadButton->Click += gcnew System::EventHandler(this, &Options::loadButton_Click);
+            // 
             // Options
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(370, 289);
+            this->Controls->Add(this->loadButton);
+            this->Controls->Add(this->saveButton);
             this->Controls->Add(this->label2);
             this->Controls->Add(this->tbSFXVolume);
             this->Controls->Add(this->label1);
@@ -211,12 +248,18 @@ namespace HdB {
             this->Controls->Add(this->tbCamSpeed);
             this->Name = L"Options";
             this->Text = L"Options";
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->EndInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->EndInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSFXVolume))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 
         }
+private: System::Void saveButton_Click(System::Object^  sender, System::EventArgs^  e) {
+             SaveEvent();            
+         }
+private: System::Void loadButton_Click(System::Object^  sender, System::EventArgs^  e) {
+             LoadEvent();
+         }
 };
 }

@@ -1,16 +1,15 @@
 #pragma once
-
+#include "ISaveable.h"
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Windows::Forms;
-
 namespace HdB {
     ref struct BuildTask;
     ref class Unit;
     ref class Resources;
 
     delegate void UnitEvent(Unit^ unit);
-    ref class Player
+    ref class Player : ISaveable
     {
     public:
         Player();
@@ -34,6 +33,10 @@ namespace HdB {
         void AddBlockterieUnit(UInt16 value);
         void AddFoodUnit(UInt16 value);
 
+        /** Saves all Data of the Player*/
+        virtual void Save(BinaryWriter^ bw);
+
+        virtual void Load(BinaryReader^ br,Renderer^ renderer);
     private:
         // Workers on the resources
         UInt16 mGoldUnits;

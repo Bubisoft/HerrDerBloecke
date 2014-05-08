@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ISaveable.h"
 namespace HdB {
 
     value struct Costs {
@@ -11,7 +11,7 @@ namespace HdB {
 
     enum ProductionType{eGold,eBlockterie,eFood};
 
-    ref class Resources
+    ref class Resources : ISaveable
     {
     public:
         /** setting up the start resources and capacity
@@ -33,6 +33,12 @@ namespace HdB {
         /** Expands the capacity about the passed amount
         */
         void ExpandCapacity(int Gold, int Blockterie, int Food);
+
+        /** */
+        virtual void Save(BinaryWriter^ bw);
+
+        /** */
+        virtual void Load(BinaryReader^ br,Renderer^ renderer);
 
         property int Gold
         {

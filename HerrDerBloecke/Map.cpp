@@ -10,7 +10,7 @@ using namespace System::Diagnostics;
 #define FIELDS_Y 255
 #define FIELD_WIDTH 1.f
 #define FIELD_HEIGHT 1.f
-
+#define DIFFERENT_FIELDS 3
 /*****************
  * MapOccupation *
  *****************/

@@ -4,7 +4,6 @@
 #include "Unit.h"
 #include "Map.h"
 #include "HealthBar.h"
-
 HdB::Renderer::Renderer()
 {
     mDrawables = gcnew List<IDrawable^>();
