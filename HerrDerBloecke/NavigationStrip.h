@@ -44,6 +44,8 @@ namespace HdB {
         /** Shows the "tooltip) on MousOver */
         void MousOver(Object^ sender, EventArgs^ e);
 
+        void MouseLeave(Object^ sender, EventArgs^ e);
+
 		/** Unfocus the PictureBoxes, returns true if something was focused
 		*/
 		bool Unfocus();

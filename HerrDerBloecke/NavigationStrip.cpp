@@ -94,13 +94,25 @@ void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 void HdB::NavigationStrip::MousOver(Object^ sender, EventArgs^ e)
 {
     NavigationThumb^ t=(NavigationThumb^)sender;
-    Type^ p=t->UnitType;
+    if(t->UnitType!=nullptr)
+    {
+        Type^ p=t->UnitType;
 
-    Unit^ unit=safe_cast<Unit^>(Activator::CreateInstance(p,
-                        gcnew array<Object^> {nullptr,
-                        Vector3::Zero}));
-    Costs cost = unit->GetCosts();
-    mToolTip->Text=t->Text + " | " + cost.ToString();
+        Unit^ unit=safe_cast<Unit^>(Activator::CreateInstance(p,
+                            gcnew array<Object^> {nullptr,
+                            Vector3::Zero}));
+        Costs cost = unit->GetCosts();
+        mToolTip->Text=t->Text + " | " + cost.ToString();
+    }
+    else if(t->Text=="tearoff")
+        mToolTip->Text="Abriss";
+    else if(t->Text=="goldcoin")
+        mToolTip->Text="Goldproduktion umschalten";
+}
+
+void HdB::NavigationStrip::MouseLeave(Object^ sender,EventArgs^ e)
+{
+    mToolTip->Text="";
 }
 
 void HdB::NavigationStrip::Resize()
@@ -208,7 +220,7 @@ void HdB::NavigationStrip::BlockhausView(Unit^ u)
     String^ foreground=nullptr;
     if(!dynamic_cast<Blockhuette^>(u)->enabled)
         foreground=gcnew String("cross");
-    this->AddPictureBox("goldcoin",foreground,gcnew EventHandler(this,&HdB::NavigationStrip::BlockhausViewClick), Blockwerk::typeid);
+    this->AddPictureBox("goldcoin",foreground,gcnew EventHandler(this,&HdB::NavigationStrip::BlockhausViewClick), nullptr);
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall),nullptr);
 
     Resize();
@@ -239,7 +251,7 @@ void HdB::NavigationStrip::BlockfarmView(Unit^ u)
     ClearThumbnails();
     Unfocus();
     mFocusedUnit=u;
-    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockfarm::typeid);
+    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), nullptr);
     Resize();
 }
 
@@ -249,7 +261,7 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     Unfocus();
     mFocusedUnit=u;
     array<EventHandler^>^ calledFunctions=gcnew array<EventHandler^>{gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus),gcnew EventHandler(this,&HdB::NavigationStrip::BuildUnitCall), gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus)}; //HACKS!!!!
-    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
+    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), nullptr);
     this->AddPictureBox("ZuseZ3",nullptr,calledFunctions,ZuseZ3::typeid);
     Resize();
 }
@@ -259,7 +271,7 @@ void HdB::NavigationStrip::BlockwerkView(Unit^ u)
     ClearThumbnails();
     Unfocus();
     mFocusedUnit=u;
-    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockwerk::typeid);
+    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), nullptr);
     Resize();
 }
 
@@ -268,7 +280,7 @@ void HdB::NavigationStrip::UnitView(Unit^ u)
     ClearThumbnails();
     Unfocus();
     mFocusedUnit=u;
-    this->AddPictureBox("tearoff", nullptr, gcnew EventHandler(this, &HdB::NavigationStrip::TearOffCall), TestUnit::typeid);
+    this->AddPictureBox("tearoff", nullptr, gcnew EventHandler(this, &HdB::NavigationStrip::TearOffCall), nullptr);
     Resize();
 }
 
@@ -318,6 +330,7 @@ void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,E
         mPBNavi[mPBNavi->Count-1]->Image=Image::FromFile(THUMB_PATH + ForeGround + ".png");
     mPBNavi[mPBNavi->Count-1]->Click+=CalledFunction;
     mPBNavi[mPBNavi->Count-1]->MouseHover+=gcnew EventHandler(this,&NavigationStrip::MousOver);
+    mPBNavi[mPBNavi->Count-1]->MouseLeave+=gcnew EventHandler(this,&NavigationStrip::MouseLeave);
     mPBNavi[mPBNavi->Count-1]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
     mPBNavi[mPBNavi->Count-1]->Size=Size(PB_WIDTH,PB_HEIGHT);
     mPBNavi[mPBNavi->Count-1]->SizeMode=PictureBoxSizeMode::StretchImage;
