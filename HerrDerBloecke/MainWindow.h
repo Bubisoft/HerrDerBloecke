@@ -284,7 +284,7 @@ namespace HdB {
                         mNavi->BlockwerkView(u);
                     else if (u->GetType() == Blockfarm::typeid)
                         mNavi->BlockfarmView(u);
-                    else if (u->GetType() == TestUnit::typeid)
+                    else if (u->GetType()->IsSubclassOf(Soldier::typeid))
                         mNavi->UnitView(u);
                 } else if (mNavi->GetModelString() && mNavi->GetModelType()) {
                     // What unit are we building?
@@ -389,6 +389,8 @@ namespace HdB {
                 if(mNavi->GetModelString()) {
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
                         gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),pos}));
+                    if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
+                        return;
                     mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
                     mRenderer->Map->AddUnit(unit);
                 }

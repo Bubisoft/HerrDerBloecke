@@ -100,6 +100,24 @@ namespace HdB {
         virtual const int Range() override { return 1; }
     };
 
+    /************
+     * SOLDIERS *
+     ************/
+    ref class ZuseZ3 : Soldier
+    {
+    public:
+        ZuseZ3(HdB::Model^ model, const Vector3% pos);
+
+        virtual const int MaxHP() override { return 50; }
+        virtual const UInt16 BuildTime() override { return 5; }
+        virtual const Costs GetCosts() override { return Costs(5, 10, 10); }
+
+        virtual const int Attack() override { return 10; }
+        virtual const int Defense() override { return 10; }
+        virtual const int Speed() override { return 10; }
+        virtual const int Range() override { return 10; }
+    };
+
     /*************
      * BUILDINGS *
      *************/

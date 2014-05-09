@@ -92,6 +92,14 @@ HdB::ProductionBuilding::ProductionBuilding(HdB::Model^ model, const Vector3% po
 {
 }
 
+/***********
+ * SOLDIER *
+ ***********/
+
+HdB::ZuseZ3::ZuseZ3(HdB::Model^ model, const Vector3% pos)
+    : Soldier(model, pos)
+{
+}
 
 /*************
  * BUILDINGS *

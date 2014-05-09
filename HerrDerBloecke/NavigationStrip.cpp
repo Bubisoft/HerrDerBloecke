@@ -237,7 +237,7 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     mFocusedUnit=u;
     array<EventHandler^>^ calledFunctions=gcnew array<EventHandler^>{gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus),gcnew EventHandler(this,&HdB::NavigationStrip::BuildUnitCall), gcnew EventHandler(this,&HdB::NavigationStrip::ChangeFocus)}; //HACKS!!!!
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), Blockstatt::typeid);
-    this->AddPictureBox("Kastenfarm",nullptr,calledFunctions,TestUnit::typeid);
+    this->AddPictureBox("ZuseZ3",nullptr,calledFunctions,ZuseZ3::typeid);
     Resize();
 }
 
