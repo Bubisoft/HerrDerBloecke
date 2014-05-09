@@ -31,15 +31,18 @@ namespace HdB {
     ref class NavigationStrip
     {
     public:
-        NavigationStrip(Control^ target,int x, int y);
+        NavigationStrip(Control^ target,ToolStripStatusLabel^ ToolTip,int x, int y);
 
         /** Scrolls in the Navigation (PictureBoxes) when clicking one of the two buttons
         */
         void Scroll(Object^  sender, EventArgs^  e);
 
-        /** Sets the focus a the clicked PictureBox (blue frame)
+        /** Sets the focus a the clicked PictureBox (blue frame)(CLickEvent)
         */
         void ChangeFocus(Object^ sender, EventArgs^ e);
+
+        /** Shows the "tooltip) on MousOver */
+        void MousOver(Object^ sender, EventArgs^ e);
 
 		/** Unfocus the PictureBoxes, returns true if something was focused
 		*/
@@ -100,6 +103,7 @@ namespace HdB {
     private:
         Point Location;
 		Control^ mParent;			
+        ToolStripStatusLabel^ mToolTip;
         List<NavigationThumb^>^ mPBNavi;
         Label^ mTitle;           //titlelabel over the strip
         NavigationThumb^ mFocusedPb;    //currently focused picturbox

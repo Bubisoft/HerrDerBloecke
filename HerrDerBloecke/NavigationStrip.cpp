@@ -6,9 +6,10 @@
 using namespace HdB;
 using namespace System;
 using namespace System::Diagnostics;
-HdB::NavigationStrip::NavigationStrip(Control^ target,int x, int y)
+HdB::NavigationStrip::NavigationStrip(Control^ target,ToolStripStatusLabel^ tooltip,int x, int y)
 {
 	mParent=target;
+    mToolTip=tooltip;
     Location=Point(x,y); //upper left corner of the Strip
 
     //Label
@@ -88,6 +89,18 @@ void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 	{
         mFocusedPb=nullptr;
     }
+}
+
+void HdB::NavigationStrip::MousOver(Object^ sender, EventArgs^ e)
+{
+    NavigationThumb^ t=(NavigationThumb^)sender;
+    Type^ p=t->UnitType;
+
+    Unit^ unit=safe_cast<Unit^>(Activator::CreateInstance(p,
+                        gcnew array<Object^> {nullptr,
+                        Vector3::Zero}));
+    Costs cost = unit->GetCosts();
+    mToolTip->Text=t->Text + " | " + cost.ToString();
 }
 
 void HdB::NavigationStrip::Resize()
@@ -304,6 +317,7 @@ void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,E
     if(ForeGround!=nullptr)
         mPBNavi[mPBNavi->Count-1]->Image=Image::FromFile(THUMB_PATH + ForeGround + ".png");
     mPBNavi[mPBNavi->Count-1]->Click+=CalledFunction;
+    mPBNavi[mPBNavi->Count-1]->MouseHover+=gcnew EventHandler(this,&NavigationStrip::MousOver);
     mPBNavi[mPBNavi->Count-1]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
     mPBNavi[mPBNavi->Count-1]->Size=Size(PB_WIDTH,PB_HEIGHT);
     mPBNavi[mPBNavi->Count-1]->SizeMode=PictureBoxSizeMode::StretchImage;

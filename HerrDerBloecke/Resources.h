@@ -7,6 +7,11 @@ namespace HdB {
         int Gold;
         int Blockterie;
         int Food;
+
+        virtual System::String^ ToString()  override{
+         
+            return "Blockterie: " + Blockterie + " Gold: " + Gold + " Food: " + Food;
+        }
     };
 
     enum ProductionType{eGold,eBlockterie,eFood};

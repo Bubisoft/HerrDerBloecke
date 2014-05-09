@@ -44,6 +44,7 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
     if (placeholder)
         placeholder->Spawn();
     mBuildTasks->Add(task);
+    Res->Pay(unit->GetCosts());
 }
 
 void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)

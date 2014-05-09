@@ -44,7 +44,7 @@ namespace HdB {
             mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
-            mNavi = gcnew NavigationStrip(this, mRenderFrame->Location.X, mNotificationBox->_Location.Y);
+            mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
@@ -89,6 +89,7 @@ namespace HdB {
     private: System::Windows::Forms::Timer^  labelTimer;
     private: System::Windows::Forms::StatusStrip^  statusStrip1;
     private: System::Windows::Forms::Timer^  resourcesTimer;
+    private: System::Windows::Forms::ToolStripStatusLabel^  ToolTipLabel;
 
 
     private: System::Windows::Forms::Button^  btnGraph;
@@ -110,7 +111,9 @@ namespace HdB {
             this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
             this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
             this->resourcesTimer = (gcnew System::Windows::Forms::Timer(this->components));
+            this->ToolTipLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
+            this->statusStrip1->SuspendLayout();
             this->SuspendLayout();
             // 
             // mRenderFrame
@@ -193,6 +196,7 @@ namespace HdB {
             // 
             // statusStrip1
             // 
+            this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->ToolTipLabel});
             this->statusStrip1->Location = System::Drawing::Point(0, 539);
             this->statusStrip1->Name = L"statusStrip1";
             this->statusStrip1->Size = System::Drawing::Size(784, 22);
@@ -204,6 +208,11 @@ namespace HdB {
             this->resourcesTimer->Enabled = true;
             this->resourcesTimer->Interval = 1500;
             this->resourcesTimer->Tick += gcnew System::EventHandler(this, &MainWindow::resourcesTimer_Tick);
+            // 
+            // ToolTipLabel
+            // 
+            this->ToolTipLabel->Name = L"ToolTipLabel";
+            this->ToolTipLabel->Size = System::Drawing::Size(0, 17);
             // 
             // MainWindow
             // 
@@ -228,6 +237,8 @@ namespace HdB {
             this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainWindow::MainWindow_KeyPress);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
+            this->statusStrip1->ResumeLayout(false);
+            this->statusStrip1->PerformLayout();
             this->ResumeLayout(false);
             this->PerformLayout();
 
@@ -308,8 +319,6 @@ namespace HdB {
                         mRenderer->Camera->Unproject2D(e->Location)}));
                     mPlayer->BuildUnit(unit, unit->BuildTime(), placeholderUnit);
                     mRenderer->Map->AddUnit(unit);
-                    // Pay resources for building
-                    mPlayer->Res->Pay(unit->GetCosts());
                 } else {
                     mNavi->BuildingMenuView();
                 }
