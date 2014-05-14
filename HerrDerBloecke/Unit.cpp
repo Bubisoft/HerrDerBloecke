@@ -101,6 +101,11 @@ HdB::ZuseZ3::ZuseZ3(HdB::Model^ model, const Vector3% pos)
 {
 }
 
+HdB::Wirth::Wirth(HdB::Model^ model, const Vector3% pos)
+    : Soldier(model, pos)
+{
+}
+
 /*************
  * BUILDINGS *
  *************/
