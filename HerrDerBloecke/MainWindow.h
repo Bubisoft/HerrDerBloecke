@@ -28,7 +28,6 @@ namespace HdB {
         {
             InitializeComponent();
             mMousePos = this->MousePosition;
-            mMousePosSet = false;
             mOptions = gcnew Options();
             mOptions->SaveEvent+=gcnew Options::SaveClick(this,&MainWindow::SaveGame);
             mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
@@ -79,7 +78,6 @@ namespace HdB {
         AudioSystem^ mAudioSystem;
         Point mMousePos;
         Options^ mOptions;
-        bool mMousePosSet;
     private: System::Windows::Forms::Button^  btnMenu;
     private: System::Windows::Forms::Label^  lblResGold;
     private: System::Windows::Forms::Label^  lblResBlockterie;
@@ -127,6 +125,7 @@ namespace HdB {
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
             this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
+            this->mRenderFrame->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseDown);
             this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
             this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
@@ -260,26 +259,28 @@ namespace HdB {
             mRenderer->Draw();
         }
     private: System::Void mRenderFrame_MouseMove(Object^  sender, MouseEventArgs^  e) {
-            if (e->Button != System::Windows::Forms::MouseButtons::Right &&
-                e->Button != System::Windows::Forms::MouseButtons::Middle)
-                return;
-
-            if (!mMousePosSet) {
-                mMousePos = e->Location;
-                mMousePosSet = true;
-            }
-
             if (e->Button == System::Windows::Forms::MouseButtons::Right) {
                 Vector3 move = Vector3::Subtract(mRenderer->Camera->Unproject2D(mMousePos),
                     mRenderer->Camera->Unproject2D(e->Location));
                 mRenderer->Camera->Move(move);
+                mMousePos = e->Location;
             } else if (e->Button == System::Windows::Forms::MouseButtons::Middle) {
                 mRenderer->Camera->Rotate(Vector2(mMousePos.X - e->Location.X, e->Location.Y - mMousePos.Y));
             }
-            mMousePos = e->Location;
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
-            mMousePosSet = false;
+            if (e->Button == System::Windows::Forms::MouseButtons::Left) {
+                Vector3 a = mRenderer->Camera->Unproject2D(mMousePos);
+                Vector3 b = mRenderer->Camera->Unproject2D(e->Location);
+                List<Unit^>^ units = mRenderer->Map->CheckOccupation(a, b);
+                if (units->Count > 0) {
+                    mRenderer->SelectedUnits->Clear();
+                    mRenderer->SelectedUnits->AddRange(units);
+                }
+            }
+        }
+    private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
+                 mMousePos = e->Location;
         }
     private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
@@ -448,6 +449,6 @@ private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windo
          }
 private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {             
          }
-         
+
 };
 }
