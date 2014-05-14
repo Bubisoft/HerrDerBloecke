@@ -118,6 +118,21 @@ namespace HdB {
         virtual const int Range() override { return 10; }
     };
 
+    ref class Wirth : Soldier
+    {
+    public:
+        Wirth(HdB::Model^ model, const Vector3% pos);
+
+        virtual const int MaxHP() override { return 30; }
+        virtual const UInt16 BuildTime() override { return 7; }
+        virtual const Costs GetCosts() override { return Costs(15, 10, 5); }
+
+        virtual const int Attack() override { return 10; }
+        virtual const int Defense() override { return 20; }
+        virtual const int Speed() override { return 100; }
+        virtual const int Range() override { return 5; }
+    };
+
     /*************
      * BUILDINGS *
      *************/
