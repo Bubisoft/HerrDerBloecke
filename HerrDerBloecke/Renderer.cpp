@@ -1,9 +1,11 @@
 #include "Renderer.h"
+#include "Globals.h"
 #include "Camera.h"
 #include "Model.h"
 #include "Unit.h"
 #include "Map.h"
 #include "HealthBar.h"
+
 HdB::Renderer::Renderer()
 {
     mDrawables = gcnew List<IDrawable^>();
@@ -86,6 +88,11 @@ bool HdB::Renderer::Init(Control^ target)
     mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -30.f, 30.f), Vector3::Zero);
     mMap = gcnew HdB::Map(mDevice);
     mHealthBar = gcnew HealthBar(mDevice);
+    try {
+        mSelectionTexture = Texture::FromFile(mDevice, TEXTURE_PATH + "SelectionFrame.png");
+    } catch (Exception^ e) {
+        Debug::WriteLine("ERROR: Could not load texture SelectionFrame.png");
+    }
 
     return true;
 }
@@ -120,6 +127,8 @@ void HdB::Renderer::Draw()
 
     for each (Unit^ u in mSelectedUnits)
         mHealthBar->DrawForUnit(u);
+
+    DrawSelectionFrame();
 
     mDevice->EndScene();
     mDevice->Present();
@@ -157,6 +166,20 @@ void HdB::Renderer::ResetDevice() {
     l.Range = 500.f;
     mDevice->SetLight(0, l);
     mDevice->EnableLight(0, true);
+}
+
+void HdB::Renderer::DrawSelectionFrame()
+{
+    if (SelectionFrame) {
+        Matrix tr = Matrix::Scaling(Vector3(SelectionFrame->Width / 512.f, SelectionFrame->Height / 512.f, 1.f))
+            * Matrix::Translation(Vector3(SelectionFrame->X, SelectionFrame->Y, 0.f));
+        Sprite^ frame = gcnew Sprite(mDevice);
+        frame->Begin(SpriteFlags::None);
+        frame->Transform = tr;
+        frame->Draw(mSelectionTexture, Color::LightGreen);
+        frame->End();
+        delete frame;
+    }
 }
 
 HdB::Model^ HdB::Renderer::GetModel(String^ name)

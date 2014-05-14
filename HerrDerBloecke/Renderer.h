@@ -4,6 +4,7 @@
 
 using namespace System;
 using namespace System::Diagnostics;
+using namespace System::Drawing;
 using namespace System::Windows::Forms;
 using namespace System::Collections::Generic;
 using namespace SlimDX;
@@ -56,9 +57,11 @@ namespace HdB {
         property List<Unit^>^ SelectedUnits {
             List<Unit^>^ get() { return mSelectedUnits; }
         }
+        property Rectangle^ SelectionFrame;
 
     private:
         void ResetDevice();
+        void DrawSelectionFrame();
 
         PresentParameters^ mParams;
         Direct3D^ m3D;
@@ -70,6 +73,7 @@ namespace HdB {
         HdB::Map^ mMap;
         HealthBar^ mHealthBar;
         List<Unit^>^ mSelectedUnits;
+        Texture^ mSelectionTexture;
         long long mFrameTime;
     };
 }

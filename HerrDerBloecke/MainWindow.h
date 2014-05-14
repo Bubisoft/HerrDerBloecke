@@ -266,6 +266,9 @@ namespace HdB {
                 mMousePos = e->Location;
             } else if (e->Button == System::Windows::Forms::MouseButtons::Middle) {
                 mRenderer->Camera->Rotate(Vector2(mMousePos.X - e->Location.X, e->Location.Y - mMousePos.Y));
+                mMousePos = e->Location;
+            } else if (e->Button == System::Windows::Forms::MouseButtons::Left) {
+                mRenderer->SelectionFrame = gcnew Rectangle(mMousePos.X, mMousePos.Y, e->Location.X - mMousePos.X, e->Location.Y - mMousePos.Y);
             }
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
@@ -277,6 +280,7 @@ namespace HdB {
                     mRenderer->SelectedUnits->Clear();
                     mRenderer->SelectedUnits->AddRange(units);
                 }
+                mRenderer->SelectionFrame = nullptr;
             }
         }
     private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
