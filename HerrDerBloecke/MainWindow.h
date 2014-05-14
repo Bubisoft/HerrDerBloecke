@@ -28,7 +28,6 @@ namespace HdB {
         {
             InitializeComponent();
             mMousePos = this->MousePosition;
-            mMousePosSet = false;
             mOptions = gcnew Options();
             mOptions->SaveEvent+=gcnew Options::SaveClick(this,&MainWindow::SaveGame);
             mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
@@ -79,7 +78,6 @@ namespace HdB {
         AudioSystem^ mAudioSystem;
         Point mMousePos;
         Options^ mOptions;
-        bool mMousePosSet;
     private: System::Windows::Forms::Button^  btnMenu;
     private: System::Windows::Forms::Label^  lblResGold;
     private: System::Windows::Forms::Label^  lblResBlockterie;
@@ -271,7 +269,6 @@ namespace HdB {
             }
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
-            mMousePosSet = false;
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
                 Vector3 a = mRenderer->Camera->Unproject2D(mMousePos);
                 Vector3 b = mRenderer->Camera->Unproject2D(e->Location);
