@@ -311,6 +311,8 @@ void HdB::NavigationStrip::AddPictureBox(String^ Background,String^ ForeGround,a
         mPBNavi[mPBNavi->Count-1]->Image=Image::FromFile(THUMB_PATH + ForeGround + ".png");
     for each(EventHandler^ e in CalledFunction)
         mPBNavi[mPBNavi->Count-1]->Click+=e;
+    mPBNavi[mPBNavi->Count-1]->MouseHover+=gcnew EventHandler(this,&NavigationStrip::MousOver);
+    mPBNavi[mPBNavi->Count-1]->MouseLeave+=gcnew EventHandler(this,&NavigationStrip::MouseLeave);
     mPBNavi[mPBNavi->Count-1]->Location=Point(Location.X,mTitle->Location.Y+mTitle->Size.Height);
     mPBNavi[mPBNavi->Count-1]->Size=Size(PB_WIDTH,PB_HEIGHT);
     mPBNavi[mPBNavi->Count-1]->SizeMode=PictureBoxSizeMode::StretchImage;
