@@ -48,7 +48,7 @@ namespace HdB {
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
             /** FOR TESTING */
-            Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
+            Unit^ u = gcnew Hauptgebaeude(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
             mPlayer->Units->Add(u);
             u->Spawn();
             mRenderer->Map->AddUnit(u);

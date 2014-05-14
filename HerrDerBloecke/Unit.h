@@ -136,6 +136,15 @@ namespace HdB {
     /*************
      * BUILDINGS *
      *************/
+    ref class Hauptgebaeude: Building
+    {
+    public:
+        Hauptgebaeude(HdB::Model^ model, const Vector3% pos);
+        virtual const int MaxHP() override { return 500; }
+        virtual const UInt16 BuildTime() override { return 0; }
+        virtual const Costs GetCosts() override { return Costs(0, 0, 0); }
+    };
+
     ref class Blockhuette : ProductionBuilding
     {
     public:

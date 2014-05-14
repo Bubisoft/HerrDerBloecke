@@ -110,6 +110,11 @@ HdB::Wirth::Wirth(HdB::Model^ model, const Vector3% pos)
  * BUILDINGS *
  *************/
 
+HdB::Hauptgebaeude::Hauptgebaeude(HdB::Model^ model, const Vector3% pos)
+    : Building(model,pos)
+{
+}
+
 HdB::Blockhuette::Blockhuette(HdB::Model^ model, const Vector3% pos)
     : ProductionBuilding(model, pos), enabled(true)
 {
