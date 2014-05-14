@@ -272,13 +272,12 @@ namespace HdB {
                 mRenderer->SelectionFrame = gcnew Rectangle(mMousePos.X, mMousePos.Y, e->Location.X - mMousePos.X, e->Location.Y - mMousePos.Y);
 
             }
-
-            if(mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location))!=nullptr)
+            Unit^ mouseUnit=mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
+            if(mouseUnit!=nullptr)
             {
                 if(mRenderer->SelectedUnits->Count <= 0)
                     return;
-                for each(Unit^ u in mPlayer->Units) // check if our mousepos is one of the players unit
-                    if(u == mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location)))
+                if(mPlayer->Units->Contains(mouseUnit))
                         return;
                 this->Cursor->Current=gcnew System::Windows::Forms::Cursor("attackcursor.cur");
             }            
