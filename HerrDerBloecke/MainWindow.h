@@ -49,6 +49,7 @@ namespace HdB {
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
             /** FOR TESTING */
             Unit^ u = gcnew TestUnit(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
+            mPlayer->Units->Add(u);
             u->Spawn();
             mRenderer->Map->AddUnit(u);
             /** END TESTING */
@@ -266,7 +267,18 @@ namespace HdB {
                 mMousePos = e->Location;
             } else if (e->Button == System::Windows::Forms::MouseButtons::Middle) {
                 mRenderer->Camera->Rotate(Vector2(mMousePos.X - e->Location.X, e->Location.Y - mMousePos.Y));
+                mMousePos=e->Location;
             }
+
+            if(mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location))!=nullptr)
+            {
+                if(mRenderer->SelectedUnits->Count <= 0)
+                    return;
+                for each(Unit^ u in mPlayer->Units) // check if our mousepos is one of the players unit
+                    if(u == mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location)))
+                        return;
+                this->Cursor->Current=gcnew System::Windows::Forms::Cursor("attackcursor.cur");
+            }            
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
