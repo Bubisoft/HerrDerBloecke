@@ -51,10 +51,15 @@ namespace HdB {
          */
         Unit^ CheckOccupation(const Vector3% posOnGround);
 
-        /** Check whether units are occupying the given positions area. Returns a
-         *  list of the units in that area.
+        /** Check whether units are occupying the rectangle of the given two positions. Returns a
+        *  list of the units in that area.
+        */
+        List<Unit^>^ CheckOccupation(const Vector3% a, const Vector3% b);
+
+        /** Check whether units are occupying the area of the given four polygon points.
+         *  Returns a list of the units in that area.
          */
-        List<Unit^>^ CheckOccupation(const Vector3% minPos, const Vector3% maxPos);
+        List<Unit^>^ CheckOccupation(const Vector3% a, const Vector3% b, const Vector3% c, const Vector3% d);
 
         /** Check whether we can build a unit or if it would collide with other units. */
         bool CanBuild(Unit^ unit);

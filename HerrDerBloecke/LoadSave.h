@@ -1,7 +1,7 @@
 #pragma once
-#include "Map.h";
-#include "Renderer.h";
-#include "Player.h";
+#include "Map.h"
+#include "Renderer.h"
+#include "Player.h"
 
 using namespace System;
 using namespace System::Windows::Forms;

@@ -127,11 +127,10 @@ namespace HdB {
             this->mRenderFrame->Size = System::Drawing::Size(760, 419);
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
-            this->mRenderFrame->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseClick);
+            this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseDown);
             this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
-            this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
             // 
             // btnMenu
@@ -272,7 +271,6 @@ namespace HdB {
                 mMousePos = e->Location;
             } else if (e->Button == System::Windows::Forms::MouseButtons::Left) {
                 mRenderer->SelectionFrame = gcnew Rectangle(mMousePos.X, mMousePos.Y, e->Location.X - mMousePos.X, e->Location.Y - mMousePos.Y);
-
             }
             Unit^ mouseUnit=mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if(mouseUnit!=nullptr)
@@ -284,38 +282,19 @@ namespace HdB {
                 this->Cursor->Current=gcnew System::Windows::Forms::Cursor("attackcursor.cur");
             }            
         }
+    private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
+                mMousePos = e->Location;
+        }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
-                Vector3 a = mRenderer->Camera->Unproject2D(mMousePos);
-                Vector3 b = mRenderer->Camera->Unproject2D(e->Location);
-                List<Unit^>^ units = mRenderer->Map->CheckOccupation(a, b);
-                if (units->Count > 0) {
-                    mRenderer->SelectedUnits->Clear();
-                    mRenderer->SelectedUnits->AddRange(units);
-                }
+                // Clear selections
                 mRenderer->SelectionFrame = nullptr;
-            }
-        }
-    private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
-                 mMousePos = e->Location;
-        }
-    private: System::Void mRenderFrame_MouseClick(Object^  sender, MouseEventArgs^  e) {
-            if (e->Button == System::Windows::Forms::MouseButtons::Left) {
-                Unit^ u = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
                 mRenderer->SelectedUnits->Clear();
-                if (u && u->Spawned) {
-                    mRenderer->SelectedUnits->Add(u);
-                    if(u->GetType() == Blockhuette::typeid)
-                        mNavi->BlockhausView(u);
-                    else if (u->GetType() == Blockstatt::typeid)
-                        mNavi->BlockstattView(u);
-                    else if (u->GetType() == Blockwerk::typeid)
-                        mNavi->BlockwerkView(u);
-                    else if (u->GetType() == Blockfarm::typeid)
-                        mNavi->BlockfarmView(u);
-                    else if (u->GetType()->IsSubclassOf(Soldier::typeid))
-                        mNavi->UnitView(u);
-                } else if (mNavi->GetModelString() && mNavi->GetModelType()) {
+
+                if (mNavi->GetModelString() && mNavi->GetModelType()) {
+                    if (mMousePos != e->Location)
+                        return;
+
                     // What unit are we building?
                     Type^ unittype = mNavi->GetModelType();
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
@@ -338,9 +317,36 @@ namespace HdB {
                     mPlayer->BuildUnit(unit, unit->BuildTime(), placeholderUnit);
                     mRenderer->Map->AddUnit(unit);
                 } else {
-                    mNavi->BuildingMenuView();
+                    // Unproject rectangle to ground polygon
+                    Vector3 a = mRenderer->Camera->Unproject2D(mMousePos);
+                    Vector3 b = mRenderer->Camera->Unproject2D(Point(e->Location.X, mMousePos.Y));
+                    Vector3 c = mRenderer->Camera->Unproject2D(e->Location);
+                    Vector3 d = mRenderer->Camera->Unproject2D(Point(mMousePos.X, e->Location.Y));
+                    List<Unit^>^ units = mRenderer->Map->CheckOccupation(a, b, c, d);
+                    for each (Unit^ u in units)
+                        if (u->Spawned)
+                            mRenderer->SelectedUnits->Add(u);
+
+                    // Only one unit selected
+                    if (mRenderer->SelectedUnits->Count == 1) {
+                        Unit^ u = mRenderer->SelectedUnits[0];
+                        if (u->GetType() == Blockhuette::typeid)
+                            mNavi->BlockhausView(u);
+                        else if (u->GetType() == Blockstatt::typeid)
+                            mNavi->BlockstattView(u);
+                        else if (u->GetType() == Blockwerk::typeid)
+                            mNavi->BlockwerkView(u);
+                        else if (u->GetType() == Blockfarm::typeid)
+                            mNavi->BlockfarmView(u);
+                        else if (u->GetType()->IsSubclassOf(Soldier::typeid))
+                            mNavi->UnitView(u);
+                    } else {
+                        mNavi->BuildingMenuView();
+                    }
                 }
             } else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
+                if (e->Location != mMousePos)
+                    return;
                 for each (Unit^ u in mRenderer->SelectedUnits) {
                     if (u->GetType()->IsSubclassOf(Soldier::typeid)) {
                         Vector3 targetLocation = mRenderer->Camera->Unproject2D(e->Location);

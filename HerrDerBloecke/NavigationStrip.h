@@ -114,10 +114,7 @@ namespace HdB {
         Button^ mBtnRight;      //button at the right of the navigation
         Unit^ mFocusedUnit;
                                                            //Reihenfolge  3            2          4               1
-    static const array<String^>^ initBuildings= gcnew array<String^>{"Blockhaus","Blockstatt","Blockwerk", "Kastenfarm"};
-    static const array<Type^>^ initTypes= gcnew array<Type^>{Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Blockfarm::typeid};
+    static array<String^>^ initBuildings = gcnew array<String^> {"Blockhaus", "Blockstatt", "Blockwerk", "Kastenfarm"};
+    static array<Type^>^ initTypes = gcnew array<Type^> {Blockhuette::typeid, Blockstatt::typeid, Blockwerk::typeid, Blockfarm::typeid};
     };
-    
 }
-
-

@@ -26,6 +26,8 @@ void HdB::MapOccupation::Update(const Vector3% pos)
 {
     Point mMinField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Minimum);
     Point mMaxField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Maximum);
+    mMinField.X--; mMinField.Y--;
+    mMaxField.X++; mMaxField.Y++;
     mArea = Rectangle(mMinField.X, mMinField.Y, mMaxField.X - mMinField.X, mMaxField.Y - mMinField.Y);
 }
 
@@ -106,14 +108,36 @@ HdB::Unit^ HdB::Map::CheckOccupation(const Vector3% posOnGround)
     return nullptr;
 }
 
-List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% corner1, const Vector3% corner2)
+List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% a, const Vector3% b)
 {
-    Point minField = GetFieldCoordinate(Vector3(Math::Min(corner1.X, corner2.X), Math::Min(corner1.Y, corner2.Y), 0.f));
-    Point maxField = GetFieldCoordinate(Vector3(Math::Max(corner1.X, corner2.X), Math::Max(corner1.Y, corner2.Y), 0.f));
+    Point minField = GetFieldCoordinate(Vector3(Math::Min(a.X, b.X), Math::Min(a.Y, b.Y), 0.f));
+    Point maxField = GetFieldCoordinate(Vector3(Math::Max(a.X, b.X), Math::Max(a.Y, b.Y), 0.f));
     Rectangle area(minField.X, minField.Y, maxField.X - minField.X, maxField.Y - minField.Y);
     List<HdB::Unit^>^ units = gcnew List<HdB::Unit^>();
     for each (MapOccupation^ occ in mOccupations)
-        if (occ->Area.IntersectsWith(area))
+    if (occ->Area.IntersectsWith(area))
+        units->Add(occ->Unit);
+    return units;
+}
+
+List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% a, const Vector3% b, const Vector3% c, const Vector3% d)
+{
+    List<HdB::Unit^>^ units = gcnew List<HdB::Unit^>();
+    Point field1 = GetFieldCoordinate(a);
+    Point field2 = GetFieldCoordinate(b);
+    Point field3 = GetFieldCoordinate(c);
+    Point field4 = GetFieldCoordinate(d);
+    System::Drawing::Drawing2D::GraphicsPath^ path = gcnew System::Drawing::Drawing2D::GraphicsPath();
+    path->AddPolygon(gcnew array<Point> {field1, field2, field3, field4});
+    if (path->GetBounds().IsEmpty) {
+        Unit^ u = CheckOccupation(a);
+        if (u)
+            units->Add(u);
+        return units;
+    }
+    Region^ area = gcnew Region(path);
+    for each (MapOccupation^ occ in mOccupations)
+        if (area->IsVisible(occ->Area))
             units->Add(occ->Unit);
     return units;
 }
