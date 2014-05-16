@@ -88,11 +88,6 @@ bool HdB::Renderer::Init(Control^ target)
     mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -30.f, 30.f), Vector3::Zero);
     mMap = gcnew HdB::Map(mDevice);
     mHealthBar = gcnew HealthBar(mDevice);
-    try {
-        mSelectionTexture = Texture::FromFile(mDevice, TEXTURE_PATH + "SelectionFrame.png");
-    } catch (Exception^ e) {
-        Debug::WriteLine("ERROR: Could not load texture SelectionFrame.png");
-    }
 
     return true;
 }
@@ -171,14 +166,22 @@ void HdB::Renderer::ResetDevice() {
 void HdB::Renderer::DrawSelectionFrame()
 {
     if (SelectionFrame) {
-        Matrix tr = Matrix::Scaling(Vector3(SelectionFrame->Width / 512.f, SelectionFrame->Height / 512.f, 1.f))
-            * Matrix::Translation(Vector3(SelectionFrame->X, SelectionFrame->Y, 0.f));
-        Sprite^ frame = gcnew Sprite(mDevice);
-        frame->Begin(SpriteFlags::None);
-        frame->Transform = tr;
-        frame->Draw(mSelectionTexture, Color::LightGreen);
-        frame->End();
-        delete frame;
+        // Create 2D Box as Rectangle
+        float width = 2.f * SelectionFrame->Width / mDevice->Viewport.Width;
+        float height = 2.f * SelectionFrame->Height / mDevice->Viewport.Height;
+        float x = 2.f * SelectionFrame->X / mDevice->Viewport.Width + width / 2.f - 1.f;
+        float y = -(2.f * SelectionFrame->Y / mDevice->Viewport.Height + height / 2.f - 1.f);
+        Mesh^ box = Mesh::CreateBox(mDevice, Math::Abs(width), Math::Abs(height), 0.f);
+        mDevice->SetTransform(TransformState::World, Matrix::Translation(Vector3(x, y, 0.f)));
+        mDevice->SetTransform(TransformState::View, Matrix::Identity);
+        mDevice->SetTransform(TransformState::Projection, Matrix::Identity);
+
+        // Draw Rectangle
+        Material m;
+        m.Diffuse = Color4(0.1f, 0.f, 1.f, 0.f);
+        mDevice->Material = m;
+        box->DrawSubset(0);
+        delete box;
     }
 }
 

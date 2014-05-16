@@ -23,7 +23,8 @@ HdB::HealthBar::~HealthBar()
 void HdB::HealthBar::DrawForUnit(Unit^ unit)
 {
     mSprite = gcnew Sprite(mDevice);
-    Vector3 pos3D = Vector3(unit->Position.X, unit->Position.Y, 20.f); // Draw 20m above unit
+    float barZ = unit->GetType()->IsSubclassOf(Soldier::typeid) ? 5.f : 20.f;
+    Vector3 pos3D = Vector3(unit->Position.X, unit->Position.Y, barZ);
     mSprite->SetWorldViewRH(Matrix::Translation(pos3D), mDevice->GetTransform(TransformState::View));
     mSprite->Begin(SpriteFlags::Billboard);
 

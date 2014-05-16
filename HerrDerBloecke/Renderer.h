@@ -73,7 +73,6 @@ namespace HdB {
         HdB::Map^ mMap;
         HealthBar^ mHealthBar;
         List<Unit^>^ mSelectedUnits;
-        Texture^ mSelectionTexture;
         long long mFrameTime;
     };
 }
