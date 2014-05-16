@@ -30,7 +30,10 @@ NotificationBox::NotificationBox(Control^ target,int x,int y)
 	this->GotFocus +=gcnew System::EventHandler(this,&NotificationBox::BoxGotFocus);
     target->Controls->Add(this);
 }
-
+HdB::NotificationBox::~NotificationBox()
+{
+    delete mTitle;
+}
 void NotificationBox::Resize(Control^ hwnd)
 {
     this->Location=Point(hwnd->Width*0.4,this->Location.Y);

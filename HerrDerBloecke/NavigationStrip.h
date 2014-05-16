@@ -32,6 +32,7 @@ namespace HdB {
     {
     public:
         NavigationStrip(Control^ target,ToolStripStatusLabel^ ToolTip,int x, int y);
+        ~NavigationStrip();
 
         /** Scrolls in the Navigation (PictureBoxes) when clicking one of the two buttons
         */

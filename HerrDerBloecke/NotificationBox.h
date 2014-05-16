@@ -12,6 +12,7 @@ namespace HdB{
     {
     public:
         NotificationBox(Control^ target,int x,int y);
+        ~NotificationBox();
 
         void SendMessage(String^ msg);  //appends the message to the textbox
 

@@ -46,6 +46,17 @@ HdB::NavigationStrip::NavigationStrip(Control^ target,ToolStripStatusLabel^ tool
     BuildingMenuView();
 }
 
+HdB::NavigationStrip::~NavigationStrip()
+{
+    for each(NavigationThumb^ thumb in mPBNavi)
+        delete thumb;
+    delete mTitle;
+    delete mToolTip;
+    delete mFocusedPb;
+    delete mBtnLeft;
+    delete mBtnRight;
+}
+
 void HdB::NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
 {
     Image^ temp1=mPBNavi[0]->BackgroundImage;

@@ -67,6 +67,8 @@ namespace HdB {
             }
             delete mRenderer;
             delete mAudioSystem;
+            delete mNavi;
+            delete mNotificationBox;
         }
 
     private:
