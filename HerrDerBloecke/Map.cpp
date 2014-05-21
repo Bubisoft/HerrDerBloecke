@@ -6,8 +6,8 @@
 using namespace System::IO;
 using namespace System::Diagnostics;
 
-#define FIELDS_X 255
-#define FIELDS_Y 255
+#define FIELDS_X 2049
+#define FIELDS_Y 2049
 #define FIELD_WIDTH 1.f
 #define FIELD_HEIGHT 1.f
 #define DIFFERENT_FIELDS 3

@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Map.h"
 #include "Player.h"
+#include "PlayerAI.h"
 #include "NavigationStrip.h"
 #include "NotificationBox.h"
 #include "Resources.h"
@@ -42,6 +43,7 @@ namespace HdB {
             mAudioSystem->Init(mRenderFrame);
             mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
+            mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
@@ -77,6 +79,7 @@ namespace HdB {
         NavigationStrip^ mNavi;
         NotificationBox^ mNotificationBox;
         Player^ mPlayer;
+        PlayerAI^ mComputerPlayer;
         Renderer^ mRenderer;
         AudioSystem^ mAudioSystem;
         Point mMousePos;

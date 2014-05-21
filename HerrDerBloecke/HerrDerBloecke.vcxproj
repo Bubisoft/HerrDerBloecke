@@ -144,6 +144,7 @@
     <ClCompile Include="NavigationStrip.cpp" />
     <ClCompile Include="NotificationBox.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerAI.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Sound.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="NavigationStrip.h" />
     <ClInclude Include="NotificationBox.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerAI.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Sound.h" />
