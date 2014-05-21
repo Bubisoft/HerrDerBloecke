@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "Unit.h"
+#include "Renderer.h"
 #include "Globals.h"
 
 using namespace System::IO;
@@ -44,10 +45,10 @@ ref struct HdB::Submesh
     }
 };
 
-HdB::Model::Model(String^ name, Device^ device)
+HdB::Model::Model(String^ name, Renderer^ renderer)
 {
     Name = name;
-    mDevice = device;
+    mRenderer = renderer;
     mMeshes = gcnew List<Submesh^>();
     mInstances = gcnew List<Unit^>();
 
@@ -75,12 +76,13 @@ void HdB::Model::RemoveInstance(Unit^ unit)
 
 void HdB::Model::Draw(long long timeSinceLastFrame)
 {
+    Device^ dev = mRenderer->D3DDevice;
     for each (Submesh^ m in mMeshes) {
-        mDevice->Material = m->material;
-        mDevice->VertexFormat = Vertex::Format;
-        mDevice->Indices = m->indices;
-        mDevice->SetStreamSource(0, m->vertices, 0, Vertex::Size);
-        mDevice->SetTexture(0, m->texture);
+        dev->Material = m->material;
+        dev->VertexFormat = Vertex::Format;
+        dev->Indices = m->indices;
+        dev->SetStreamSource(0, m->vertices, 0, Vertex::Size);
+        dev->SetTexture(0, m->texture);
 
         for each (Unit^ u in mInstances) {
             if (u->GetType()->IsSubclassOf(Soldier::typeid) && (u->Position != u->MoveTo))
@@ -102,8 +104,8 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                     u->LookAt += mov;
                 }
             }
-            mDevice->SetTransform(TransformState::World, u->GetTransform());
-            mDevice->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,
+            dev->SetTransform(TransformState::World, u->GetTransform());
+            dev->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,
                 m->numVertices, 0, m->numFaces);
         }
     }
@@ -117,18 +119,12 @@ void HdB::Model::SetAlpha(float alpha)
     }
 }
 
-void HdB::Model::SetTeamColor(bool isBlue)
+void HdB::Model::SetTeamColor(Color4 color)
 {
     for each (Submesh^ m in mMeshes) {
-
-        Color4 color;
-
-        if(isBlue)
-            color = Color4(1, 0, 0, 1);
-        else
-            color = Color4(1, 1, 0, 0);
-
         m->material.Diffuse = color;
+        m->material.Specular = Color4(color.Red / 2.f, color.Green / 2.f, color.Blue / 2.f);
+        m->material.Ambient = Color4(color.Red / 4.f, color.Green / 4.f, color.Blue / 4.f);
     }
 }
 
@@ -162,7 +158,7 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             mesh->numFaces = StrToInt(line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1]);
 
             line = reader->ReadLine(); // Vertices
-            mesh->vertices = gcnew VertexBuffer(mDevice, mesh->numVertices * Vertex::Size, Usage::WriteOnly,
+            mesh->vertices = gcnew VertexBuffer(mRenderer->D3DDevice, mesh->numVertices * Vertex::Size, Usage::WriteOnly,
                 Vertex::Format, Pool::Managed);
             DataStream^ vBuf = mesh->vertices->Lock(0, 0, LockFlags::None);
             for (int vert = 0; vert < mesh->numVertices; vert++) {
@@ -178,7 +174,7 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
             line = reader->ReadLine(); // Close Vertices
 
             line = reader->ReadLine(); // Faces
-            mesh->indices = gcnew IndexBuffer(mDevice, mesh->numFaces * 3 * sizeof(UInt32),
+            mesh->indices = gcnew IndexBuffer(mRenderer->D3DDevice, mesh->numFaces * 3 * sizeof(UInt32),
                 Usage::WriteOnly, Pool::Managed, false);
             DataStream^ iBuf = mesh->indices->Lock(0, 0, LockFlags::None);
             for (int face = 0; face < mesh->numFaces; face++) {
@@ -209,7 +205,7 @@ void HdB::Model::LoadFromHBMFile(String^ filename)
                 line = reader->ReadLine(); // TextureName
                 String^ texture = TEXTURE_PATH + line->Split(controlChars, StringSplitOptions::RemoveEmptyEntries)[1];
                 try {
-                    mesh->texture = Texture::FromFile(mDevice, texture, Usage::None, Pool::Managed);
+                    mesh->texture = Texture::FromFile(mRenderer->D3DDevice, texture, Usage::None, Pool::Managed);
                 } catch (Exception^ e) {
                     mesh->texture = nullptr;
                     Debug::WriteLine("ERROR: Could not load texture " + texture);

@@ -9,6 +9,7 @@ using namespace SlimDX::Direct3D9;
 
 namespace HdB {
     // Forward declarations
+    ref class Renderer;
     ref class Unit;
     ref struct Submesh;
 
@@ -20,7 +21,7 @@ namespace HdB {
          *  The Modelname in the file will be ignored as we want to
          *  handle model creation and usage consistently.
          */
-        Model(String^ name, Device^ device);
+        Model(String^ name, Renderer^ device);
 
         /** Destructor */
         virtual ~Model();
@@ -34,11 +35,12 @@ namespace HdB {
         /** Draw all of our model instances. */
         virtual void Draw(long long timeSinceLastFrame);
 
-        /** Set Alpha */
+        /** Set alpha blending (opacity) of the model. */
         void SetAlpha(float alpha);
 
-        /** Set Teamcolor */
-        void SetTeamColor(bool isBlue);
+        /** Overwrite diffuse color, used to display a player's units
+         *  in a specific color. */
+        void SetTeamColor(Color4 color);
 
         property String^ Name;
         property BoundingBox Bounds {
@@ -50,7 +52,7 @@ namespace HdB {
     private:
         void LoadFromHBMFile(String^ filename);
 
-        Device^ mDevice;
+        Renderer^ mRenderer;
         List<Submesh^>^ mMeshes;
         List<Unit^>^ mInstances;
         BoundingBox mBounds;

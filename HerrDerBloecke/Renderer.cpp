@@ -90,7 +90,7 @@ bool HdB::Renderer::Init(Control^ target)
     ResetDevice();
 
     mCamera = gcnew HdB::Camera(mDevice, Vector3(0.f, -30.f, 30.f), Vector3::Zero);
-    mMap = gcnew HdB::Map(mDevice);
+    mMap = gcnew HdB::Map(this);
     mHealthBar = gcnew HealthBar(mDevice);
 
     return true;
@@ -161,11 +161,11 @@ void HdB::Renderer::ResetDevice() {
     mDevice->SetSamplerState(0, SamplerState::MipFilter, TextureFilter::Linear);
 
     Light l;
-    l.Position = Vector3(100.f, 100.f, -100.f);
+    l.Position = Vector3(1000.f, 1000.f, -1000.f);
     l.Type = LightType::Point;
     l.Direction = Vector3::Zero;
     l.Diffuse = Color4(1.f, 1.f, 1.f);
-    l.Range = 500.f;
+    l.Range = 5000.f;
     mDevice->SetLight(0, l);
     mDevice->EnableLight(0, true);
 }
@@ -199,8 +199,8 @@ HdB::Model^ HdB::Renderer::GetBlueModel(String^ name)
         if ((m = dynamic_cast<Model^>(d)) && m->Name == name)
             return m;
 
-    m = gcnew Model(name, mDevice);
-    m->SetTeamColor(true);
+    m = gcnew Model(name, this);
+    m->SetTeamColor(Color4(0.f, 0.f, 1.f));
     mBlueDrawables->Add(m);
 
     return m;
@@ -213,8 +213,8 @@ HdB::Model^ HdB::Renderer::GetRedModel(String^ name)
         if ((m = dynamic_cast<Model^>(d)) && m->Name == name)
             return m;
 
-    m = gcnew Model(name, mDevice);
-    m->SetTeamColor(false);
+    m = gcnew Model(name, this);
+    m->SetTeamColor(Color4(1.f, 0.f, 0.f));
     mRedDrawables->Add(m);
 
     return m;
@@ -228,7 +228,7 @@ HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)
             if (m->Name == name)
                 return m;
     }
-    m = gcnew Model(name, mDevice);
+    m = gcnew Model(name, this);
     m->SetAlpha(0.5f); //Hardcoded alpha
     mAlphaDrawables->Add(m);
     return m;

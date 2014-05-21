@@ -18,7 +18,7 @@ Matrix HdB::Camera::ViewMatrix()
 Matrix HdB::Camera::ProjectionMatrix()
 {
     return Matrix::PerspectiveFovRH(System::Math::PI / 4.f, mDevice->Viewport.Width * 1.f / mDevice->Viewport.Height,
-        1.0f, 1000.0f);
+        1.0f, 5000.0f);
 }
 
 Vector3 HdB::Camera::Unproject2D(System::Drawing::Point pos)

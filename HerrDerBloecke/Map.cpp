@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "Renderer.h"
 #include "Globals.h"
 #include "Unit.h"
 #include "Model.h"
@@ -35,21 +36,20 @@ void HdB::MapOccupation::Update(const Vector3% pos)
  * Map *
  *******/
 
-HdB::Map::Map(Device^ device)
-: mDevice(device)
+HdB::Map::Map(Renderer^ renderer) : mRenderer(renderer)
 {
     mOccupations = gcnew List<MapOccupation^>();
 
     String^ texture = "Grass.png";
     try {
-        mTexture = Texture::FromFile(mDevice, TEXTURE_PATH + texture, Usage::None, Pool::Managed);
+        mTexture = Texture::FromFile(mRenderer->D3DDevice, TEXTURE_PATH + texture, Usage::None, Pool::Managed);
     } catch (Exception^ e) {
         mTexture = nullptr;
         Debug::WriteLine("ERROR: Could not load texture " + texture);
     }
 
-    Mesh^ temp = Mesh::CreateBox(mDevice, FIELDS_X * FIELD_WIDTH, FIELDS_Y * FIELD_HEIGHT, 0.f);
-    mGroundMesh = temp->Clone(mDevice, temp->CreationOptions, VertexFormat::Position | VertexFormat::Texture1);
+    Mesh^ temp = Mesh::CreateBox(mRenderer->D3DDevice, FIELDS_X * FIELD_WIDTH, FIELDS_Y * FIELD_HEIGHT, 0.f);
+    mGroundMesh = temp->Clone(mRenderer->D3DDevice, temp->CreationOptions, VertexFormat::Position | VertexFormat::Texture1);
     delete temp;
     DataStream^ dataStream = mGroundMesh->LockVertexBuffer(LockFlags::None);
     array<Vector3>^ vectors = D3DX::GetVectors(dataStream, mGroundMesh->VertexCount, mGroundMesh->VertexFormat);
@@ -77,10 +77,10 @@ HdB::Map::~Map()
 
 void HdB::Map::Draw(long long timeSinceLastFrame)
 {
-    mDevice->Material = mMaterial;
-    mDevice->SetTexture(0, mTexture);
+    mRenderer->D3DDevice->Material = mMaterial;
+    mRenderer->D3DDevice->SetTexture(0, mTexture);
         
-    mDevice->SetTransform(TransformState::World, Matrix::Translation(Vector3::Zero));
+    mRenderer->D3DDevice->SetTransform(TransformState::World, Matrix::Translation(Vector3::Zero));
     mGroundMesh->DrawSubset(0);
 }
 

@@ -10,6 +10,7 @@ using namespace SlimDX::Direct3D9;
 
 namespace HdB {
     ref class Unit;
+    ref class Renderer;
 
     ref class MapOccupation
     {
@@ -33,7 +34,7 @@ namespace HdB {
     {
     public:
         /** Construct our renderable map. Just a simple grass ground for now. */
-        Map(Device^ device);
+        Map(Renderer^ renderer);
 
         virtual ~Map();
 
@@ -71,7 +72,7 @@ namespace HdB {
         /** Saves the map with the passed StreamWriter*/
         //virtual void Save(BinaryWriter^ bw);
     private:
-        Device^ mDevice;
+        Renderer^ mRenderer;
         Mesh^ mGroundMesh;
         Texture^ mTexture;
         Material mMaterial;
