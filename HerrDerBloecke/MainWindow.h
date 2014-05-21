@@ -406,7 +406,7 @@ namespace HdB {
                  {
                      if(b->GetProductionType()==ProductionType::eGold)
                      {
-                        if(dynamic_cast<Blockhuette^>(b)->enabled==true)
+                        if(dynamic_cast<Blockhuette^>(b)->Enabled==true)
                             mPlayer->AddGoldUnit(-1);
                      }
                      else if(b->GetProductionType()==ProductionType::eFood)

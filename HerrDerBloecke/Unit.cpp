@@ -1,6 +1,10 @@
 #include "Unit.h"
 #include "Model.h"
 #include "Renderer.h"
+
+#define DEFAULT_CONSTRUCTOR(UnitType, Parent) \
+    HdB::UnitType::UnitType(HdB::Model^ model, const Vector3% pos) : Parent(model, pos) {}
+
 HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
 {
     mModel = model;
@@ -72,81 +76,39 @@ HdB::Unit^ HdB::Unit::Load(BinaryReader^ br,Renderer^ renderer)
                         Pos}));
     u->LookAt=lookAt;
     if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
-        b->enabled=br->ReadBoolean();
+        b->Enabled=br->ReadBoolean();
 
     return u;
 }
 
-HdB::Building::Building(HdB::Model^ model, const Vector3% pos)
-    : Unit(model, pos)
-{
-}
+/*********************
+ * Unit Constructors *
+ *********************/
 
-HdB::Soldier::Soldier(HdB::Model^ model, const Vector3% pos)
-    : Unit(model, pos)
-{
-}
+// Unit base types
+DEFAULT_CONSTRUCTOR(Soldier, Unit);
+DEFAULT_CONSTRUCTOR(Building, Unit);
+DEFAULT_CONSTRUCTOR(ProductionBuilding, Building);
 
-HdB::ProductionBuilding::ProductionBuilding(HdB::Model^ model, const Vector3% pos)
-    : Building(model, pos)
-{
-}
+// Soldier types
+DEFAULT_CONSTRUCTOR(ZuseZ3, Soldier);
+DEFAULT_CONSTRUCTOR(Wirth, Soldier);
+DEFAULT_CONSTRUCTOR(TestUnit, Soldier); // Maybe this should be removed later
 
-/***********
- * SOLDIER *
- ***********/
-
-HdB::ZuseZ3::ZuseZ3(HdB::Model^ model, const Vector3% pos)
-    : Soldier(model, pos)
-{
-}
-
-HdB::Wirth::Wirth(HdB::Model^ model, const Vector3% pos)
-    : Soldier(model, pos)
-{
-}
-
-/*************
- * BUILDINGS *
- *************/
-
-HdB::Hauptgebaeude::Hauptgebaeude(HdB::Model^ model, const Vector3% pos)
-    : Building(model,pos)
-{
-}
+// Building types
+DEFAULT_CONSTRUCTOR(Hauptgebaeude, Building);
+DEFAULT_CONSTRUCTOR(Blockstatt, Building);
+DEFAULT_CONSTRUCTOR(Blockwerk, ProductionBuilding);
+DEFAULT_CONSTRUCTOR(Blockfarm, ProductionBuilding);
 
 HdB::Blockhuette::Blockhuette(HdB::Model^ model, const Vector3% pos)
-    : ProductionBuilding(model, pos), enabled(true)
+    : ProductionBuilding(model, pos)
 {
+    Enabled = true;
 }
 
 void HdB::Blockhuette::Save(BinaryWriter^ br)
 {
     Unit::Save(br);
-    br->Write(enabled);
-}
-
-HdB::Blockstatt::Blockstatt(HdB::Model^ model, const Vector3% pos)
-    : Building(model, pos)
-{
-}
-
-HdB::Blockwerk::Blockwerk(HdB::Model^ model, const Vector3% pos)
-    : ProductionBuilding(model, pos)
-{
-}
-
-HdB::Blockfarm::Blockfarm(HdB::Model^ model, const Vector3% pos)
-    : ProductionBuilding(model, pos)
-{
-}
-
-
-
-/********
- * TEMP *
- ********/
-HdB::TestUnit::TestUnit(HdB::Model^ model, const Vector3% pos)
-    : Soldier(model, pos)
-{
+    br->Write(Enabled);
 }

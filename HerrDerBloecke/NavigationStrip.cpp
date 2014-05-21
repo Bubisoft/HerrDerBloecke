@@ -203,13 +203,13 @@ void HdB::NavigationStrip::BlockhausViewClick(Object^  sender, EventArgs^  e)
     if(pb->Image!=nullptr) //enabled gold production
     {
         pb->Image=nullptr;
-        dynamic_cast<Blockhuette^>(mFocusedUnit)->enabled=true;
+        dynamic_cast<Blockhuette^>(mFocusedUnit)->Enabled=true;
         ProductionSwitched(1);
     }
     else //Disabled gold Production -> showing overlayed cross
     {
         pb->Image=Image::FromFile(THUMB_PATH+"cross.png");
-        dynamic_cast<Blockhuette^>(mFocusedUnit)->enabled=false;
+        dynamic_cast<Blockhuette^>(mFocusedUnit)->Enabled=false;
         ProductionSwitched(-1);
     }
 }
@@ -229,7 +229,7 @@ void HdB::NavigationStrip::BlockhausView(Unit^ u)
     Unfocus();
     mFocusedUnit=u;
     String^ foreground=nullptr;
-    if(!dynamic_cast<Blockhuette^>(u)->enabled)
+    if(!dynamic_cast<Blockhuette^>(u)->Enabled)
         foreground=gcnew String("cross");
     this->AddPictureBox("goldcoin",foreground,gcnew EventHandler(this,&HdB::NavigationStrip::BlockhausViewClick), nullptr);
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall),nullptr);

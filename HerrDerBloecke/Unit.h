@@ -1,8 +1,10 @@
 #pragma once
 #include "Resources.h"
 #include "ISaveable.h"
+
 using namespace System;
 using namespace SlimDX;
+
 namespace HdB {
     ref class Model;
     ref class Renderer;
@@ -17,7 +19,7 @@ namespace HdB {
         void Despawn();
         Matrix GetTransform();
         void Damage(int dmg);
-        float PercentHP() { return mHP / MaxHP(); }
+        float PercentHP() { return (float)mHP / MaxHP(); }
         
         // Properties
         property HdB::Model^ Model {
@@ -55,6 +57,9 @@ namespace HdB {
         bool mSpawned;
     };
 
+    /*********************
+     * UNIT BASE CLASSES *
+     *********************/
     ref class Building abstract : Unit
     {
     public:
@@ -82,6 +87,18 @@ namespace HdB {
         virtual const ProductionType GetProductionType() = 0;
     };
 
+    /*******************
+     * OVERRIDE MACROS *
+     *******************/
+    #define UNIT_MAXHP(x) virtual const int MaxHP() override { return x; }
+    #define UNIT_BUILDTIME(x) virtual const UInt16 BuildTime() override { return x; }
+    #define UNIT_COSTS(gold, blockt, food) virtual const Costs GetCosts() override { return Costs(gold, blockt, food); }
+    #define SOLDIER_ATTACK(x) virtual const int Attack() override { return x; }
+    #define SOLDIER_DEFENSE(x) virtual const int Defense() override { return x; }
+    #define SOLDIER_SPEED(x) virtual const int Speed() override { return x; }
+    #define SOLDIER_RANGE(x) virtual const int Range() override { return x; }
+    #define PRODUCTION_TYPE(x) virtual const ProductionType GetProductionType() override { return x; }
+
     /********
      * TEMP *
      ********/
@@ -90,14 +107,14 @@ namespace HdB {
     public:
         TestUnit(HdB::Model^ model, const Vector3% pos);
 
-        virtual const int MaxHP() override { return 100; }
-        virtual const UInt16 BuildTime() override { return 5; }
-        virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
+        UNIT_MAXHP(100);
+        UNIT_BUILDTIME(5);
+        UNIT_COSTS(3, 6, 8);
 
-        virtual const int Attack() override { return 10; }
-        virtual const int Defense() override { return 10; }
-        virtual const int Speed() override { return 10; }
-        virtual const int Range() override { return 1; }
+        SOLDIER_ATTACK(10);
+        SOLDIER_DEFENSE(10);
+        SOLDIER_SPEED(10);
+        SOLDIER_RANGE(1);
     };
 
     /************
@@ -108,14 +125,14 @@ namespace HdB {
     public:
         ZuseZ3(HdB::Model^ model, const Vector3% pos);
 
-        virtual const int MaxHP() override { return 50; }
-        virtual const UInt16 BuildTime() override { return 5; }
-        virtual const Costs GetCosts() override { return Costs(5, 10, 10); }
+        UNIT_MAXHP(50);
+        UNIT_BUILDTIME(5);
+        UNIT_COSTS(5, 10, 10);
 
-        virtual const int Attack() override { return 10; }
-        virtual const int Defense() override { return 10; }
-        virtual const int Speed() override { return 10; }
-        virtual const int Range() override { return 10; }
+        SOLDIER_ATTACK(10);
+        SOLDIER_DEFENSE(10);
+        SOLDIER_SPEED(10);
+        SOLDIER_RANGE(10);
     };
 
     ref class Wirth : Soldier
@@ -123,14 +140,14 @@ namespace HdB {
     public:
         Wirth(HdB::Model^ model, const Vector3% pos);
 
-        virtual const int MaxHP() override { return 30; }
-        virtual const UInt16 BuildTime() override { return 7; }
-        virtual const Costs GetCosts() override { return Costs(15, 10, 5); }
+        UNIT_MAXHP(30);
+        UNIT_BUILDTIME(7);
+        UNIT_COSTS(15, 10, 5);
 
-        virtual const int Attack() override { return 10; }
-        virtual const int Defense() override { return 20; }
-        virtual const int Speed() override { return 100; }
-        virtual const int Range() override { return 5; }
+        SOLDIER_ATTACK(10);
+        SOLDIER_DEFENSE(20);
+        SOLDIER_SPEED(100);
+        SOLDIER_RANGE(5);
     };
 
     /*************
@@ -140,24 +157,10 @@ namespace HdB {
     {
     public:
         Hauptgebaeude(HdB::Model^ model, const Vector3% pos);
-        virtual const int MaxHP() override { return 500; }
-        virtual const UInt16 BuildTime() override { return 0; }
-        virtual const Costs GetCosts() override { return Costs(0, 0, 0); }
-    };
 
-    ref class Blockhuette : ProductionBuilding
-    {
-    public:
-        Blockhuette(HdB::Model^ model, const Vector3% pos);
-
-        virtual const int MaxHP() override { return 100; }
-        virtual const UInt16 BuildTime() override { return 10; }
-        virtual const Costs GetCosts() override { return Costs(3, 6, 8); }
-        virtual const ProductionType GetProductionType() override { return ProductionType::eGold; }
-        virtual void Save(BinaryWriter^ br) override;
-
-    public:
-        bool enabled;
+        UNIT_MAXHP(500);
+        UNIT_BUILDTIME(0);
+        UNIT_COSTS(0, 0, 0);
     };
 
     ref class Blockstatt : Building
@@ -165,9 +168,23 @@ namespace HdB {
     public:
         Blockstatt(HdB::Model^ model, const Vector3% pos);
 
-        virtual const int MaxHP() override { return 100; }
-        virtual const UInt16 BuildTime() override { return 8; }
-        virtual const Costs GetCosts() override { return Costs(3, 3, 3); }
+        UNIT_MAXHP(100);
+        UNIT_BUILDTIME(8);
+        UNIT_COSTS(3, 3, 3);
+    };
+
+    ref class Blockhuette : ProductionBuilding
+    {
+    public:
+        Blockhuette(HdB::Model^ model, const Vector3% pos);
+
+        virtual void Save(BinaryWriter^ br) override;
+        property bool Enabled;
+
+        UNIT_MAXHP(100);
+        UNIT_BUILDTIME(10);
+        UNIT_COSTS(3, 6, 8);
+        PRODUCTION_TYPE(ProductionType::eGold);
     };
 
     ref class Blockwerk : ProductionBuilding
@@ -175,10 +192,10 @@ namespace HdB {
     public:
         Blockwerk(HdB::Model^ model, const Vector3% pos);
 
-        virtual const int MaxHP() override { return 100; }
-        virtual const UInt16 BuildTime() override { return 8; }
-        virtual const Costs GetCosts() override { return Costs(1,2,3); }
-        virtual const ProductionType GetProductionType() override { return ProductionType::eBlockterie; }
+        UNIT_MAXHP(100);
+        UNIT_BUILDTIME(8);
+        UNIT_COSTS(1, 2, 3);
+        PRODUCTION_TYPE(ProductionType::eBlockterie);
     };
 
     ref class Blockfarm : ProductionBuilding
@@ -186,9 +203,9 @@ namespace HdB {
     public:
         Blockfarm(HdB::Model^ model, const Vector3% pos);
 
-        virtual const int MaxHP() override { return 100; }
-        virtual const UInt16 BuildTime() override { return 11; }
-        virtual const Costs GetCosts() override { return Costs(4,5,6); }
-        virtual const ProductionType GetProductionType() override { return ProductionType::eFood; }
+        UNIT_MAXHP(100);
+        UNIT_BUILDTIME(11);
+        UNIT_COSTS(4, 5, 6);
+        PRODUCTION_TYPE(ProductionType::eFood);
     };
 }
