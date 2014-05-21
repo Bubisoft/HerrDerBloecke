@@ -42,6 +42,8 @@ namespace HdB {
          *  don't have it in our list of loaded drawables (load-on-demand).
          */
         Model^ GetModel(String^ name);
+        Model^ GetBlueModel(String^ name);
+        Model^ GetRedModel(String^ name);
 
         /** Returns an Alphamodel with the given name, try to load it from a file if we
          *  don't have it in our list of loaded drawables (load-on-demand).
@@ -66,7 +68,8 @@ namespace HdB {
         PresentParameters^ mParams;
         Direct3D^ m3D;
         Device^ mDevice;
-        List<IDrawable^>^ mDrawables;
+        List<IDrawable^>^ mBlueDrawables;
+        List<IDrawable^>^ mRedDrawables;
         List<IDrawable^>^ mAlphaDrawables;
         List<IDrawable^>^ mFonts;
         HdB::Camera^ mCamera;

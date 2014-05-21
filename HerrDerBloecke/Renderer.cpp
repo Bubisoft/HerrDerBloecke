@@ -8,7 +8,8 @@
 
 HdB::Renderer::Renderer()
 {
-    mDrawables = gcnew List<IDrawable^>();
+    mBlueDrawables = gcnew List<IDrawable^>();
+    mRedDrawables = gcnew List<IDrawable^>();
     mAlphaDrawables = gcnew List<IDrawable^>();
     mSelectedUnits = gcnew List<Unit^>();
     mFrameTime = Stopwatch::GetTimestamp();
@@ -19,12 +20,15 @@ HdB::Renderer::~Renderer()
     delete mHealthBar;
     mSelectedUnits->Clear();
 
-    for each (IDrawable^ d in mDrawables)
+    for each (IDrawable^ d in mBlueDrawables)
         delete d;
     for each (IDrawable^ d in mAlphaDrawables)
         delete d;
+    for each (IDrawable^ d in mRedDrawables)
+        delete d;
 
-    mDrawables->Clear();
+    mBlueDrawables->Clear();
+    mRedDrawables->Clear();
     mAlphaDrawables->Clear();
     delete mMap;
 
@@ -114,7 +118,10 @@ void HdB::Renderer::Draw()
 
     mMap->Draw(timeSinceLastFrame);
 
-    for each (IDrawable^ d in mDrawables)
+    for each (IDrawable^ d in mBlueDrawables)
+        d->Draw(timeSinceLastFrame);
+
+    for each (IDrawable^ d in mRedDrawables)
         d->Draw(timeSinceLastFrame);
 
     for each (IDrawable^ d in mAlphaDrawables)
@@ -187,6 +194,8 @@ void HdB::Renderer::DrawSelectionFrame()
 
 HdB::Model^ HdB::Renderer::GetModel(String^ name)
 {
+    return GetBlueModel(name);
+    /*
     Model^ m;
     for each (IDrawable^ d in mDrawables) {
         if (m = dynamic_cast<Model^>(d))
@@ -196,6 +205,29 @@ HdB::Model^ HdB::Renderer::GetModel(String^ name)
     m = gcnew Model(name, mDevice);
     mDrawables->Add(m);
     return m;
+    */
+}
+
+HdB::Model^ HdB::Renderer::GetBlueModel(String^ name)
+{
+    Model^ m;
+    for each (IDrawable^ d in mBlueDrawables)
+        if ((m = dynamic_cast<Model^>(d)) && m->Name == name)
+            return m;
+
+    m = gcnew Model(name, mDevice);
+    m->SetTeamColor(true);
+}
+
+HdB::Model^ HdB::Renderer::GetRedModel(String^ name)
+{
+    Model^ m;
+    for each (IDrawable^ d in mBlueDrawables)
+        if ((m = dynamic_cast<Model^>(d)) && m->Name == name)
+            return m;
+
+    m = gcnew Model(name, mDevice);
+    m->SetTeamColor(false);
 }
 
 HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)

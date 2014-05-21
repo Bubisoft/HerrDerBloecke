@@ -37,6 +37,9 @@ namespace HdB {
         /** Set Alpha */
         void SetAlpha(float alpha);
 
+        /** Set Teamcolor */
+        void SetTeamColor(bool isBlue);
+
         property String^ Name;
         property BoundingBox Bounds {
             BoundingBox get() { return mBounds; }

@@ -117,6 +117,21 @@ void HdB::Model::SetAlpha(float alpha)
     }
 }
 
+void HdB::Model::SetTeamColor(bool isBlue)
+{
+    for each (Submesh^ m in mMeshes) {
+
+        Color4 color;
+
+        if(isBlue)
+            color = Color4(1, m->material.Diffuse.Red, m->material.Diffuse.Green, 1);
+        else
+            color = Color4(1, 1, m->material.Diffuse.Green, m->material.Diffuse.Blue);
+
+        m->material.Diffuse = color;
+    }
+}
+
 void HdB::Model::LoadFromHBMFile(String^ filename)
 {
     // This is not a real parser, we just fetch the information we need
