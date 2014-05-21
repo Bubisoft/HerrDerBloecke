@@ -192,22 +192,6 @@ void HdB::Renderer::DrawSelectionFrame()
     }
 }
 
-HdB::Model^ HdB::Renderer::GetModel(String^ name)
-{
-    return GetBlueModel(name);
-    /*
-    Model^ m;
-    for each (IDrawable^ d in mDrawables) {
-        if (m = dynamic_cast<Model^>(d))
-            if (m->Name == name)
-                return m;
-    }
-    m = gcnew Model(name, mDevice);
-    mDrawables->Add(m);
-    return m;
-    */
-}
-
 HdB::Model^ HdB::Renderer::GetBlueModel(String^ name)
 {
     Model^ m;
@@ -217,6 +201,9 @@ HdB::Model^ HdB::Renderer::GetBlueModel(String^ name)
 
     m = gcnew Model(name, mDevice);
     m->SetTeamColor(true);
+    mBlueDrawables->Add(m);
+
+    return m;
 }
 
 HdB::Model^ HdB::Renderer::GetRedModel(String^ name)
@@ -228,6 +215,9 @@ HdB::Model^ HdB::Renderer::GetRedModel(String^ name)
 
     m = gcnew Model(name, mDevice);
     m->SetTeamColor(false);
+    mRedDrawables->Add(m);
+
+    return m;
 }
 
 HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)

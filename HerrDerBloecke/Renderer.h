@@ -41,7 +41,7 @@ namespace HdB {
         /** Returns a Model with the given name, try to load it from a file if we
          *  don't have it in our list of loaded drawables (load-on-demand).
          */
-        Model^ GetModel(String^ name);
+        //Model^ GetModel(String^ name);
         Model^ GetBlueModel(String^ name);
         Model^ GetRedModel(String^ name);
 

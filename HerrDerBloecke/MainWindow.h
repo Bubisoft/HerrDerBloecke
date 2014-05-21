@@ -48,7 +48,7 @@ namespace HdB {
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
             /** FOR TESTING */
-            Unit^ u = gcnew Hauptgebaeude(mRenderer->GetModel("Hauptgebaeude"), Vector3::Zero);
+            Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
             mPlayer->Units->Add(u);
             u->Spawn();
             mRenderer->Map->AddUnit(u);
@@ -298,7 +298,7 @@ namespace HdB {
                     // What unit are we building?
                     Type^ unittype = mNavi->GetModelType();
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                        gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),
+                        gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),
                         mRenderer->Camera->Unproject2D(e->Location)}));
 
                     // Do not build the unit if the player can't pay the costs
@@ -421,7 +421,7 @@ namespace HdB {
                 Type^ unittype = mNavi->GetModelType();
                 if(mNavi->GetModelString()) {
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                        gcnew array<Object^> {mRenderer->GetModel(mNavi->GetModelString()),pos}));
+                        gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),pos}));
                     if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
                         return;
                     mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);

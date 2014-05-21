@@ -124,9 +124,9 @@ void HdB::Model::SetTeamColor(bool isBlue)
         Color4 color;
 
         if(isBlue)
-            color = Color4(1, m->material.Diffuse.Red, m->material.Diffuse.Green, 1);
+            color = Color4(1, 0, 0, 1);
         else
-            color = Color4(1, 1, m->material.Diffuse.Green, m->material.Diffuse.Blue);
+            color = Color4(1, 1, 0, 0);
 
         m->material.Diffuse = color;
     }
