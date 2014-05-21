@@ -24,6 +24,7 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player)
         player->Save(bw);
         //map->Save(bw);
         bw->Close();
+        fs->Close();
     }
     catch(Exception^ e)
     {
@@ -54,6 +55,7 @@ void HdB::LoadSave::LoadGame(Map^ map, Player^ player,Renderer^ renderer)
     player->Load(br,renderer);
     //map->Load(br);
     br->Close();
+    fs->Close();
     }
     catch(Exception^ e)
     {
