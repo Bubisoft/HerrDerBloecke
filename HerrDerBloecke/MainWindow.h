@@ -422,6 +422,11 @@ namespace HdB {
                 if(mNavi->GetModelString()) {
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
                         gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),pos}));
+                    while(!mRenderer->Map->CanBuild(unit)) {
+                        unit->Position = unit->Position + Vector3(1,0,0);
+                        unit->MoveTo = unit->Position;
+                    }
+
                     if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
                         return;
                     mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
