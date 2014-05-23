@@ -74,6 +74,7 @@ namespace HdB {
     public:
         Soldier(HdB::Model^ model, const Vector3% pos);
         void StartAttack(Unit^ target);
+        void StopAttack();
         void AttackCallback(Object^ sender, EventArgs^ e);
         property Unit^ mAttackTarget;
     private:

@@ -40,7 +40,6 @@ void HdB::Unit::Damage(int dmg) {
     if(mHP<=0)
     {
         mHP=0;
-        Despawn();
         UnitDestroyed(this);
     }
 }
@@ -104,6 +103,12 @@ void HdB::Soldier::StartAttack(Unit^ target)
 {
     mAttackTarget=target;
     mAttackTimer->Start();
+}
+
+void HdB::Soldier::StopAttack()
+{
+    mAttackTimer->Stop();
+    mAttackTarget=nullptr;
 }
 
 void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)

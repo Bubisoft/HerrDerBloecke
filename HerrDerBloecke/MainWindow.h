@@ -45,6 +45,7 @@ namespace HdB {
             mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
             mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
+            mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
@@ -301,7 +302,14 @@ namespace HdB {
                     Unit^ target = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
 
                     if(target==nullptr) // no Unit clicked
+                    {
+                        for each (Unit^ u in mRenderer->SelectedUnits)
+                        {
+                            if(Soldier^ s = dynamic_cast<Soldier^>(u))
+                                s->StopAttack();
+                        }
                         return;
+                    }
 
                     if(mPlayer->OwnUnit(target)) //prevent attacking own Units
                         return;
@@ -409,11 +417,19 @@ namespace HdB {
                 mAudioSystem->VolumeSFX = mOptions->SFXVolume;
             }
         }
-
+    //mUnit events
     private: System::Void mUnit_UnitDestroyed(Unit^ u)
              {
                  mRenderer->Map->RemoveUnit(u);
+                 u->Despawn();
              }
+
+    //mPlayerAI Events
+    private: System::Void mPlayerAI_UnitBuilt(Unit^ u)
+             {
+                 u->UnitDestroyed+=gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+             }
+                
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->Model + " ausgebildet");
