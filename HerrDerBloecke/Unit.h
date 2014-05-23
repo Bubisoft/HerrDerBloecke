@@ -8,7 +8,9 @@ using namespace SlimDX;
 namespace HdB {
     ref class Model;
     ref class Renderer;
+    ref class Unit;
     delegate void PositionEvent(const Vector3% pos);
+    delegate void UnitDestroyedEvent(Unit^ u);
 
     ref class Unit abstract
     {
@@ -40,6 +42,7 @@ namespace HdB {
 
         // Events
         event PositionEvent^ PositionChanged;
+        event UnitDestroyedEvent^ UnitDestroyed;
 
         //ISaveable
         virtual void Save(BinaryWriter^ bw);
@@ -70,9 +73,15 @@ namespace HdB {
     {
     public:
         Soldier(HdB::Model^ model, const Vector3% pos);
-
+        void StartAttack(Unit^ target);
+        void AttackCallback(Object^ sender, EventArgs^ e);
+        property Unit^ mAttackTarget;
+    private:
+        System::Windows::Forms::Timer^ mAttackTimer;
+    public:
         // Abstract Unit Attributes
         virtual const int Attack() = 0;
+        virtual const int AttackSpeed() = 0;
         virtual const int Defense() = 0;
         virtual const int Speed() = 0;
         virtual const int Range() = 0;
@@ -94,6 +103,7 @@ namespace HdB {
     #define UNIT_BUILDTIME(x) virtual const UInt16 BuildTime() override { return x; }
     #define UNIT_COSTS(gold, blockt, food) virtual const Costs GetCosts() override { return Costs(gold, blockt, food); }
     #define SOLDIER_ATTACK(x) virtual const int Attack() override { return x; }
+    #define SOLDIER_ATTACKSPEED(x) virtual const int AttackSpeed() override {return x; }
     #define SOLDIER_DEFENSE(x) virtual const int Defense() override { return x; }
     #define SOLDIER_SPEED(x) virtual const int Speed() override { return x; }
     #define SOLDIER_RANGE(x) virtual const int Range() override { return x; }
@@ -112,6 +122,7 @@ namespace HdB {
         UNIT_COSTS(3, 6, 8);
 
         SOLDIER_ATTACK(10);
+        SOLDIER_ATTACKSPEED(3);
         SOLDIER_DEFENSE(10);
         SOLDIER_SPEED(10);
         SOLDIER_RANGE(1);
@@ -130,6 +141,7 @@ namespace HdB {
         UNIT_COSTS(5, 10, 10);
 
         SOLDIER_ATTACK(10);
+        SOLDIER_ATTACKSPEED(6);
         SOLDIER_DEFENSE(10);
         SOLDIER_SPEED(10);
         SOLDIER_RANGE(10);
@@ -145,6 +157,7 @@ namespace HdB {
         UNIT_COSTS(15, 10, 5);
 
         SOLDIER_ATTACK(10);
+        SOLDIER_ATTACKSPEED(3);
         SOLDIER_DEFENSE(20);
         SOLDIER_SPEED(100);
         SOLDIER_RANGE(5);

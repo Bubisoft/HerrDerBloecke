@@ -62,6 +62,11 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
     }
 }
 
+bool HdB::Player::OwnUnit(Unit^ u)
+{
+    return mUnits->Contains(u);
+}
+
 void HdB::Player::AddGoldUnit(UInt16 value)
 {
     mGoldUnits+=value;

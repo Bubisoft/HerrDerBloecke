@@ -37,6 +37,10 @@ namespace HdB {
         virtual void Save(BinaryWriter^ bw);
 
         virtual void Load(BinaryReader^ br,Renderer^ renderer);
+
+        /** Returns true if the passed Unit ist one of the players */
+        bool OwnUnit(Unit^ u);
+
     private:
         // Workers on the resources
         UInt16 mGoldUnits;

@@ -37,6 +37,12 @@ Matrix HdB::Unit::GetTransform()
 
 void HdB::Unit::Damage(int dmg) {
     mHP -= dmg;
+    if(mHP<=0)
+    {
+        mHP=0;
+        Despawn();
+        UnitDestroyed(this);
+    }
 }
 
 void HdB::Unit::Save(BinaryWriter^ bw)
@@ -86,7 +92,26 @@ HdB::Unit^ HdB::Unit::Load(BinaryReader^ br,Renderer^ renderer)
  *********************/
 
 // Unit base types
-DEFAULT_CONSTRUCTOR(Soldier, Unit);
+HdB::Soldier::Soldier(HdB::Model^ model, const Vector3% pos) : Unit(model,pos)
+{
+    mAttackTimer=gcnew Timer();
+    mAttackTimer->Enabled=false;
+    mAttackTimer->Interval=1000 * this->AttackSpeed();
+    mAttackTimer->Tick+=gcnew EventHandler(this, &HdB::Soldier::AttackCallback);
+}
+
+void HdB::Soldier::StartAttack(Unit^ target)
+{
+    mAttackTarget=target;
+    mAttackTimer->Start();
+}
+
+void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
+{
+    mAttackTarget->Damage(this->Attack());
+}
+
+
 DEFAULT_CONSTRUCTOR(Building, Unit);
 DEFAULT_CONSTRUCTOR(ProductionBuilding, Building);
 

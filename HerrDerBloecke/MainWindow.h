@@ -287,6 +287,27 @@ namespace HdB {
         }
     private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
                 mMousePos = e->Location;
+                if(e->Button == System::Windows::Forms::MouseButtons::Right) //attack with right click
+                {
+                    if(mRenderer->SelectedUnits->Count <=0)
+                        return;
+
+                    Unit^ target = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
+
+                    if(target==nullptr) // no Unit clicked
+                        return;
+
+                    if(mPlayer->OwnUnit(target)) //prevent attacking own Units
+                        return;
+
+                 
+                    for each (Unit^ u in mRenderer->SelectedUnits)
+                    {
+                        //let soldiers attack
+                        if(Soldier^ s=dynamic_cast<Soldier^>(u))
+                            s->StartAttack(target);
+                    }
+                }
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
@@ -379,11 +400,16 @@ namespace HdB {
             }
         }
 
-
+    private: System::Void mUnit_UnitDestroyed(Unit^ u)
+             {
+                 mRenderer->Map->RemoveUnit(u);
+             }
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->Model + " ausgebildet");
             mAudioSystem->PlaySFX("test");
+            unit->UnitDestroyed+=gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+
             if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit))
             {
                 if(b->GetProductionType() == ProductionType::eBlockterie)
