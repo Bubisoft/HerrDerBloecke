@@ -209,7 +209,7 @@ HdB::Model^ HdB::Renderer::GetBlueModel(String^ name)
 HdB::Model^ HdB::Renderer::GetRedModel(String^ name)
 {
     Model^ m;
-    for each (IDrawable^ d in mBlueDrawables)
+    for each (IDrawable^ d in mRedDrawables)
         if ((m = dynamic_cast<Model^>(d)) && m->Name == name)
             return m;
 
