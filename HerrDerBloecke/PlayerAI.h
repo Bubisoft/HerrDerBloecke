@@ -15,6 +15,7 @@ namespace HdB {
 
     private:
         void CheckSchedule(Object^ source, EventArgs^ e);
+        void OnNewUnit(Unit^ unit);
 
         Renderer^ mRenderer;
         Vector3 mPositionHQ;

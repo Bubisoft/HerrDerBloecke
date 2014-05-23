@@ -29,6 +29,7 @@ namespace HdB {
         {
             InitializeComponent();
             mMousePos = this->MousePosition;
+            mMouseMoved = false;
             mOptions = gcnew Options();
             mOptions->SaveEvent+=gcnew Options::SaveClick(this,&MainWindow::SaveGame);
             mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
@@ -83,6 +84,7 @@ namespace HdB {
         Renderer^ mRenderer;
         AudioSystem^ mAudioSystem;
         Point mMousePos;
+        bool mMouseMoved;
         Options^ mOptions;
     private: System::Windows::Forms::Button^  btnMenu;
     private: System::Windows::Forms::Label^  lblResGold;
@@ -264,6 +266,9 @@ namespace HdB {
             mRenderer->Draw();
         }
     private: System::Void mRenderFrame_MouseMove(Object^  sender, MouseEventArgs^  e) {
+            if (e->Button != System::Windows::Forms::MouseButtons::None)
+                mMouseMoved = true;
+
             if (e->Button == System::Windows::Forms::MouseButtons::Right) {
                 Vector3 move = Vector3::Subtract(mRenderer->Camera->Unproject2D(mMousePos),
                     mRenderer->Camera->Unproject2D(e->Location));
@@ -275,6 +280,7 @@ namespace HdB {
             } else if (e->Button == System::Windows::Forms::MouseButtons::Left) {
                 mRenderer->SelectionFrame = gcnew Rectangle(mMousePos.X, mMousePos.Y, e->Location.X - mMousePos.X, e->Location.Y - mMousePos.Y);
             }
+
             Unit^ mouseUnit=mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if(mouseUnit!=nullptr)
             {
@@ -316,8 +322,10 @@ namespace HdB {
                 mRenderer->SelectedUnits->Clear();
 
                 if (mNavi->GetModelString() && mNavi->GetModelType()) {
-                    if (mMousePos != e->Location)
+                    if (mMouseMoved) {
+                        mMouseMoved = false;
                         return;
+                    }
 
                     // What unit are we building?
                     Type^ unittype = mNavi->GetModelType();
@@ -369,8 +377,10 @@ namespace HdB {
                     }
                 }
             } else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
-                if (e->Location != mMousePos)
+                if (mMouseMoved) {
+                    mMouseMoved = false;
                     return;
+                }
                 for each (Unit^ u in mRenderer->SelectedUnits) {
                     if (u->GetType()->IsSubclassOf(Soldier::typeid)) {
                         Vector3 targetLocation = mRenderer->Camera->Unproject2D(e->Location);
