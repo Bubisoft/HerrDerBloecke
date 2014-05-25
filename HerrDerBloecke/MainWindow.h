@@ -339,7 +339,9 @@ namespace HdB {
                     // Only one unit selected
                     if (mRenderer->SelectedUnits->Count == 1) {
                         Unit^ u = mRenderer->SelectedUnits[0];
-                        if (u->GetType() == Blockhuette::typeid)
+                        if (!mPlayer->OwnUnit(u))
+                            return;
+                        else if (u->GetType() == Blockhuette::typeid)
                             mNavi->BlockhausView(u);
                         else if (u->GetType() == Blockstatt::typeid)
                             mNavi->BlockstattView(u);
@@ -377,8 +379,8 @@ namespace HdB {
                 mRenderer->Camera->Zoom(e->Delta);
         }
     private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
-             mRenderFrame->Focus();
-         }
+            mRenderFrame->Focus();
+        }
 
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {
@@ -392,18 +394,18 @@ namespace HdB {
             }
         }
     //mUnit events
-    private: System::Void mUnit_UnitDestroyed(Unit^ u)
-             {
-                 mRenderer->Map->RemoveUnit(u);
-                 u->Despawn();
-             }
+    private: System::Void mUnit_UnitDestroyed(Unit^ u) {
+            if (mRenderer->SelectedUnits->Contains(u))
+                mRenderer->SelectedUnits->Remove(u);
+            mRenderer->Map->RemoveUnit(u);
+            u->Despawn();
+        }
 
     //mPlayerAI Events
-    private: System::Void mPlayerAI_UnitBuilt(Unit^ u)
-             {
-                 u->UnitDestroyed+=gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
-             }
-                
+    private: System::Void mPlayerAI_UnitBuilt(Unit^ u) {
+            u->UnitDestroyed+=gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+        }
+
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
             mNotificationBox->SendMessage(unit->Model + " ausgebildet");
