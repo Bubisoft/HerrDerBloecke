@@ -282,46 +282,15 @@ namespace HdB {
                 mRenderer->SelectionFrame = gcnew Rectangle(mMousePos.X, mMousePos.Y, e->Location.X - mMousePos.X, e->Location.Y - mMousePos.Y);
             }
 
-            Unit^ mouseUnit=mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
-            if(mouseUnit!=nullptr)
-            {
-                if(mRenderer->SelectedUnits->Count <= 0)
+            Unit^ mouseUnit = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
+            if (mouseUnit) {
+                if (mRenderer->SelectedUnits->Count <= 0 || mPlayer->OwnUnit(mouseUnit))
                     return;
-                if(mPlayer->Units->Contains(mouseUnit))
-                        return;
-                this->Cursor->Current=gcnew System::Windows::Forms::Cursor("attackcursor.cur");
-            }            
+                Cursor->Current = gcnew System::Windows::Forms::Cursor("attackcursor.cur");
+            }
         }
     private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
                 mMousePos = e->Location;
-                if(e->Button == System::Windows::Forms::MouseButtons::Right) //attack with right click
-                {
-                    if(mRenderer->SelectedUnits->Count <=0)
-                        return;
-
-                    Unit^ target = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
-
-                    if(target==nullptr) // no Unit clicked
-                    {
-                        for each (Unit^ u in mRenderer->SelectedUnits)
-                        {
-                            if(Soldier^ s = dynamic_cast<Soldier^>(u))
-                                s->StopAttack();
-                        }
-                        return;
-                    }
-
-                    if(mPlayer->OwnUnit(target)) //prevent attacking own Units
-                        return;
-
-                 
-                    for each (Unit^ u in mRenderer->SelectedUnits)
-                    {
-                        //let soldiers attack
-                        if(Soldier^ s=dynamic_cast<Soldier^>(u))
-                            s->StartAttack(target);
-                    }
-                }
         }
     private: System::Void mRenderFrame_MouseUp(Object^  sender, MouseEventArgs^  e) {
             if (e->Button == System::Windows::Forms::MouseButtons::Left) {
@@ -390,10 +359,15 @@ namespace HdB {
                     return;
                 }
                 for each (Unit^ u in mRenderer->SelectedUnits) {
-                    if (u->GetType()->IsSubclassOf(Soldier::typeid)) {
+                    if (Soldier^ s = dynamic_cast<Soldier^>(u)) {
                         Vector3 targetLocation = mRenderer->Camera->Unproject2D(e->Location);
-                        u->LookAt = targetLocation;
-                        u->MoveTo = targetLocation;
+                        s->LookAt = targetLocation;
+                        s->MoveTo = targetLocation;
+                        Unit^ target = mRenderer->Map->CheckOccupation(targetLocation);
+                        if (target && !mPlayer->OwnUnit(target))
+                            s->StartAttack(target);
+                        else
+                            s->StopAttack();
                     }
                 }
             }
