@@ -284,9 +284,11 @@ namespace HdB {
 
             Unit^ mouseUnit = mRenderer->Map->CheckOccupation(mRenderer->Camera->Unproject2D(e->Location));
             if (mouseUnit) {
-                if (mRenderer->SelectedUnits->Count <= 0 || mPlayer->OwnUnit(mouseUnit))
+                if (mPlayer->OwnUnit(mouseUnit))
                     return;
-                Cursor->Current = gcnew System::Windows::Forms::Cursor("attackcursor.cur");
+                for each (Unit^ u in mRenderer->SelectedUnits)
+                    if (mPlayer->OwnUnit(u) && u->GetType()->IsSubclassOf(Soldier::typeid))
+                        Cursor->Current = gcnew System::Windows::Forms::Cursor("attackcursor.cur");
             }
         }
     private: System::Void mRenderFrame_MouseDown(Object^  sender, MouseEventArgs^  e) {
@@ -361,7 +363,8 @@ namespace HdB {
                     return;
                 }
                 for each (Unit^ u in mRenderer->SelectedUnits) {
-                    if (Soldier^ s = dynamic_cast<Soldier^>(u)) {
+                    if (mPlayer->OwnUnit(u) && u->GetType()->IsSubclassOf(Soldier::typeid)) {
+                        Soldier^ s = safe_cast<Soldier^>(u);
                         Vector3 targetLocation = mRenderer->Camera->Unproject2D(e->Location);
                         s->LookAt = targetLocation;
                         s->MoveTo = targetLocation;
