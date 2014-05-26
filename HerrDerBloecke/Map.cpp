@@ -151,6 +151,24 @@ bool HdB::Map::CanBuild(Unit^ unit)
     return true;
 }
 
+bool HdB::Map::CanMove(Unit^ unit, const Vector3% direction)
+{
+    Unit^ occupant;
+    Vector3 n = Vector3::Normalize(direction);
+
+    // Respect bounds, look direction is negative Y of the bounding box
+    Vector3 target = unit->Position + unit->Model->Bounds.Minimum.Y * n;
+
+    do {
+        target += n;
+        occupant = CheckOccupation(target);
+    } while (occupant == unit);
+
+    if (occupant)
+        return false;
+    return true;
+}
+
 Point HdB::Map::GetFieldCoordinate(const Vector3% posOnGround)
 {
     int x = posOnGround.X > 0.f ? (int)(posOnGround.X + .5f) : (int)(posOnGround.X - .5f);

@@ -65,6 +65,9 @@ namespace HdB {
         /** Check whether we can build a unit or if it would collide with other units. */
         bool CanBuild(Unit^ unit);
 
+        /** Check whether a unit is allowed to move to the next field in the given direction. */
+        bool CanMove(Unit^ unit, const Vector3% direction);
+
         /** Convert a position on the ground plane to a map field coordinate. */
         static Point GetFieldCoordinate(const Vector3% posOnGround);
 
