@@ -68,6 +68,9 @@ namespace HdB {
         /** Check whether a unit is allowed to move to the next field in the given direction. */
         bool CanMove(Unit^ unit, const Vector3% direction);
 
+        /** Check whether a given position is on our map. */
+        bool OnMap(const Vector3% pos);
+
         /** Convert a position on the ground plane to a map field coordinate. */
         static Point GetFieldCoordinate(const Vector3% posOnGround);
 

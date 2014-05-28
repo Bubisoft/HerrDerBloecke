@@ -148,6 +148,8 @@ bool HdB::Map::CanBuild(Unit^ unit)
     Vector3 max = unit->Position + unit->Model->Bounds.Maximum;
     if (CheckOccupation(min, max)->Count > 0)
         return false;
+    if (!OnMap(min) || !OnMap(max))
+        return false;
     return true;
 }
 
@@ -164,7 +166,21 @@ bool HdB::Map::CanMove(Unit^ unit, const Vector3% direction)
         occupant = CheckOccupation(target);
     } while (occupant == unit);
 
-    if (occupant)
+    if (occupant || !OnMap(target))
+        return false;
+    return true;
+}
+
+bool HdB::Map::OnMap(const Vector3% pos)
+{
+    Point field = GetFieldCoordinate(pos);
+    if (field.X < (int)(-FIELDS_X / 2.f))
+        return false;
+    if (field.X > (int)(FIELDS_X / 2.f))
+        return false;
+    if (field.Y < (int)(-FIELDS_Y / 2.f))
+        return false;
+    if (field.Y > (int)(FIELDS_Y / 2.f))
         return false;
     return true;
 }
