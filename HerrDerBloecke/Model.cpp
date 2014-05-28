@@ -96,7 +96,7 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                 if(xt < x)
                     mov *= (xt/x);
 
-                if(mRenderer->Map->CanMove(u, u->Position+mov))
+                if(mRenderer->Map->CanMove(u, mov))
                 {
                     u->Position += mov;
                     u->LookAt += mov;
