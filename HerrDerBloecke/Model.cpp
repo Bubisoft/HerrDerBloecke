@@ -2,6 +2,7 @@
 #include "Unit.h"
 #include "Renderer.h"
 #include "Globals.h"
+#include "Map.h"
 
 using namespace System::IO;
 using namespace System::Diagnostics;
@@ -92,14 +93,11 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                 Vector3 mov = Vector3::Subtract(u->MoveTo, u->Position);
                 float x = mov.Length();
                 float xt = v * timeSinceLastFrame/10000000;
-                if(xt > x)
-                {
-                    u->Position += mov;
-                    u->LookAt += mov;
-                }
-                else
-                {
+                if(xt < x)
                     mov *= (xt/x);
+
+                if(mRenderer->Map->CanMove(u, u->Position+mov))
+                {
                     u->Position += mov;
                     u->LookAt += mov;
                 }
