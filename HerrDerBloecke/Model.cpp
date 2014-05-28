@@ -92,26 +92,28 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                 float v = su->Speed();
                 Vector3 mov = Vector3::Subtract(u->MoveTo, u->Position);
                 float x = mov.Length();
-                float xt = v * timeSinceLastFrame/10000000;
-                if(xt < x)
-                    mov *= (xt/x);
+                float xt = v * timeSinceLastFrame / 10000000;
+                if (xt < x)
+                    mov *= (xt / x);
 
-                if(mRenderer->Map->CanMove(u, mov))
-                {
-                    u->Position += mov;
-                    u->LookAt += mov;
-                }
-                else
-                {
-                    Vector3 vec = Vector3::Cross(Vector3::UnitZ, mov);
-                    vec.Normalize();
-                    vec *= 3;
-                    u->MoveTo += vec;
-                    u->Position += vec;
-                }
-                if(su->IsInRange())
+                Vector3 left = Vector3::Cross(Vector3::UnitZ, mov);
+                Unit^ onMoveTo = mRenderer->Map->CheckOccupation(u->MoveTo);
+
+                if (su->IsInRange()) {
+                    // In range to attack? -> STOP!
+                    u->LookAt = u->MoveTo;
                     u->MoveTo = u->Position;
-
+                } else if (mRenderer->Map->CanMove(u, mov)) {
+                    // Can we move towards our target?
+                    u->Position += mov;
+                    u->LookAt = u->Position + mov;
+                } else {
+                    // Can we go around it? Left?
+                    if (onMoveTo && onMoveTo != u && !su->IsAttacking())
+                        u->MoveTo += left;
+                    u->Position += left;
+                    u->LookAt = u->Position + left;
+                }
             }
             dev->SetTransform(TransformState::World, u->GetTransform());
             dev->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,

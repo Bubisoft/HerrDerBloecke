@@ -76,6 +76,7 @@ namespace HdB {
         Soldier(HdB::Model^ model, const Vector3% pos);
         void StartAttack(Unit^ target);
         void StopAttack();
+        bool IsAttacking() { return mAttackTarget != nullptr; }
         bool IsInRange();
         void AttackCallback(Object^ sender, EventArgs^ e);
         property Unit^ mAttackTarget;
