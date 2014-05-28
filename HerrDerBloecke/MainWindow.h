@@ -14,6 +14,8 @@
 #include "Unit.h"
 #include "Model.h"
 #include "LoadSave.h"
+#include "Score.h"
+
 namespace HdB {
     using namespace System;
     using namespace System::ComponentModel;
@@ -47,6 +49,8 @@ namespace HdB {
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
             mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
             mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
+            mPlayerScore = gcnew Score(mPlayer);
+            mComputerScore = gcnew Score(mComputerPlayer);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
@@ -81,7 +85,9 @@ namespace HdB {
         NavigationStrip^ mNavi;
         NotificationBox^ mNotificationBox;
         Player^ mPlayer;
+        Score^ mPlayerScore;
         PlayerAI^ mComputerPlayer;
+        Score^ mComputerScore;
         Renderer^ mRenderer;
         AudioSystem^ mAudioSystem;
         Point mMousePos;
@@ -514,8 +520,8 @@ private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Window
          }
 
 private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
-             Graph^ g=gcnew Graph();
-             g->PointsOverTime=mPlayer->PointsOverTime;
+             Graph^ g = gcnew Graph();
+             g->PointsOverTime = mPlayerScore->Log;
              g->Show();
          }
 };

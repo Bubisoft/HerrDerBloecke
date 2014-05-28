@@ -76,6 +76,8 @@ namespace HdB {
         }
 #pragma endregion
     private: System::Void Graph_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+                 if (mPointsOverTime->Count == 0)
+                     return;
 
                  e->Graphics->Clear(this->BackColor);
                  Pen^ pen=gcnew Pen(Color::Black);

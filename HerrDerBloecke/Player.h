@@ -29,10 +29,6 @@ namespace HdB {
             List<Unit^>^ get() { return mUnits; }
         }
 
-        property List<UInt32>^ PointsOverTime {
-            List<UInt32>^ get() { return mPointsOverTime; }
-        }
-
         void AddGoldUnit(UInt16 value);
         void AddBlockterieUnit(UInt16 value);
         void AddFoodUnit(UInt16 value);
@@ -50,9 +46,7 @@ namespace HdB {
         UInt16 mGoldUnits;
         UInt16 mBlockterieUnits;
         UInt16 mFoodUnits;
-        UInt32 mPoints;
 
-        List<UInt32>^ mPointsOverTime;
         List<Unit^>^ mUnits;
         List<BuildTask^>^ mBuildTasks;
         Timer^ mBuildTimer;

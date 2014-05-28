@@ -10,8 +10,8 @@ namespace HdB {
     ref class Score {
     public:
         Score(Player^ player);
-        property List<Int32>^ Log {
-            List<Int32>^ get() { return mScoreLog; }
+        property List<UInt32>^ Log {
+            List<UInt32>^ get() { return mScoreLog; }
         }
 
     private:
@@ -19,6 +19,6 @@ namespace HdB {
 
         Player^ mPlayer;
         Timer^ mLoggingTimer;
-        List<Int32>^ mScoreLog;
+        List<UInt32>^ mScoreLog;
     };
 }

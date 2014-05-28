@@ -13,34 +13,12 @@ HdB::Player::Player()
     : mBlockterieUnits(0), mFoodUnits(0), mGoldUnits(0)
 {
     Res = gcnew Resources(100,300,80); //setting up start resources
-    mPoints = 0;
-    mPointsOverTime=gcnew List<UInt32>();
     mUnits = gcnew List<Unit^>();
     mBuildTasks = gcnew List<BuildTask^>();
     mBuildTimer = gcnew Timer();
     mBuildTimer->Interval = 1000;
     mBuildTimer->Tick += gcnew EventHandler(this, &Player::BuildTimerCallback);
     mBuildTimer->Enabled = true;
-
-
-    /* *********
-       * TEMP  *
-       ********* */
-    mPointsOverTime->Add(0);
-    mPointsOverTime->Add(10);
-    mPointsOverTime->Add(30);
-    mPointsOverTime->Add(60);
-    mPointsOverTime->Add(100);
-    mPointsOverTime->Add(150);
-    mPointsOverTime->Add(200);
-    mPointsOverTime->Add(250);
-    mPointsOverTime->Add(270);
-    mPointsOverTime->Add(300);
-    mPointsOverTime->Add(400);
-    mPointsOverTime->Add(500);
-    mPointsOverTime->Add(600);
-    mPointsOverTime->Add(650);
-
 
     mBlockterieUnits=0;
     mGoldUnits=0;
