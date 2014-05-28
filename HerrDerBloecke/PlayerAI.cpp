@@ -29,8 +29,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ) : mRenderer(re
     UnitBuilt += gcnew UnitEvent(this, &PlayerAI::OnNewUnit);
 
     Unit^ u = gcnew Hauptgebaeude(mRenderer->GetRedModel("Hauptgebaeude"), mPositionHQ);
-    Units->Add(u);
-    u->Spawn();
+    BuildUnit(u, 0, nullptr);
     mRenderer->Map->AddUnit(u);
 }
 

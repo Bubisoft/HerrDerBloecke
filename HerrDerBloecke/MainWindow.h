@@ -55,9 +55,8 @@ namespace HdB {
 
             //Spawn Hauptgebäude
             Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
-            mPlayer->BuildUnit(u, 1, u);
+            mPlayer->BuildUnit(u, 0, nullptr);
             mRenderer->Map->AddUnit(u);
-
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);

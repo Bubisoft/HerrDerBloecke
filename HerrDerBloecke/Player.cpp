@@ -69,7 +69,7 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 {
     // Runs every second and decrements remaining time
     for (int i = 0; i < mBuildTasks->Count; i++) {
-        if (--mBuildTasks[i]->seconds == 0) {
+        if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
             mUnits->Add(mBuildTasks[i]->unit);

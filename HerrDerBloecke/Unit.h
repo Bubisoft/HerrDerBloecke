@@ -52,6 +52,7 @@ namespace HdB {
         virtual const int MaxHP() = 0;
         virtual const UInt16 BuildTime() = 0;
         virtual const Costs GetCosts() = 0;
+        virtual const Int32 Points() = 0;
 
     protected:
         HdB::Model^ mModel;
@@ -104,6 +105,7 @@ namespace HdB {
     #define UNIT_MAXHP(x) virtual const int MaxHP() override { return x; }
     #define UNIT_BUILDTIME(x) virtual const UInt16 BuildTime() override { return x; }
     #define UNIT_COSTS(gold, blockt, food) virtual const Costs GetCosts() override { return Costs(gold, blockt, food); }
+    #define UNIT_POINTS(x) virtual const Int32 Points() override { return x; }
     #define SOLDIER_ATTACK(x) virtual const int Attack() override { return x; }
     #define SOLDIER_ATTACKSPEED(x) virtual const int AttackSpeed() override {return x; }
     #define SOLDIER_DEFENSE(x) virtual const int Defense() override { return x; }
@@ -122,6 +124,7 @@ namespace HdB {
         UNIT_MAXHP(100);
         UNIT_BUILDTIME(5);
         UNIT_COSTS(3, 6, 8);
+        UNIT_POINTS(5);
 
         SOLDIER_ATTACK(10);
         SOLDIER_ATTACKSPEED(3);
@@ -141,6 +144,7 @@ namespace HdB {
         UNIT_MAXHP(50);
         UNIT_BUILDTIME(5);
         UNIT_COSTS(5, 10, 10);
+        UNIT_POINTS(5);
 
         SOLDIER_ATTACK(20);
         SOLDIER_ATTACKSPEED(4);
@@ -157,6 +161,7 @@ namespace HdB {
         UNIT_MAXHP(30);
         UNIT_BUILDTIME(7);
         UNIT_COSTS(15, 10, 5);
+        UNIT_POINTS(5);
 
         SOLDIER_ATTACK(10);
         SOLDIER_ATTACKSPEED(2);
@@ -176,6 +181,7 @@ namespace HdB {
         UNIT_MAXHP(5000);
         UNIT_BUILDTIME(0);
         UNIT_COSTS(0, 0, 0);
+        UNIT_POINTS(10);
     };
 
     ref class Blockstatt : Building
@@ -186,6 +192,7 @@ namespace HdB {
         UNIT_MAXHP(1000);
         UNIT_BUILDTIME(8);
         UNIT_COSTS(3, 3, 3);
+        UNIT_POINTS(5);
     };
 
     ref class Blockhuette : ProductionBuilding
@@ -199,6 +206,7 @@ namespace HdB {
         UNIT_MAXHP(500);
         UNIT_BUILDTIME(10);
         UNIT_COSTS(3, 6, 8);
+        UNIT_POINTS(5);
         PRODUCTION_TYPE(ProductionType::eGold);
     };
 
@@ -210,6 +218,7 @@ namespace HdB {
         UNIT_MAXHP(700);
         UNIT_BUILDTIME(8);
         UNIT_COSTS(1, 2, 3);
+        UNIT_POINTS(5);
         PRODUCTION_TYPE(ProductionType::eBlockterie);
     };
 
@@ -221,6 +230,7 @@ namespace HdB {
         UNIT_MAXHP(400);
         UNIT_BUILDTIME(11);
         UNIT_COSTS(4, 5, 6);
+        UNIT_POINTS(5);
         PRODUCTION_TYPE(ProductionType::eFood);
     };
 }

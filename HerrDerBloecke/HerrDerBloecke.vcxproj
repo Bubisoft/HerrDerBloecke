@@ -148,6 +148,7 @@
     <ClCompile Include="PlayerAI.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="PlayerAI.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="AudioSystem.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Options.h">
