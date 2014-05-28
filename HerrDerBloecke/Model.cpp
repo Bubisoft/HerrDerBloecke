@@ -101,6 +101,17 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                     u->Position += mov;
                     u->LookAt += mov;
                 }
+                else
+                {
+                    Vector3 vec = Vector3::Cross(Vector3::UnitZ, mov);
+                    vec.Normalize();
+                    vec *= 3;
+                    u->MoveTo += vec;
+                    u->Position += vec;
+                }
+                if(su->IsInRange())
+                    u->MoveTo = u->Position;
+
             }
             dev->SetTransform(TransformState::World, u->GetTransform());
             dev->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,

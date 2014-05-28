@@ -173,7 +173,7 @@ namespace HdB {
     public:
         Hauptgebaeude(HdB::Model^ model, const Vector3% pos);
 
-        UNIT_MAXHP(500);
+        UNIT_MAXHP(5000);
         UNIT_BUILDTIME(0);
         UNIT_COSTS(0, 0, 0);
     };
@@ -183,7 +183,7 @@ namespace HdB {
     public:
         Blockstatt(HdB::Model^ model, const Vector3% pos);
 
-        UNIT_MAXHP(100);
+        UNIT_MAXHP(1000);
         UNIT_BUILDTIME(8);
         UNIT_COSTS(3, 3, 3);
     };
@@ -196,7 +196,7 @@ namespace HdB {
         virtual void Save(BinaryWriter^ br) override;
         property bool Enabled;
 
-        UNIT_MAXHP(100);
+        UNIT_MAXHP(500);
         UNIT_BUILDTIME(10);
         UNIT_COSTS(3, 6, 8);
         PRODUCTION_TYPE(ProductionType::eGold);
@@ -207,7 +207,7 @@ namespace HdB {
     public:
         Blockwerk(HdB::Model^ model, const Vector3% pos);
 
-        UNIT_MAXHP(100);
+        UNIT_MAXHP(700);
         UNIT_BUILDTIME(8);
         UNIT_COSTS(1, 2, 3);
         PRODUCTION_TYPE(ProductionType::eBlockterie);
@@ -218,7 +218,7 @@ namespace HdB {
     public:
         Blockfarm(HdB::Model^ model, const Vector3% pos);
 
-        UNIT_MAXHP(100);
+        UNIT_MAXHP(400);
         UNIT_BUILDTIME(11);
         UNIT_COSTS(4, 5, 6);
         PRODUCTION_TYPE(ProductionType::eFood);

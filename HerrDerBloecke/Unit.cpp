@@ -107,8 +107,11 @@ void HdB::Soldier::StartAttack(Unit^ target)
 
 bool HdB::Soldier::IsInRange()
 {
-    Vector3^ diff=Vector3::Subtract(mAttackTarget->Position,Position);
-    if(diff->Length() <= Range())
+    if(!mAttackTarget)
+        return false;
+
+    Vector3 diff=Vector3::Subtract(mAttackTarget->Position,Position);
+    if(diff.Length() <= Range())
         return true;
 
     return false;
@@ -123,7 +126,18 @@ void HdB::Soldier::StopAttack()
 void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
 {
     if(IsInRange())
-        mAttackTarget->Damage(this->Attack());
+    {
+        Soldier^ target = dynamic_cast<Soldier^>(mAttackTarget);
+        if(target) //Is it a Soldier
+        {
+            int dmg = this->Attack() - (this->Attack() * target->Defense());
+            mAttackTarget->Damage(dmg);
+        }
+        else //No it's a Building
+        {
+            mAttackTarget->Damage(this->Attack());
+        }
+    }
 }
 
 

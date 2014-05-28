@@ -51,12 +51,12 @@ namespace HdB {
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
-            /** FOR TESTING */
+
+            //Spawn Hauptgebäude
             Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
-            mPlayer->Units->Add(u);
-            u->Spawn();
+            mPlayer->BuildUnit(u, 1, u);
             mRenderer->Map->AddUnit(u);
-            /** END TESTING */
+
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
