@@ -105,6 +105,15 @@ void HdB::Soldier::StartAttack(Unit^ target)
     mAttackTimer->Start();
 }
 
+bool HdB::Soldier::IsInRange()
+{
+    Vector3^ diff=Vector3::Subtract(mAttackTarget->Position,Position);
+    if(diff->Length() <= Range())
+        return true;
+
+    return false;
+}
+
 void HdB::Soldier::StopAttack()
 {
     mAttackTimer->Stop();
@@ -113,7 +122,8 @@ void HdB::Soldier::StopAttack()
 
 void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
 {
-    mAttackTarget->Damage(this->Attack());
+    if(IsInRange())
+        mAttackTarget->Damage(this->Attack());
 }
 
 

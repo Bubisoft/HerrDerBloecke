@@ -75,6 +75,7 @@ namespace HdB {
         Soldier(HdB::Model^ model, const Vector3% pos);
         void StartAttack(Unit^ target);
         void StopAttack();
+        bool IsInRange();
         void AttackCallback(Object^ sender, EventArgs^ e);
         property Unit^ mAttackTarget;
     private:
@@ -141,11 +142,11 @@ namespace HdB {
         UNIT_BUILDTIME(5);
         UNIT_COSTS(5, 10, 10);
 
-        SOLDIER_ATTACK(10);
-        SOLDIER_ATTACKSPEED(6);
+        SOLDIER_ATTACK(20);
+        SOLDIER_ATTACKSPEED(4);
         SOLDIER_DEFENSE(10);
         SOLDIER_SPEED(10);
-        SOLDIER_RANGE(10);
+        SOLDIER_RANGE(50);
     };
 
     ref class Wirth : Soldier
@@ -158,10 +159,10 @@ namespace HdB {
         UNIT_COSTS(15, 10, 5);
 
         SOLDIER_ATTACK(10);
-        SOLDIER_ATTACKSPEED(3);
+        SOLDIER_ATTACKSPEED(2);
         SOLDIER_DEFENSE(20);
         SOLDIER_SPEED(100);
-        SOLDIER_RANGE(5);
+        SOLDIER_RANGE(25);
     };
 
     /*************
