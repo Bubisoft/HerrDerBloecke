@@ -82,7 +82,7 @@ namespace HdB {
                  e->Graphics->Clear(this->BackColor);
                  Pen^ pen=gcnew Pen(Color::Black);
                  pen->Width=2;
-                 UInt32 delta=this->Size.Width / mPointsOverTime->Count;
+                 UInt32 delta=this->ClientSize.Width / mPointsOverTime->Count;
                  UInt32 max=0;
 
                  for(int x=0; x< mPointsOverTime->Count;++x) //get the maximum for the scaling
@@ -109,7 +109,7 @@ namespace HdB {
 
                  for(int i=1;i<=10;++i)
                  {
-                     e->Graphics->DrawString((max/i).ToString(),f,Brushes::Black,Point(0,((max*scale)/10)*i));
+                     e->Graphics->DrawString((max / 10 * (11 - i)).ToString(), f, Brushes::Black, Point(0, this->ClientSize.Height - 10 - (max*scale / 10)*(11 - i)));
                  }
              }
     private: System::Void Graph_Resize(System::Object^  sender, System::EventArgs^  e) {
