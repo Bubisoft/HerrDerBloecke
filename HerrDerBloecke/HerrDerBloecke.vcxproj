@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="LoadSave.cpp" />
     <ClCompile Include="main.cpp" />
@@ -164,6 +165,9 @@
     <ClInclude Include="BuildingRessources.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Graph.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="IDrawable.h" />
     <ClInclude Include="ISaveable.h" />
@@ -188,6 +192,9 @@
     <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Graph.resx">
+      <DependentUpon>Graph.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.h</DependentUpon>
     </EmbeddedResource>

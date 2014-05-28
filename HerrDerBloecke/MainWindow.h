@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "AudioSystem.h"
 #include "Options.h"
+#include "Graph.h"
 #include "Camera.h"
 #include "Map.h"
 #include "Player.h"
@@ -117,8 +118,8 @@ namespace HdB {
             this->btnGraph = (gcnew System::Windows::Forms::Button());
             this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
             this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
-            this->resourcesTimer = (gcnew System::Windows::Forms::Timer(this->components));
             this->ToolTipLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+            this->resourcesTimer = (gcnew System::Windows::Forms::Timer(this->components));
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
             this->statusStrip1->SuspendLayout();
             this->SuspendLayout();
@@ -133,10 +134,10 @@ namespace HdB {
             this->mRenderFrame->Size = System::Drawing::Size(760, 419);
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
-            this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseDown);
             this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
+            this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
             // 
             // btnMenu
@@ -195,6 +196,7 @@ namespace HdB {
             this->btnGraph->TabIndex = 7;
             this->btnGraph->Text = L"Graph";
             this->btnGraph->UseVisualStyleBackColor = true;
+            this->btnGraph->Click += gcnew System::EventHandler(this, &MainWindow::btnGraph_Click);
             // 
             // labelTimer
             // 
@@ -210,16 +212,16 @@ namespace HdB {
             this->statusStrip1->TabIndex = 8;
             this->statusStrip1->Text = L"statusStrip1";
             // 
+            // ToolTipLabel
+            // 
+            this->ToolTipLabel->Name = L"ToolTipLabel";
+            this->ToolTipLabel->Size = System::Drawing::Size(0, 17);
+            // 
             // resourcesTimer
             // 
             this->resourcesTimer->Enabled = true;
             this->resourcesTimer->Interval = 1500;
             this->resourcesTimer->Tick += gcnew System::EventHandler(this, &MainWindow::resourcesTimer_Tick);
-            // 
-            // ToolTipLabel
-            // 
-            this->ToolTipLabel->Name = L"ToolTipLabel";
-            this->ToolTipLabel->Size = System::Drawing::Size(0, 17);
             // 
             // MainWindow
             // 
@@ -512,5 +514,10 @@ private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windo
 private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {             
          }
 
+private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
+             Graph^ g=gcnew Graph();
+             g->PointsOverTime=mPlayer->PointsOverTime;
+             g->Show();
+         }
 };
 }
