@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Unit.h"
 #include "Model.h"
+#include "Math.h"
 
 using namespace System::IO;
 using namespace System::Diagnostics;
@@ -27,9 +28,8 @@ void HdB::MapOccupation::Update(const Vector3% pos)
 {
     Point mMinField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Minimum);
     Point mMaxField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Maximum);
-    mMinField.X--; mMinField.Y--;
-    mMaxField.X++; mMaxField.Y++;
     mArea = Rectangle(mMinField.X, mMinField.Y, mMaxField.X - mMinField.X, mMaxField.Y - mMinField.Y);
+    mArea.Inflate(1, 1);
 }
 
 /*******
@@ -115,8 +115,8 @@ List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% a, const Vector3% b)
     Rectangle area(minField.X, minField.Y, maxField.X - minField.X, maxField.Y - minField.Y);
     List<HdB::Unit^>^ units = gcnew List<HdB::Unit^>();
     for each (MapOccupation^ occ in mOccupations)
-    if (occ->Area.IntersectsWith(area))
-        units->Add(occ->Unit);
+        if (occ->Area.IntersectsWith(area) || occ->Area.Contains(area))
+            units->Add(occ->Unit);
     return units;
 }
 
@@ -144,31 +144,81 @@ List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% a, const Vector3% b, 
 
 bool HdB::Map::CanBuild(Unit^ unit)
 {
-    Vector3 min = unit->Position + unit->Model->Bounds.Minimum;
-    Vector3 max = unit->Position + unit->Model->Bounds.Maximum;
-    if (CheckOccupation(min, max)->Count > 0)
+    return CanBuild(unit, unit->Position);
+}
+
+bool HdB::Map::CanBuild(Unit^ unit, const Vector3% position)
+{
+    Vector3 min = position + unit->Model->Bounds.Minimum;
+    Vector3 max = position + unit->Model->Bounds.Maximum;
+    List<Unit^>^ collisions = CheckOccupation(min, max);
+    if (collisions->Count > 1)
+        return false;
+    else if (collisions->Count == 1 && collisions[0] != unit)
         return false;
     if (!OnMap(min) || !OnMap(max))
         return false;
     return true;
 }
 
-bool HdB::Map::CanMove(Unit^ unit, const Vector3% direction)
+Vector3 HdB::Map::NextMoveDirection(Unit^ unit, Point endField)
 {
-    Unit^ occupant;
-    Vector3 n = Vector3::Normalize(direction);
+    return NextMoveDirection(unit, endField, 0);
+}
 
-    // Respect bounds, look direction is negative Y of the bounding box
-    Vector3 target = unit->Position + unit->Model->Bounds.Minimum.Y * n;
+Vector3 HdB::Map::NextMoveDirection(Unit^ unit, Point endField, size_t it)
+{
+    // If we have too many iterations, we're stuck
+    if (++it > 25)
+        return Vector3::Zero;
 
-    do {
-        target += n;
-        occupant = CheckOccupation(target);
-    } while (occupant == unit);
+    Vector3 dir = Vector3::Subtract(GetFieldCenter(endField), unit->Position);
+    PointF start = PointF(unit->Position.X, unit->Position.Y);
+    Point startField = GetFieldCoordinate(unit->Position);
+    if (startField == endField)
+        return dir;
 
-    if (occupant || !OnMap(target))
-        return false;
-    return true;
+    for each (MapOccupation^ occ in mOccupations) {
+        if (occ->Unit == unit)
+            continue;
+
+        // Inflate collision to include unit bounds -> Path around
+        int unitWidth = Math::Ceiling(unit->Model->Bounds.Maximum.X - unit->Model->Bounds.Minimum.X);
+        int unitHeight = Math::Ceiling(unit->Model->Bounds.Maximum.Y - unit->Model->Bounds.Minimum.Y);
+        Rectangle collision = Rectangle::Inflate(occ->Area, unitWidth, unitHeight);
+        Rectangle around = Rectangle::Inflate(collision, 1, 1);
+
+        // Do we collide?
+        if (!Math2D::LineIntersects(start, endField, collision))
+            continue;
+
+        // Find nearest point towards goal
+        float dist;
+        Point nearest;
+        array<Point>^ corners = gcnew array<Point> {
+            Point(around.Left, around.Top), Point(around.Right, around.Top),
+                Point(around.Right, around.Bottom), Point(around.Left, around.Bottom) };
+        for (int i = 0; i < corners->Length; i++) {
+            float newdist = Math2D::Distance(endField, corners[i]);
+            if (i == 0 || newdist < dist) {
+                dist = newdist;
+                nearest = corners[i];
+            }
+        }
+
+        // Can we reach that point directly?
+        if (!Math2D::LineIntersects(start, nearest, collision))
+            return NextMoveDirection(unit, nearest, it);
+
+        // Check the two connected points of the rectangle
+        Point r1 = nearest.X == around.Left ? Point(around.Right, nearest.Y) : Point(around.Left, nearest.Y);
+        Point r2 = nearest.Y == around.Top ? Point(nearest.X, around.Bottom) : Point(nearest.X, around.Top);
+        if (Math2D::Distance(start, r1) < Math2D::Distance(start, r2))
+            return NextMoveDirection(unit, r1, it);
+        return NextMoveDirection(unit, r2, it);
+    }
+
+    return dir;
 }
 
 bool HdB::Map::OnMap(const Vector3% pos)
@@ -190,4 +240,9 @@ Point HdB::Map::GetFieldCoordinate(const Vector3% posOnGround)
     int x = posOnGround.X > 0.f ? (int)(posOnGround.X + .5f) : (int)(posOnGround.X - .5f);
     int y = posOnGround.Y > 0.f ? (int)(posOnGround.Y + .5f) : (int)(posOnGround.Y - .5f);
     return Point(x, y);
+}
+
+Vector3 HdB::Map::GetFieldCenter(Point field)
+{
+    return Vector3(field.X, field.Y, 0.f);
 }

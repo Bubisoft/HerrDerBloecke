@@ -141,6 +141,7 @@
     <ClCompile Include="LoadSave.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NavigationStrip.cpp" />
     <ClCompile Include="NotificationBox.cpp" />
@@ -177,6 +178,7 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="NavigationStrip.h" />
     <ClInclude Include="NotificationBox.h" />

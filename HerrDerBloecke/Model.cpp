@@ -86,33 +86,38 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
         dev->SetTexture(0, m->texture);
 
         for each (Unit^ u in mInstances) {
-            if (u->GetType()->IsSubclassOf(Soldier::typeid) && (u->Position != u->MoveTo))
+            if (u->GetType()->IsSubclassOf(Soldier::typeid) && u->Position != u->MoveTo)
             {
+                // We have a soldier that wants to move
                 Soldier^ su = safe_cast<Soldier^>(u);
-                float v = su->Speed();
-                Vector3 mov = Vector3::Subtract(u->MoveTo, u->Position);
-                float x = mov.Length();
-                float xt = v * timeSinceLastFrame / 10000000;
-                if (xt < x)
-                    mov *= (xt / x);
 
-                Vector3 left = Vector3::Cross(Vector3::UnitZ, mov);
-                Unit^ onMoveTo = mRenderer->Map->CheckOccupation(u->MoveTo);
+                // Can we move to our target location? If not move our target to the side.
+                Vector3 toTarget = Vector3::Subtract(u->MoveTo, u->Position);
+                Vector3 left = Vector3::Normalize(Vector3::Cross(Vector3::UnitZ, toTarget));
+                while (!mRenderer->Map->CanBuild(u, u->MoveTo) && mRenderer->Map->OnMap(u->MoveTo))
+                    u->MoveTo += left;
 
                 if (su->IsInRange()) {
-                    // In range to attack? -> STOP!
-                    u->LookAt = u->MoveTo;
+                    // Unit is attacking and in range? -> Stop
                     u->MoveTo = u->Position;
-                } else if (mRenderer->Map->CanMove(u, mov)) {
-                    // Can we move towards our target?
-                    u->Position += mov;
-                    u->LookAt = u->Position + mov;
                 } else {
-                    // Can we go around it? Left?
-                    if (onMoveTo && onMoveTo != u && !su->IsAttacking())
-                        u->MoveTo += left;
-                    u->Position += left;
-                    u->LookAt = u->Position + left;
+                    // Calculate Movement
+                    Vector3 toNext = mRenderer->Map->NextMoveDirection(u, Map::GetFieldCoordinate(u->MoveTo));
+                    if (toNext != Vector3::Zero) {
+                        Vector3 mov = Vector3::Normalize(toNext);
+                        mov *= su->Speed() * timeSinceLastFrame / 10000000.f;
+                        if (mov.Length() > toNext.Length()) {
+                            u->Position += toNext;
+                            // Stop moving when we reach our destination field center
+                            if (Map::GetFieldCoordinate(u->Position) == Map::GetFieldCoordinate(u->MoveTo))
+                                u->MoveTo = u->Position;
+                        } else if (!mRenderer->Map->OnMap(u->Position + mov)) {
+                            u->MoveTo = u->Position;
+                        } else {
+                            u->Position += mov;
+                        }
+                        u->LookAt = u->Position + mov;
+                    }
                 }
             }
             dev->SetTransform(TransformState::World, u->GetTransform());

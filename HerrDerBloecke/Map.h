@@ -65,8 +65,13 @@ namespace HdB {
         /** Check whether we can build a unit or if it would collide with other units. */
         bool CanBuild(Unit^ unit);
 
-        /** Check whether a unit is allowed to move to the next field in the given direction. */
-        bool CanMove(Unit^ unit, const Vector3% direction);
+        /** Check whether we can build a unit at the given position or if it would collide with other units. */
+        bool CanBuild(Unit^ unit, const Vector3% position);
+
+        /** Recursively calculate the direction a unit has to go from its position to reach the given field.
+         *  This caclulates a path without collisions and returns the direction vector to the next waypoint.
+         */
+        Vector3 NextMoveDirection(Unit^ unit, Point endField);
 
         /** Check whether a given position is on our map. */
         bool OnMap(const Vector3% pos);
@@ -74,10 +79,13 @@ namespace HdB {
         /** Convert a position on the ground plane to a map field coordinate. */
         static Point GetFieldCoordinate(const Vector3% posOnGround);
 
+        /** Convert a map field coordinate to the vector pointing at its center. */
+        static Vector3 GetFieldCenter(Point field);
 
         /** Saves the map with the passed StreamWriter*/
         //virtual void Save(BinaryWriter^ bw);
     private:
+        Vector3 NextMoveDirection(Unit^ unit, Point endField, size_t it);
         Renderer^ mRenderer;
         Mesh^ mGroundMesh;
         Texture^ mTexture;
