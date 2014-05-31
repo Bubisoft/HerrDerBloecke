@@ -37,9 +37,8 @@ Matrix HdB::Unit::GetTransform()
 
 void HdB::Unit::Damage(int dmg) {
     mHP -= dmg;
-    if(mHP<=0)
-    {
-        mHP=0;
+    if (mHP <= 0) {
+        mHP = 0;
         UnitDestroyed(this);
     }
 }
@@ -130,7 +129,7 @@ void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
         Soldier^ target = dynamic_cast<Soldier^>(mAttackTarget);
         if(target) //Is it a Soldier
         {
-            int dmg = this->Attack() - (this->Attack() * target->Defense());
+            int dmg = Math::Round(this->Attack() * (1.f - target->Defense() / 100.f));
             mAttackTarget->Damage(dmg);
         }
         else //No it's a Building

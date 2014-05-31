@@ -10,8 +10,6 @@ using namespace System::Diagnostics;
 
 #define FIELDS_X 2049
 #define FIELDS_Y 2049
-#define FIELD_WIDTH 1.f
-#define FIELD_HEIGHT 1.f
 #define DIFFERENT_FIELDS 3
 /*****************
  * MapOccupation *
@@ -48,7 +46,7 @@ HdB::Map::Map(Renderer^ renderer) : mRenderer(renderer)
         Debug::WriteLine("ERROR: Could not load texture " + texture);
     }
 
-    Mesh^ temp = Mesh::CreateBox(mRenderer->D3DDevice, FIELDS_X * FIELD_WIDTH, FIELDS_Y * FIELD_HEIGHT, 0.f);
+    Mesh^ temp = Mesh::CreateBox(mRenderer->D3DDevice, FIELDS_X, FIELDS_Y, 0.f);
     mGroundMesh = temp->Clone(mRenderer->D3DDevice, temp->CreationOptions, VertexFormat::Position | VertexFormat::Texture1);
     delete temp;
     DataStream^ dataStream = mGroundMesh->LockVertexBuffer(LockFlags::None);
