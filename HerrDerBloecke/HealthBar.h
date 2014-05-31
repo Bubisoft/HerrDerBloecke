@@ -15,7 +15,8 @@ namespace HdB {
 
     protected:
         Device^ mDevice;
-        Texture^ mTexture;
+        Texture^ mBarTexture;
+        Texture^ mAttackTexture;
         Sprite^ mSprite;
     };
 }

@@ -100,16 +100,16 @@ HdB::Soldier::Soldier(HdB::Model^ model, const Vector3% pos) : Unit(model,pos)
 
 void HdB::Soldier::StartAttack(Unit^ target)
 {
-    mAttackTarget=target;
+    AttackTarget=target;
     mAttackTimer->Start();
 }
 
 bool HdB::Soldier::IsInRange()
 {
-    if(!mAttackTarget)
+    if (!AttackTarget)
         return false;
 
-    Vector3 diff=Vector3::Subtract(mAttackTarget->Position,Position);
+    Vector3 diff=Vector3::Subtract(AttackTarget->Position,Position);
     if(diff.Length() <= Range())
         return true;
 
@@ -119,26 +119,28 @@ bool HdB::Soldier::IsInRange()
 void HdB::Soldier::StopAttack()
 {
     mAttackTimer->Stop();
-    mAttackTarget=nullptr;
+    AttackTarget = nullptr;
 }
 
 void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
 {
-    if(IsInRange())
-    {
-        Soldier^ target = dynamic_cast<Soldier^>(mAttackTarget);
-        if(target) //Is it a Soldier
-        {
-            int dmg = Math::Round(this->Attack() * (1.f - target->Defense() / 100.f));
-            mAttackTarget->Damage(dmg);
-        }
-        else //No it's a Building
-        {
-            mAttackTarget->Damage(this->Attack());
-        }
-    }
-}
+    if (!IsInRange())
+        return;
 
+    Soldier^ target = dynamic_cast<Soldier^>(AttackTarget);
+    if(target) //Is it a Soldier
+    {
+        int dmg = Math::Round(this->Attack() * (1.f - target->Defense() / 100.f));
+        AttackTarget->Damage(dmg);
+    }
+    else //No it's a Building
+    {
+        AttackTarget->Damage(this->Attack());
+    }
+
+    if (AttackTarget->PercentHP() <= 0.f)
+        StopAttack();
+}
 
 DEFAULT_CONSTRUCTOR(Building, Unit);
 DEFAULT_CONSTRUCTOR(ProductionBuilding, Building);

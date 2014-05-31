@@ -76,19 +76,19 @@ namespace HdB {
         Soldier(HdB::Model^ model, const Vector3% pos);
         void StartAttack(Unit^ target);
         void StopAttack();
-        bool IsAttacking() { return mAttackTarget != nullptr; }
         bool IsInRange();
-        void AttackCallback(Object^ sender, EventArgs^ e);
-        property Unit^ mAttackTarget;
-    private:
-        System::Windows::Forms::Timer^ mAttackTimer;
-    public:
+        property Unit^ AttackTarget;
+
         // Abstract Unit Attributes
         virtual const int Attack() = 0;
         virtual const int AttackSpeed() = 0;
         virtual const int Defense() = 0;
         virtual const int Speed() = 0;
         virtual const int Range() = 0;
+
+    private:
+        void AttackCallback(Object^ sender, EventArgs^ e);
+        System::Windows::Forms::Timer^ mAttackTimer;
     };
 
     ref class ProductionBuilding abstract : Building

@@ -127,6 +127,13 @@ void HdB::Renderer::Draw()
     for each (IDrawable^ d in mAlphaDrawables)
         d->Draw(timeSinceLastFrame);
 
+    // Also show targets of selected targets
+    for each (Unit^ u in mSelectedUnits->ToArray()) {
+        if (Soldier^ s = dynamic_cast<Soldier^>(u))
+            if (s->IsInRange() && !mSelectedUnits->Contains(s->AttackTarget))
+                mSelectedUnits->Add(s->AttackTarget);
+    }
+
     for each (Unit^ u in mSelectedUnits)
         mHealthBar->DrawForUnit(u);
 
