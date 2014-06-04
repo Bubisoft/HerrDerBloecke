@@ -435,12 +435,24 @@ namespace HdB {
     private: System::Void mUnit_UnitDestroyed(Unit^ u) {
             if (mRenderer->SelectedUnits->Contains(u))
                 mRenderer->SelectedUnits->Remove(u);
+
             mRenderer->Map->RemoveUnit(u);
-            u->Despawn();
-            if(mPlayer->Units->Contains(u))
+            if (mPlayer->Units->Contains(u)) {
                 mComputerScore->ExtraPoints += u->Points();
-            else if(mComputerPlayer->Units->Contains(u))
-                mPlayerScore->ExtraPoints+=u->Points();
+                mPlayer->Units->Remove(u);
+            } else if (mComputerPlayer->Units->Contains(u)) {
+                mPlayerScore->ExtraPoints += u->Points();
+                mComputerPlayer->Units->Remove(u);
+            }
+            u->Despawn();
+
+            if (u == mComputerPlayer->Headquarters) {
+                MessageBox::Show("Sie haben gewonnen!");
+                Graph^ g = gcnew Graph();
+                g->PlayerPoints = mPlayerScore->Log;
+                g->EnemiePoints = mComputerScore->Log;
+                g->Show();
+            }
         }
 
     //mPlayerAI Events

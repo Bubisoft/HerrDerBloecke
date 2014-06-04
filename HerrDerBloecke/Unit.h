@@ -22,7 +22,7 @@ namespace HdB {
         Matrix GetTransform();
         void Damage(int dmg);
         float PercentHP() { return (float)mHP / MaxHP(); }
-        
+
         // Properties
         property HdB::Model^ Model {
             HdB::Model^ get() { return mModel; }

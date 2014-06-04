@@ -39,7 +39,8 @@ void HdB::Unit::Damage(int dmg) {
     mHP -= dmg;
     if (mHP <= 0) {
         mHP = 0;
-        UnitDestroyed(this);
+        if (mSpawned)
+            UnitDestroyed(this);
     }
 }
 
@@ -126,6 +127,10 @@ void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
 {
     if (!IsInRange())
         return;
+    if (AttackTarget->PercentHP() <= 0.f) {
+        StopAttack();
+        return;
+    }
 
     Soldier^ target = dynamic_cast<Soldier^>(AttackTarget);
     if(target) //Is it a Soldier

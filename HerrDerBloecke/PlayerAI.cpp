@@ -36,6 +36,9 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ) : mRenderer(re
 
 void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 {
+    if (Headquarters && Headquarters->PercentHP() <= 0.f)
+        return;
+
     mSeconds++;
     static const Vector2 blockstattPos = Vector2(25.f, 25.f);
 
