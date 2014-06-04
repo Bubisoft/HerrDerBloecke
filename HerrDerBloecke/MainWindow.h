@@ -85,6 +85,7 @@ namespace HdB {
             Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
             mPlayer->BuildUnit(u, 0, nullptr);
             mRenderer->Map->AddUnit(u);
+            mPlayer->Headquarters = u;
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
@@ -337,11 +338,16 @@ namespace HdB {
                     }
 
                     // What unit are we building?
+                    Vector3 pos = mRenderer->Camera->Unproject2D(e->Location);
                     Type^ unittype = mNavi->GetModelType();
                     Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                        gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),
-                        mRenderer->Camera->Unproject2D(e->Location)}));
+                        gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()), pos}));
 
+                    // Do not build too far away from HQ
+                    if (Vector3::Distance(pos, mPlayer->Headquarters->Position) > 500.f) {
+                        mNotificationBox->SendMessage("So weit entfernt vom Hauptgebäude darf nicht gebaut werden.");
+                        return;
+                    }
                     // Do not build the unit if the player can't pay the costs
                     if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
                         return;
@@ -353,8 +359,7 @@ namespace HdB {
 
                     // Start building the unit
                     Unit^ placeholderUnit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                        gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()),
-                        mRenderer->Camera->Unproject2D(e->Location)}));
+                        gcnew array<Object^> {mRenderer->GetAlphaModel(mNavi->GetModelString()), pos}));
                     mPlayer->BuildUnit(unit, unit->BuildTime(), placeholderUnit);
                     mRenderer->Map->AddUnit(unit);
                 } else {

@@ -28,6 +28,7 @@ namespace HdB {
         property List<Unit^>^ Units {
             List<Unit^>^ get() { return mUnits; }
         }
+        property Unit^ Headquarters;
 
         void AddGoldUnit(UInt16 value);
         void AddBlockterieUnit(UInt16 value);

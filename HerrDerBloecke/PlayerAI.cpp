@@ -31,6 +31,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ) : mRenderer(re
     Unit^ u = gcnew Hauptgebaeude(mRenderer->GetRedModel("Hauptgebaeude"), mPositionHQ);
     BuildUnit(u, 0, nullptr);
     mRenderer->Map->AddUnit(u);
+    Headquarters = u;
 }
 
 void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)

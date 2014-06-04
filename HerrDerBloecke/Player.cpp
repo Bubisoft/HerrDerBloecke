@@ -62,6 +62,9 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 
 bool HdB::Player::OwnUnit(Unit^ u)
 {
+    for each (BuildTask^ t in mBuildTasks)
+        if (t->unit == u)
+            return true;
     return mUnits->Contains(u);
 }
 
