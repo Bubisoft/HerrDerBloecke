@@ -13,6 +13,7 @@ namespace HdB {
         property List<UInt32>^ Log {
             List<UInt32>^ get() { return mScoreLog; }
         }
+        property Int32 ExtraPoints;
 
     private:
         void MakeLogEntry(Object^ sender, EventArgs^ args);

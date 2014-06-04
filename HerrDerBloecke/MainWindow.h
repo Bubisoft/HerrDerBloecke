@@ -432,6 +432,10 @@ namespace HdB {
                 mRenderer->SelectedUnits->Remove(u);
             mRenderer->Map->RemoveUnit(u);
             u->Despawn();
+            if(mPlayer->Units->Contains(u))
+                mComputerScore->ExtraPoints += u->Points();
+            else if(mComputerPlayer->Units->Contains(u))
+                mPlayerScore->ExtraPoints+=u->Points();
         }
 
     //mPlayerAI Events
@@ -549,7 +553,8 @@ private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Window
 
 private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
              Graph^ g = gcnew Graph();
-             g->PointsOverTime = mPlayerScore->Log;
+             g->PlayerPoints = mPlayerScore->Log;
+             g->EnemiePoints = mComputerScore->Log;
              g->Show();
          }
 };

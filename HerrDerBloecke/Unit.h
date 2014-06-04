@@ -182,7 +182,7 @@ namespace HdB {
         UNIT_MAXHP(5000);
         UNIT_BUILDTIME(0);
         UNIT_COSTS(0, 0, 0);
-        UNIT_POINTS(10);
+        UNIT_POINTS(0);
     };
 
     ref class Blockstatt : Building
