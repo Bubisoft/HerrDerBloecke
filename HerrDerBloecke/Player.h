@@ -32,6 +32,8 @@ namespace HdB {
         void AddGoldUnit(UInt16 value);
         void AddBlockterieUnit(UInt16 value);
         void AddFoodUnit(UInt16 value);
+        
+        bool CheckUnitSpace();
 
         /** Saves all Data of the Player*/
         virtual void Save(BinaryWriter^ bw);

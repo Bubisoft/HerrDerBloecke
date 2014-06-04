@@ -75,7 +75,6 @@ namespace HdB {
             }
 
             mPlayerScore = gcnew Score(mPlayer);
-            mComputerScore = gcnew Score(mComputerPlayer);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
@@ -494,6 +493,11 @@ namespace HdB {
 
                     if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
                         return;
+                    if (!mPlayer->CheckUnitSpace())
+                    {
+                        mNotificationBox->SendMessage("Sie Haben zu viele Einheiten!");
+                        return;
+                    }
                     mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
                     mRenderer->Map->AddUnit(unit);
                 }

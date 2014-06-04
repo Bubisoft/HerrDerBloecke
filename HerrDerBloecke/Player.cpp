@@ -2,6 +2,8 @@
 #include "Resources.h"
 #include "Unit.h"
 
+#define MAX_UNITS 50
+
 ref struct HdB::BuildTask
 {
     UInt16 seconds;
@@ -106,5 +108,25 @@ void HdB::Player::Load(BinaryReader^ br,Renderer^ renderer)
         LoadedUnit->Spawn();
         mUnits->Add(LoadedUnit);
     }
+}
+
+bool HdB::Player::CheckUnitSpace()
+{
+    int i = 0;
+    for each(Unit^ u in mUnits)
+        if(dynamic_cast<Soldier^>(u))
+            i++;
+
+    for each(BuildTask^ b in mBuildTasks)
+    {
+        Unit^ u = b->unit;
+        if(dynamic_cast<Soldier^>(u))
+            i++;
+    }
+
+    if(i >= MAX_UNITS)
+        return false;
+
+    return true;
 }
 
