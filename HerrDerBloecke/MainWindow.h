@@ -36,6 +36,7 @@ namespace HdB {
             this->Hide();
 
             mRenderer = gcnew Renderer();
+
             if (!mRenderer->Init(mRenderFrame)) {
                 MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
                     "ERROR", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -53,8 +54,6 @@ namespace HdB {
                 }
                 if(game == GameType::kLoadGame)
                 {
-                    //Dein Part Rico
-                    //mRenderer=gcnew Renderer();
                     LoadSave^ load = gcnew LoadSave();
                     load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
                 }
@@ -70,13 +69,22 @@ namespace HdB {
 
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
-            //mPlayer = gcnew Player();
+            if(game == GameType::kNewGame)
+            {
+                mPlayer = gcnew Player();
+                mPlayerScore=gcnew Score(mPlayer);
+            }
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
 
             if(game == GameType::kCPUGame) {
                 mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
                 mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
                 mComputerScore = gcnew Score(mComputerPlayer);
+            }
+            else
+            {
+                mComputerPlayer=nullptr;
+                mComputerScore=nullptr;
             }
 
            // mPlayerScore = gcnew Score(mPlayer);

@@ -21,11 +21,18 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy,Score^ Play
     {
         FileStream^ fs = gcnew FileStream(save->FileName, FileMode::Create,FileAccess::Write);
         BinaryWriter^ bw= gcnew BinaryWriter(fs);
+        if(enemy==nullptr)
+            bw->Write(false); //singleplayergame
+        else
+            bw->Write(true); //multiplayergame
 
         player->Save(bw);
-        enemy->Save(bw);
         PlayerScore->Save(bw);
-        EnemyScore->Save(bw);
+        if(enemy!=nullptr)
+        {
+            enemy->Save(bw);
+            EnemyScore->Save(bw);
+        }
         //map->Save(bw);
 
         bw->Close();
@@ -54,19 +61,26 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
         return;
 
     player=gcnew Player();
-    enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f));
-    EnemyScore=gcnew Score(enemy);
     PlayerScore=gcnew Score(player);
+    enemy=nullptr;
+    EnemyScore=nullptr;
 
     try
     {
     FileStream^ fs = gcnew FileStream(open->FileName, FileMode::Open,FileAccess::Read);
     BinaryReader^ br= gcnew BinaryReader(fs);
 
+    bool isMultiplayer=br->ReadBoolean();
+
     player->Load(br,renderer);
-    enemy->Load(br, renderer);
     PlayerScore->Load(br,renderer);
-    EnemyScore->Load(br,renderer);
+    if(isMultiplayer)
+    {
+        enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f));
+        EnemyScore=gcnew Score(enemy);      
+        enemy->Load(br, renderer);
+        EnemyScore->Load(br,renderer);
+    }
     //map->Load(br);
     br->Close();
     fs->Close();
