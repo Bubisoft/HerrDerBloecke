@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "LoadSave.h"
 #include "Score.h"
+#include "MainMenu.h"
 
 namespace HdB {
     using namespace System;
@@ -31,6 +32,25 @@ namespace HdB {
         MainWindow()
         {
             InitializeComponent();
+            mMainMenu = gcnew MainMenu();
+            this->Hide();
+
+            GameType game;
+            if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
+                game = mMainMenu->game;
+                if(game == GameType::kExit)
+                {
+                    Close();
+                    return;
+                }
+                if(game == GameType::kLoadGame)
+                {
+                    //Dein Part Rico
+                }
+                this->Show();
+            }
+            labelTimer->Enabled = true;
+            resourcesTimer->Enabled = true;
             mMousePos = this->MousePosition;
             mMouseMoved = false;
             mOptions = gcnew Options();
@@ -47,8 +67,13 @@ namespace HdB {
             mAudioSystem->Init(mRenderFrame);
             mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
-            mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
-            mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
+
+            if(game == GameType::kCPUGame) {
+                mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
+                mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
+                mComputerScore = gcnew Score(mComputerPlayer);
+            }
+
             mPlayerScore = gcnew Score(mPlayer);
             mComputerScore = gcnew Score(mComputerPlayer);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
@@ -93,6 +118,7 @@ namespace HdB {
         Point mMousePos;
         bool mMouseMoved;
         Options^ mOptions;
+        MainMenu^ mMainMenu;
     private: System::Windows::Forms::Button^  btnMenu;
     private: System::Windows::Forms::Label^  lblResGold;
     private: System::Windows::Forms::Label^  lblResBlockterie;
@@ -205,7 +231,6 @@ namespace HdB {
             // 
             // labelTimer
             // 
-            this->labelTimer->Enabled = true;
             this->labelTimer->Tick += gcnew System::EventHandler(this, &MainWindow::labelTimer_Tick);
             // 
             // statusStrip1
@@ -224,7 +249,6 @@ namespace HdB {
             // 
             // resourcesTimer
             // 
-            this->resourcesTimer->Enabled = true;
             this->resourcesTimer->Interval = 1500;
             this->resourcesTimer->Tick += gcnew System::EventHandler(this, &MainWindow::resourcesTimer_Tick);
             // 

@@ -180,6 +180,9 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="MainMenu.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="NavigationStrip.h" />
     <ClInclude Include="NotificationBox.h" />
     <ClInclude Include="Player.h" />
@@ -201,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainMenu.resx">
+      <DependentUpon>MainMenu.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Options.resx">
       <DependentUpon>Options.h</DependentUpon>
