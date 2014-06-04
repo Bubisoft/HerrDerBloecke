@@ -54,6 +54,8 @@ namespace HdB {
         List<BuildTask^>^ mBuildTasks;
         Timer^ mBuildTimer;
         void BuildTimerCallback(Object^ source, EventArgs^ e);
+    protected:
+        bool IsBlue;
     };
 }
 

@@ -35,6 +35,14 @@ namespace HdB {
             mMainMenu = gcnew MainMenu();
             this->Hide();
 
+            mRenderer = gcnew Renderer();
+            if (!mRenderer->Init(mRenderFrame)) {
+                MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
+                    "ERROR", MessageBoxButtons::OK, MessageBoxIcon::Error);
+                Close();
+                return;
+            }
+
             GameType game;
             if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 game = mMainMenu->game;
@@ -46,6 +54,9 @@ namespace HdB {
                 if(game == GameType::kLoadGame)
                 {
                     //Dein Part Rico
+                    //mRenderer=gcnew Renderer();
+                    LoadSave^ load = gcnew LoadSave();
+                    load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mRenderer);
                 }
                 this->Show();
             }
@@ -56,13 +67,7 @@ namespace HdB {
             mOptions = gcnew Options();
             mOptions->SaveEvent+=gcnew Options::SaveClick(this,&MainWindow::SaveGame);
             mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
-            mRenderer = gcnew Renderer();
-            if (!mRenderer->Init(mRenderFrame)) {
-                MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
-                    "ERROR", MessageBoxButtons::OK, MessageBoxIcon::Error);
-                Close();
-                return;
-            }
+
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
             mPlayer = gcnew Player();
@@ -528,12 +533,12 @@ namespace HdB {
     private: System::Void SaveGame()
              {
                  LoadSave^ save=gcnew LoadSave();
-                 save->SaveGame(mRenderer->Map,mPlayer);
+                 save->SaveGame(mRenderer->Map,mPlayer,mComputerPlayer);
              }
     private: System::Void LoadGame()
              {
                  LoadSave^ load=gcnew LoadSave();
-                 load->LoadGame(mRenderer->Map, mPlayer, mRenderer);
+                 load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer, mRenderer);
              }
 
 

@@ -46,7 +46,7 @@ namespace HdB {
 
         //ISaveable
         virtual void Save(BinaryWriter^ bw);
-        static Unit^ Load(BinaryReader^ br, Renderer^ renderer);
+        static Unit^ Load(BinaryReader^ br, Renderer^ renderer,bool isblue);
 
         // Abstract Unit Attributes
         virtual const int MaxHP() = 0;

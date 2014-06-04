@@ -89,7 +89,7 @@ namespace HdB {
             this->playerCheckBox->AutoSize = true;
             this->playerCheckBox->Checked = true;
             this->playerCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-            this->playerCheckBox->Location = System::Drawing::Point(12, 12);
+            this->playerCheckBox->Location = System::Drawing::Point(44, 12);
             this->playerCheckBox->Name = L"playerCheckBox";
             this->playerCheckBox->Size = System::Drawing::Size(58, 17);
             this->playerCheckBox->TabIndex = 0;
@@ -101,7 +101,7 @@ namespace HdB {
             // 
             this->enemieCheckBox->AutoSize = true;
             this->enemieCheckBox->CheckAlign = System::Drawing::ContentAlignment::MiddleRight;
-            this->enemieCheckBox->Location = System::Drawing::Point(93, 12);
+            this->enemieCheckBox->Location = System::Drawing::Point(125, 12);
             this->enemieCheckBox->Name = L"enemieCheckBox";
             this->enemieCheckBox->Size = System::Drawing::Size(61, 17);
             this->enemieCheckBox->TabIndex = 1;

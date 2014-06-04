@@ -12,7 +12,8 @@ namespace HdB {
          *  contained.
          */
         PlayerAI(Renderer^ renderer, const Vector3% posHQ);
-
+        virtual void Save(BinaryWriter^ bw) override;
+        virtual void Load(BinaryReader^ br,Renderer^ renderer)override;
     private:
         void CheckSchedule(Object^ source, EventArgs^ e);
         void OnNewUnit(Unit^ unit);

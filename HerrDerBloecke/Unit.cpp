@@ -58,9 +58,10 @@ void HdB::Unit::Save(BinaryWriter^ bw)
     bw->Write(LookAt.X);
     bw->Write(LookAt.Y);
     bw->Write(LookAt.Z);
+    
 }
 
-HdB::Unit^ HdB::Unit::Load(BinaryReader^ br,Renderer^ renderer)
+HdB::Unit^ HdB::Unit::Load(BinaryReader^ br,Renderer^ renderer,bool isblue)
 {
     String^ typeName=br->ReadString();
     String^ model=br->ReadString();
@@ -76,9 +77,17 @@ HdB::Unit^ HdB::Unit::Load(BinaryReader^ br,Renderer^ renderer)
     lookAt.Y=br->ReadSingle();
     lookAt.Z=br->ReadSingle();
 
-    Unit^ u = safe_cast<Unit^>(Activator::CreateInstance(Type::GetType(typeName),
+    Unit^ u;
+    if(isblue)
+        u = safe_cast<Unit^>(Activator::CreateInstance(Type::GetType(typeName),
                         gcnew array<Object^> {renderer->GetBlueModel(model),
                         Pos}));
+    else
+    {
+        u = safe_cast<Unit^>(Activator::CreateInstance(Type::GetType(typeName),
+                        gcnew array<Object^> {renderer->GetRedModel(model),
+                        Pos}));
+    }
     u->LookAt=lookAt;
     if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
         b->Enabled=br->ReadBoolean();

@@ -5,7 +5,7 @@ HdB::LoadSave::LoadSave(void)
 {
 }
 
-void HdB::LoadSave::SaveGame(Map^ map,Player^ player)
+void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy)
 {
     SaveFileDialog^ save=gcnew SaveFileDialog();
     save->AddExtension=".shb";
@@ -21,8 +21,11 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player)
     {
         FileStream^ fs = gcnew FileStream(save->FileName, FileMode::Create,FileAccess::Write);
         BinaryWriter^ bw= gcnew BinaryWriter(fs);
+
         player->Save(bw);
+        enemy->Save(bw);
         //map->Save(bw);
+
         bw->Close();
         fs->Close();
     }
@@ -36,7 +39,7 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player)
     MessageBox::Show("Spielstand wurde gespeichert!");
 }
 
-void HdB::LoadSave::LoadGame(Map^ map, Player^ player,Renderer^ renderer)
+void HdB::LoadSave::LoadGame(Map^ map, Player^ player,PlayerAI^ enemy,Renderer^ renderer)
 {
     OpenFileDialog^ open=gcnew OpenFileDialog();
     open->Filter="HdB SaveGame (*.shb)|*.shb";
@@ -48,11 +51,16 @@ void HdB::LoadSave::LoadGame(Map^ map, Player^ player,Renderer^ renderer)
     if(result != DialogResult::OK)
         return;
 
+    player=gcnew Player();
+    enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f));
+
     try
     {
     FileStream^ fs = gcnew FileStream(open->FileName, FileMode::Open,FileAccess::Read);
     BinaryReader^ br= gcnew BinaryReader(fs);
+
     player->Load(br,renderer);
+    enemy->Load(br, renderer);
     //map->Load(br);
     br->Close();
     fs->Close();

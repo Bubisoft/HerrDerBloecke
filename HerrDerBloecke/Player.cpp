@@ -25,7 +25,7 @@ HdB::Player::Player()
     mBlockterieUnits=0;
     mGoldUnits=0;
     mFoodUnits=0;
-
+    IsBlue=true;
     //*********  TEMP END  ***
 }
 void HdB::Player::ProcessResources()
@@ -107,7 +107,7 @@ void HdB::Player::Load(BinaryReader^ br,Renderer^ renderer)
 
     for(int i=0;i<UnitCount;++i)
     {
-        Unit^ LoadedUnit=Unit::Load(br,renderer);
+        Unit^ LoadedUnit=Unit::Load(br,renderer,IsBlue);
         LoadedUnit->Spawn();
         mUnits->Add(LoadedUnit);
     }

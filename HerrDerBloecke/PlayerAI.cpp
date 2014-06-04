@@ -32,6 +32,8 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ) : mRenderer(re
     BuildUnit(u, 0, nullptr);
     mRenderer->Map->AddUnit(u);
     Headquarters = u;
+
+    IsBlue=false;
 }
 
 void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
@@ -54,4 +56,24 @@ void HdB::PlayerAI::OnNewUnit(Unit^ unit)
 {
     if (unit->GetType()->IsSubclassOf(Soldier::typeid))
         mRenderer->Map->AddUnit(unit);
+}
+
+void HdB::PlayerAI::Save(BinaryWriter^ bw)
+{
+    Player::Save(bw);
+
+    bw->Write(mPositionHQ.X);
+    bw->Write(mPositionHQ.Y);
+    bw->Write(mPositionHQ.Z);
+    bw->Write(mSeconds);
+}
+
+void HdB::PlayerAI::Load(BinaryReader^ br,Renderer^ renderer)
+{
+    Player::Load(br,renderer);
+
+    mPositionHQ.X=br->ReadSingle();
+    mPositionHQ.Y=br->ReadSingle();
+    mPositionHQ.Z=br->ReadSingle();
+    mSeconds=br->ReadUInt64();
 }
