@@ -5,7 +5,7 @@ HdB::LoadSave::LoadSave(void)
 {
 }
 
-void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy)
+void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy,Score^ PlayerScore,Score^ EnemyScore)
 {
     SaveFileDialog^ save=gcnew SaveFileDialog();
     save->AddExtension=".shb";
@@ -24,6 +24,8 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy)
 
         player->Save(bw);
         enemy->Save(bw);
+        PlayerScore->Save(bw);
+        EnemyScore->Save(bw);
         //map->Save(bw);
 
         bw->Close();
@@ -39,7 +41,7 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy)
     MessageBox::Show("Spielstand wurde gespeichert!");
 }
 
-void HdB::LoadSave::LoadGame(Map^ map, Player^ player,PlayerAI^ enemy,Renderer^ renderer)
+void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^% PlayerScore,Score^% EnemyScore,Renderer^% renderer)
 {
     OpenFileDialog^ open=gcnew OpenFileDialog();
     open->Filter="HdB SaveGame (*.shb)|*.shb";
@@ -53,6 +55,8 @@ void HdB::LoadSave::LoadGame(Map^ map, Player^ player,PlayerAI^ enemy,Renderer^ 
 
     player=gcnew Player();
     enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f));
+    EnemyScore=gcnew Score(enemy);
+    PlayerScore=gcnew Score(player);
 
     try
     {
@@ -61,6 +65,8 @@ void HdB::LoadSave::LoadGame(Map^ map, Player^ player,PlayerAI^ enemy,Renderer^ 
 
     player->Load(br,renderer);
     enemy->Load(br, renderer);
+    PlayerScore->Load(br,renderer);
+    EnemyScore->Load(br,renderer);
     //map->Load(br);
     br->Close();
     fs->Close();

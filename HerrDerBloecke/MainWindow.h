@@ -56,7 +56,7 @@ namespace HdB {
                     //Dein Part Rico
                     //mRenderer=gcnew Renderer();
                     LoadSave^ load = gcnew LoadSave();
-                    load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mRenderer);
+                    load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
                 }
                 this->Show();
             }
@@ -70,7 +70,7 @@ namespace HdB {
 
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
-            mPlayer = gcnew Player();
+            //mPlayer = gcnew Player();
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
 
             if(game == GameType::kCPUGame) {
@@ -79,7 +79,7 @@ namespace HdB {
                 mComputerScore = gcnew Score(mComputerPlayer);
             }
 
-            mPlayerScore = gcnew Score(mPlayer);
+           // mPlayerScore = gcnew Score(mPlayer);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
@@ -533,12 +533,12 @@ namespace HdB {
     private: System::Void SaveGame()
              {
                  LoadSave^ save=gcnew LoadSave();
-                 save->SaveGame(mRenderer->Map,mPlayer,mComputerPlayer);
+                 save->SaveGame(mRenderer->Map,mPlayer,mComputerPlayer,mPlayerScore,mComputerScore);
              }
     private: System::Void LoadGame()
              {
                  LoadSave^ load=gcnew LoadSave();
-                 load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer, mRenderer);
+                 load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
              }
 
 

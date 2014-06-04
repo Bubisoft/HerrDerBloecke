@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Player.h"
 #include "PlayerAI.h"
+#include "Score.h"
 using namespace System;
 using namespace System::Windows::Forms;
 using namespace System::IO;
@@ -12,8 +13,8 @@ namespace HdB
     {
     public:
         LoadSave(void);
-        void SaveGame(Map^ map,Player^ player, PlayerAI^ enemy);
-        void LoadGame(Map^ map,Player^ player,PlayerAI^ enemy,Renderer^ renderer);
+        void SaveGame(Map^ map,Player^ player, PlayerAI^ enemy,Score^ PlayerScore,Score^ EnemyScore);
+        void LoadGame(Map^% map,Player^% player,PlayerAI^% enemy,Score^% PlayerScore,Score^% EnemyScore,Renderer^% renderer);
     };
 }
 

@@ -20,3 +20,22 @@ void HdB::Score::MakeLogEntry(Object^ sender, EventArgs^ args)
     score+=ExtraPoints;
     mScoreLog->Add(score);
 }
+
+void HdB::Score::Load(BinaryReader^ br, Renderer^ rendere)
+{
+    mLoggingTimer->Stop();
+    int x=br->ReadUInt32();
+    for(int i=0;i<x;++i)
+        mScoreLog->Add(br->ReadUInt32());
+
+    mLoggingTimer->Start();
+}
+
+void HdB::Score::Save(BinaryWriter^ bw)
+{
+    mLoggingTimer->Stop();
+    bw->Write(mScoreLog->Count);
+    for each(UInt32 u in mScoreLog)
+        bw->Write(u);
+    mLoggingTimer->Start();
+}
