@@ -103,11 +103,65 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 
     // Define build schedule here, positions relative to the headquarters
     START_BUILDING(5, Blockhuette, "Blockhaus", Vector2(-25.f, -25.f));
-    START_BUILDING(10, Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
-    START_BUILDING(12, Blockfarm, "Kastenfarm", Vector2(35.f, -25.f));
+    //START_BUILDING(10, Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
+    //START_BUILDING(12, Blockfarm, "Kastenfarm", Vector2(35.f, -25.f));
     START_BUILDING(15, Blockwerk, "Blockwerk", Vector2(50.f, 50.f));
     START_BUILDING(20, Blockstatt, "Blockstatt", blockstattPos);
     START_SOLDIER(30, ZuseZ3, "ZuseZ3", blockstattPos + Vector2(25.f, -25.f));
+}
+
+
+void HdB::PlayerAI::CheckMissingBuilding()
+{
+    short foundFarm,foundStatt,foundHaus,foundWerk;
+    Unit^ unit=nullptr;
+    Unit^ alpha=nullptr;
+    for each(Unit^ u in Units)
+    {
+       Type^ t=u->GetType();
+        if(t == Blockfarm::typeid)
+            foundFarm++;
+        else if(t == Blockstatt::typeid)
+            foundStatt++;
+        else if(t == Blockwerk::typeid)
+            foundWerk++;
+        else if(t == Blockhuette::typeid)
+            foundHaus++;
+    }
+    if (foundFarm < 2)
+    {
+        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),mPositionHQ + Vector3(25.f, -25.f, 0.f));
+        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"), mPositionHQ + Vector3(25.f, -25.f, 0.f));
+    }
+    else if(foundHaus < 1)
+    {
+        unit=gcnew Blockhuette(mRenderer->GetRedModel("BLockhaus"),mPositionHQ + Vector3(-25.f, -25.f, 0.f));
+        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"), mPositionHQ + Vector3(-25.f, -25.f, 0.f));
+    }
+    else if(foundWerk < 1)
+    {
+        unit=gcnew Blockwerk(mRenderer->GetRedModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
+        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"), mPositionHQ + Vector3(50.f, 50.f, 0.f));
+    }
+    else if(foundStatt < 1)
+    {
+        unit=gcnew Blockstatt(mRenderer->GetRedModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
+        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"), mPositionHQ + Vector3(25.f, 25.f, 0.f));
+    }
+
+    while(!mRenderer->Map->CanBuild(unit)) 
+    {
+        unit->Position = unit->Position + Vector3(5,0,0);
+        unit->MoveTo = unit->Position;
+    }
+    alpha->Position=unit->Position;
+    alpha->MoveTo=unit->MoveTo;
+
+    if(unit!=nullptr)
+    {
+        if(Res->CheckAmount(unit->GetCosts()))
+            BuildUnit(unit,unit->BuildTime(),alpha);
+    }
 }
 
 void HdB::PlayerAI::CheckEvents(Object^ source, EventArgs^ e)
@@ -118,6 +172,10 @@ void HdB::PlayerAI::CheckEvents(Object^ source, EventArgs^ e)
     {
         Attack(attacker, true);
     }
+
+    //check rebuilding buildings
+    CheckMissingBuilding();
+
 
     //check for build/rebuild new Soldiers
     if(!CheckSoldiers() &&  mSeconds >= 60)

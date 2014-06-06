@@ -25,6 +25,8 @@ namespace HdB {
         */
         bool CheckSoldiers();
 
+        void CheckMissingBuilding();
+
         Unit^ IsAttacked();
 
         /** Returns a random subclass object of the Soldier class
