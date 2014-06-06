@@ -129,7 +129,7 @@ namespace HdB {
 
         SOLDIER_ATTACK(20);
         SOLDIER_ATTACKSPEED(4);
-        SOLDIER_DEFENSE(10);
+        SOLDIER_DEFENSE(50);
         SOLDIER_SPEED(10);
         SOLDIER_RANGE(50);
     };
@@ -144,11 +144,45 @@ namespace HdB {
         UNIT_COSTS(15, 10, 5);
         UNIT_POINTS(5);
 
-        SOLDIER_ATTACK(10);
-        SOLDIER_ATTACKSPEED(2);
-        SOLDIER_DEFENSE(20);
+        SOLDIER_ATTACK(5);
+        SOLDIER_ATTACKSPEED(1);
+        SOLDIER_DEFENSE(10);
         SOLDIER_SPEED(100);
         SOLDIER_RANGE(25);
+    };
+
+    ref class Gates : Soldier
+    {
+    public:
+        Gates(HdB::Model^ model, const Vector3% pos);
+
+        UNIT_MAXHP(40);
+        UNIT_BUILDTIME(8);
+        UNIT_COSTS(60, 20, 80);
+        UNIT_POINTS(10);
+
+        SOLDIER_ATTACK(15);
+        SOLDIER_ATTACKSPEED(2);
+        SOLDIER_DEFENSE(15);
+        SOLDIER_SPEED(20);
+        SOLDIER_RANGE(5);
+    };
+
+    ref class Turing : Soldier
+    {
+    public:
+        Turing(HdB::Model^ model, const Vector3% pos);
+
+        UNIT_MAXHP(400);
+        UNIT_BUILDTIME(120);
+        UNIT_COSTS(10000, 10000, 10000);
+        UNIT_POINTS(100);
+
+        SOLDIER_ATTACK(400);
+        SOLDIER_ATTACKSPEED(20);
+        SOLDIER_DEFENSE(100);
+        SOLDIER_SPEED(5);
+        SOLDIER_RANGE(50);
     };
 
     /*************

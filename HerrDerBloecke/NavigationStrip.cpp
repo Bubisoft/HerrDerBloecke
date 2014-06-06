@@ -275,6 +275,8 @@ void HdB::NavigationStrip::BlockstattView(Unit^ u)
     this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), nullptr);
     this->AddPictureBox("ZuseZ3",nullptr,calledFunctions,ZuseZ3::typeid);
     this->AddPictureBox("Wirth",nullptr,calledFunctions,Wirth::typeid);
+    this->AddPictureBox("Gates",nullptr,calledFunctions,Gates::typeid);
+    this->AddPictureBox("Turing",nullptr,calledFunctions,Turing::typeid);
     Resize();
 }
 

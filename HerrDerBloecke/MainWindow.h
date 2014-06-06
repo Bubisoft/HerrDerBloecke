@@ -75,7 +75,7 @@ namespace HdB {
 
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
-            if(game == GameType::kNewGame)
+            if(game == GameType::kNewGame || game == GameType::kCPUGame)
             {
                 mPlayer = gcnew Player();
                 mPlayerScore=gcnew Score(mPlayer);
