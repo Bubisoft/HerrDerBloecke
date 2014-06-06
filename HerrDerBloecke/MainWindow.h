@@ -452,10 +452,21 @@ namespace HdB {
         }
     //mUnit events
     private: System::Void mUnit_UnitDestroyed(Unit^ u) {
+            // Stop Attackers
+            List<Unit^>^ allunits = gcnew List<Unit^>();
+            allunits->AddRange(mPlayer->Units);
+            allunits->AddRange(mComputerPlayer->Units);
+            for each (Unit^ un in allunits) {
+                if (Soldier^ s = dynamic_cast<Soldier^>(un))
+                    if (s->AttackTarget == u)
+                        s->StopAttack();
+            }
+
             if (mRenderer->SelectedUnits->Contains(u))
                 mRenderer->SelectedUnits->Remove(u);
 
             mRenderer->Map->RemoveUnit(u);
+            u->Despawn();
             if (mPlayer->Units->Contains(u)) {
                 mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
@@ -463,10 +474,13 @@ namespace HdB {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
             }
-            u->Despawn();
 
-            if (u == mComputerPlayer->Headquarters) {
-                MessageBox::Show("Sie haben gewonnen!");
+            // Win or Lose checl
+            if (u->GetType() == Hauptgebaeude::typeid) {
+                if (u == mComputerPlayer->Headquarters)
+                    MessageBox::Show("Sie haben gewonnen!");
+                else
+                    MessageBox::Show("Sie haben verloren!");
                 Graph^ g = gcnew Graph();
                 g->PlayerPoints = mPlayerScore->Log;
                 g->EnemiePoints = mComputerScore->Log;

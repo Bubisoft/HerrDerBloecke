@@ -136,10 +136,6 @@ void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
 {
     if (!IsInRange())
         return;
-    if (AttackTarget->PercentHP() <= 0.f) {
-        StopAttack();
-        return;
-    }
 
     Soldier^ target = dynamic_cast<Soldier^>(AttackTarget);
     if(target) //Is it a Soldier
@@ -151,9 +147,6 @@ void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
     {
         AttackTarget->Damage(this->Attack());
     }
-
-    if (AttackTarget->PercentHP() <= 0.f)
-        StopAttack();
 }
 
 DEFAULT_CONSTRUCTOR(Building, Unit);
