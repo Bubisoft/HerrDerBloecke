@@ -44,9 +44,21 @@ namespace HdB {
         Renderer^ mRenderer;
         Random^ mRandom;
         List<Unit^>^ mEnemyUnits;
+        List<Type^>^ mWaitFor;
         Vector3 mPositionHQ;
         Timer^ mTimer;
         Timer^ mEventTimer;
         UInt64 mSeconds;
+
+        //decision parameter
+        bool CanBuildSoldier;
+        bool IsMissingBuilding;
+        bool IsWaitingForSoldier;
+        bool IsBeingAttacked;
+
+        bool IsBuildingFarm;
+        bool IsBuildingWerk;
+        bool IsBuildingStatt;
+        bool IsBuildingHaus;
     };
 }
