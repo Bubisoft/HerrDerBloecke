@@ -46,17 +46,17 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
 
 void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 {
-    // Runs every second and decrements remaining time
-    bool sFound = false;
+    bool soldierFound = false;
 
+    // Runs every second and decrements remaining time
     for (int i = 0; i < mBuildTasks->Count; i++) {
-        if(dynamic_cast<Soldier^>(mBuildTasks[i]->unit))
-        {
-            if(sFound)
+        // Only build one soldier at the same time, skip others
+        if (mBuildTasks[i]->unit->GetType()->IsSubclassOf(Soldier::typeid)) {
+            if (soldierFound)
                 continue;
-            else
-                sFound = true;
+            soldierFound = true;
         }
+
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
