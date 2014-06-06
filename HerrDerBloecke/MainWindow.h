@@ -75,7 +75,8 @@ namespace HdB {
 
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
-            if(game == GameType::kNewGame || game == GameType::kCPUGame)
+
+            if(game == GameType::kNewGame || game==GameType::kCPUGame)
             {
                 mPlayer = gcnew Player();
                 mPlayerScore=gcnew Score(mPlayer);
@@ -83,7 +84,7 @@ namespace HdB {
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
 
             if(game == GameType::kCPUGame) {
-                mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f));
+                mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f), mPlayer->Units);
                 mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
                 mComputerScore = gcnew Score(mComputerPlayer);
             }

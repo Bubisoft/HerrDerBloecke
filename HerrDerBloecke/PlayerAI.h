@@ -11,14 +11,19 @@ namespace HdB {
          *  manner. Initialize with Renderer so the AI can be completely self-
          *  contained.
          */
-        PlayerAI(Renderer^ renderer, const Vector3% posHQ);
+        PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ enemyUnits);
         virtual void Save(BinaryWriter^ bw) override;
         virtual void Load(BinaryReader^ br,Renderer^ renderer)override;
     private:
         void CheckSchedule(Object^ source, EventArgs^ e);
+        bool CheckSoldiers();
+        Unit^ GetRandomSoldier();
+        void Attack(Unit^ u);
         void OnNewUnit(Unit^ unit);
 
         Renderer^ mRenderer;
+        Random^ mRandom;
+        List<Unit^>^ mEnemyUnits;
         Vector3 mPositionHQ;
         Timer^ mTimer;
         UInt64 mSeconds;

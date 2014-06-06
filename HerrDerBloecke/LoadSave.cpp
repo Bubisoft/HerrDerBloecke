@@ -76,7 +76,7 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
     PlayerScore->Load(br,renderer);
     if(isMultiplayer)
     {
-        enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f));
+        enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f), player->Units);
         EnemyScore=gcnew Score(enemy);      
         enemy->Load(br, renderer);
         EnemyScore->Load(br,renderer);
