@@ -112,6 +112,7 @@ void HdB::Soldier::StartAttack(Unit^ target)
 {
     AttackTarget=target;
     mAttackTimer->Start();
+    MoveTo=AttackTarget->Position;
 }
 
 bool HdB::Soldier::IsInRange()
@@ -132,10 +133,26 @@ void HdB::Soldier::StopAttack()
     AttackTarget = nullptr;
 }
 
+void HdB::Soldier::Damage(int dmg)
+{
+    mHP -= dmg;
+    if (mHP <= 0) {
+        mHP = 0;
+        if (mSpawned)
+            UnitDestroyed(this);
+        StopAttack();
+    }
+}
+
 void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
 {
     if (!IsInRange())
+    {
+        //TODO: set the moveto to let the units move afterwards so they can attack moving units
+        MoveTo=AttackTarget->Position;
         return;
+    }
+    LookAt=AttackTarget->Position;
 
     Soldier^ target = dynamic_cast<Soldier^>(AttackTarget);
     if(target) //Is it a Soldier

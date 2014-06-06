@@ -20,7 +20,7 @@ namespace HdB {
         void Spawn();
         void Despawn();
         Matrix GetTransform();
-        void Damage(int dmg);
+        virtual void Damage(int dmg);
         float PercentHP() { return (float)mHP / MaxHP(); }
 
         // Properties
@@ -78,6 +78,8 @@ namespace HdB {
         void StopAttack();
         bool IsInRange();
         property Unit^ AttackTarget;
+
+        virtual void Damage(int damage)override;
 
         // Abstract Unit Attributes
         virtual const int Attack() = 0;

@@ -40,6 +40,11 @@ namespace HdB {
         void ExpandCapacity(int Gold, int Blockterie, int Food);
 
         /** */
+        float GoldLoad() { return (float)mGold / mGoldCapacity; }
+        float BlockterieLoad() { return (float)mBlockterie / mBlockterieCapacity; }
+        float FoodLoad() { return (float)mFood / mFoodCapacity; }
+
+        /** */
         virtual void Save(BinaryWriter^ bw);
 
         /** */

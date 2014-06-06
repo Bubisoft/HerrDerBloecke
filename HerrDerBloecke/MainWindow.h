@@ -492,6 +492,7 @@ namespace HdB {
     //mPlayerAI Events
     private: System::Void mPlayerAI_UnitBuilt(Unit^ u) {
             u->UnitDestroyed+=gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+            u->UnitDestroyed+=gcnew UnitDestroyedEvent(mComputerPlayer, &PlayerAI::OnUnitDestroyed);
         }
 
     // mPlayer Events
@@ -589,6 +590,8 @@ private: System::Void lblResNahrung_TextChanged(System::Object^  sender, System:
 		 }
 private: System::Void resourcesTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
                  mPlayer->ProcessResources();
+                 if(mComputerPlayer!=nullptr)
+                     mComputerPlayer->ProcessResources();
          }
 
 private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
