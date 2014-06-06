@@ -34,12 +34,6 @@ public:
 	unsigned int Version() { return 1; }
 	void ShowAbout(HWND hWnd) { }
 
-	//the actual export function
-	/* TODO:
-	-export lights
-	-export animation
-	*/
-
 	int DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOOL supressPrompts=FALSE, DWORD options=0);
 
 private:

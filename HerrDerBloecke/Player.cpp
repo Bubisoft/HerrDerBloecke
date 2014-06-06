@@ -26,7 +26,6 @@ HdB::Player::Player()
     mGoldUnits=0;
     mFoodUnits=0;
     IsBlue=true;
-    //*********  TEMP END  ***
 }
 void HdB::Player::ProcessResources()
 {

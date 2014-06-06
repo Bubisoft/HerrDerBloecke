@@ -162,7 +162,6 @@ DEFAULT_CONSTRUCTOR(ProductionBuilding, Building);
 // Soldier types
 DEFAULT_CONSTRUCTOR(ZuseZ3, Soldier);
 DEFAULT_CONSTRUCTOR(Wirth, Soldier);
-DEFAULT_CONSTRUCTOR(TestUnit, Soldier); // Maybe this should be removed later
 
 // Building types
 DEFAULT_CONSTRUCTOR(Hauptgebaeude, Building);

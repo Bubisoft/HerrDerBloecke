@@ -114,26 +114,6 @@ namespace HdB {
     #define SOLDIER_RANGE(x) virtual const int Range() override { return x; }
     #define PRODUCTION_TYPE(x) virtual const ProductionType GetProductionType() override { return x; }
 
-    /********
-     * TEMP *
-     ********/
-    ref class TestUnit : Soldier
-    {
-    public:
-        TestUnit(HdB::Model^ model, const Vector3% pos);
-
-        UNIT_MAXHP(100);
-        UNIT_BUILDTIME(5);
-        UNIT_COSTS(3, 6, 8);
-        UNIT_POINTS(5);
-
-        SOLDIER_ATTACK(10);
-        SOLDIER_ATTACKSPEED(3);
-        SOLDIER_DEFENSE(10);
-        SOLDIER_SPEED(10);
-        SOLDIER_RANGE(1);
-    };
-
     /************
      * SOLDIERS *
      ************/

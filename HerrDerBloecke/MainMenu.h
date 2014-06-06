@@ -26,6 +26,7 @@ namespace HdB {
 		MainMenu(void)
 		{
 			InitializeComponent();
+            game = GameType::kExit;
 			//
 			//TODO: Add the constructor code here
 			//

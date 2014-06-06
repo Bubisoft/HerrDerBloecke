@@ -59,6 +59,12 @@ namespace HdB {
                 }
                 this->Show();
             }
+            else
+            {
+                Close();
+                return;
+            }
+
             labelTimer->Enabled = true;
             resourcesTimer->Enabled = true;
             mMousePos = this->MousePosition;
