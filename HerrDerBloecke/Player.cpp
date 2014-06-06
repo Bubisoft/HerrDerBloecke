@@ -47,7 +47,16 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
 void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 {
     // Runs every second and decrements remaining time
+    bool sFound = false;
+
     for (int i = 0; i < mBuildTasks->Count; i++) {
+        if(dynamic_cast<Soldier^>(mBuildTasks[i]->unit))
+        {
+            if(sFound)
+                continue;
+            else
+                sFound = true;
+        }
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
