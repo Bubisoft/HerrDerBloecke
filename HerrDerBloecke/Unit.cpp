@@ -135,13 +135,10 @@ void HdB::Soldier::StopAttack()
 
 void HdB::Soldier::Damage(int dmg)
 {
-    mHP -= dmg;
-    if (mHP <= 0) {
-        mHP = 0;
-        if (mSpawned)
-            UnitDestroyed(this);
+    Unit::Damage(dmg);
+
+    if (mHP <= 0)
         StopAttack();
-    }
 }
 
 void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
