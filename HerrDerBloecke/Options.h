@@ -108,9 +108,9 @@ namespace HdB {
             this->label2 = (gcnew System::Windows::Forms::Label());
             this->saveButton = (gcnew System::Windows::Forms::Button());
             this->loadButton = (gcnew System::Windows::Forms::Button());
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->BeginInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->BeginInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSFXVolume))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->BeginInit();
             this->SuspendLayout();
             // 
             // tbCamSpeed
@@ -172,10 +172,10 @@ namespace HdB {
             // tbMusicVolume
             // 
             this->tbMusicVolume->LargeChange = 20;
-            this->tbMusicVolume->Location = System::Drawing::Point(65, 116);
+            this->tbMusicVolume->Location = System::Drawing::Point(56, 116);
             this->tbMusicVolume->Maximum = 100;
             this->tbMusicVolume->Name = L"tbMusicVolume";
-            this->tbMusicVolume->Size = System::Drawing::Size(241, 45);
+            this->tbMusicVolume->Size = System::Drawing::Size(250, 45);
             this->tbMusicVolume->SmallChange = 10;
             this->tbMusicVolume->TabIndex = 6;
             this->tbMusicVolume->Value = 100;
@@ -192,10 +192,10 @@ namespace HdB {
             // tbSFXVolume
             // 
             this->tbSFXVolume->LargeChange = 20;
-            this->tbSFXVolume->Location = System::Drawing::Point(68, 185);
+            this->tbSFXVolume->Location = System::Drawing::Point(56, 185);
             this->tbSFXVolume->Maximum = 100;
             this->tbSFXVolume->Name = L"tbSFXVolume";
-            this->tbSFXVolume->Size = System::Drawing::Size(238, 45);
+            this->tbSFXVolume->Size = System::Drawing::Size(250, 45);
             this->tbSFXVolume->SmallChange = 10;
             this->tbSFXVolume->TabIndex = 8;
             this->tbSFXVolume->Value = 50;
@@ -215,7 +215,7 @@ namespace HdB {
             this->saveButton->Name = L"saveButton";
             this->saveButton->Size = System::Drawing::Size(75, 23);
             this->saveButton->TabIndex = 10;
-            this->saveButton->Text = L"Save";
+            this->saveButton->Text = L"Speichern";
             this->saveButton->UseVisualStyleBackColor = true;
             this->saveButton->Click += gcnew System::EventHandler(this, &Options::saveButton_Click);
             // 
@@ -225,7 +225,7 @@ namespace HdB {
             this->loadButton->Name = L"loadButton";
             this->loadButton->Size = System::Drawing::Size(75, 23);
             this->loadButton->TabIndex = 11;
-            this->loadButton->Text = L"Load";
+            this->loadButton->Text = L"Laden";
             this->loadButton->UseVisualStyleBackColor = true;
             this->loadButton->Click += gcnew System::EventHandler(this, &Options::loadButton_Click);
             // 
@@ -234,6 +234,7 @@ namespace HdB {
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(370, 289);
+            this->ControlBox = false;
             this->Controls->Add(this->loadButton);
             this->Controls->Add(this->saveButton);
             this->Controls->Add(this->label2);
@@ -246,11 +247,16 @@ namespace HdB {
             this->Controls->Add(this->btnOK);
             this->Controls->Add(this->lblCameraSpeed);
             this->Controls->Add(this->tbCamSpeed);
+            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
+            this->MaximizeBox = false;
+            this->MinimizeBox = false;
             this->Name = L"Options";
+            this->ShowIcon = false;
+            this->ShowInTaskbar = false;
             this->Text = L"Options";
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbCamSpeed))->EndInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbMusicVolume))->EndInit();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tbSFXVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 

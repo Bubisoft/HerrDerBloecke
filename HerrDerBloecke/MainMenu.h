@@ -75,9 +75,9 @@ namespace HdB {
             // label1
             // 
             this->label1->AutoSize = true;
-            this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 36, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+            this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 36, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label1->Location = System::Drawing::Point(63, 9);
+            this->label1->Location = System::Drawing::Point(70, 9);
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(274, 55);
             this->label1->TabIndex = 0;
@@ -87,9 +87,9 @@ namespace HdB {
             // button1
             // 
             this->button1->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button1->Location = System::Drawing::Point(137, 77);
+            this->button1->Location = System::Drawing::Point(147, 77);
             this->button1->Name = L"button1";
-            this->button1->Size = System::Drawing::Size(121, 41);
+            this->button1->Size = System::Drawing::Size(120, 45);
             this->button1->TabIndex = 1;
             this->button1->Text = L"Neues Spiel";
             this->button1->UseVisualStyleBackColor = true;
@@ -98,9 +98,9 @@ namespace HdB {
             // button2
             // 
             this->button2->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button2->Location = System::Drawing::Point(137, 124);
+            this->button2->Location = System::Drawing::Point(147, 128);
             this->button2->Name = L"button2";
-            this->button2->Size = System::Drawing::Size(121, 42);
+            this->button2->Size = System::Drawing::Size(120, 45);
             this->button2->TabIndex = 2;
             this->button2->Text = L"Neues Spiel gegen CPU";
             this->button2->UseVisualStyleBackColor = true;
@@ -109,9 +109,9 @@ namespace HdB {
             // button3
             // 
             this->button3->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button3->Location = System::Drawing::Point(137, 173);
+            this->button3->Location = System::Drawing::Point(147, 179);
             this->button3->Name = L"button3";
-            this->button3->Size = System::Drawing::Size(121, 43);
+            this->button3->Size = System::Drawing::Size(120, 45);
             this->button3->TabIndex = 3;
             this->button3->Text = L"Spiel Laden";
             this->button3->UseVisualStyleBackColor = true;
@@ -120,9 +120,9 @@ namespace HdB {
             // button4
             // 
             this->button4->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button4->Location = System::Drawing::Point(137, 223);
+            this->button4->Location = System::Drawing::Point(147, 230);
             this->button4->Name = L"button4";
-            this->button4->Size = System::Drawing::Size(121, 46);
+            this->button4->Size = System::Drawing::Size(120, 45);
             this->button4->TabIndex = 4;
             this->button4->Text = L"Spiel verlassen";
             this->button4->UseVisualStyleBackColor = true;
@@ -138,6 +138,7 @@ namespace HdB {
             this->Controls->Add(this->button2);
             this->Controls->Add(this->button1);
             this->Controls->Add(this->label1);
+            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
             this->Name = L"MainMenu";
             this->Text = L"Hauptmenü";
             this->ResumeLayout(false);
