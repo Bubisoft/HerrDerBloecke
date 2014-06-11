@@ -125,23 +125,23 @@ void HdB::PlayerAI::CheckBuilding()
     }
 
     if(foundFarm < foundHaus*2){
-        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),Vector3(25.f, -25.f, 0.f));
-        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"),Vector3(25.f, -25.f, 0.f));
+        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),mPositionHQ + Vector3(25.f, -25.f, 0.f));
+        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"),mPositionHQ + Vector3(25.f, -25.f, 0.f));
     }
     else if(foundStatt < foundWerk){
-        unit=gcnew Blockstatt(mRenderer->GetRedModel("Blockstatt"),Vector3(25.f, 25.f, 0.f));
-        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"),Vector3(25.f, 25.f, 0.f));
+        unit=gcnew Blockstatt(mRenderer->GetRedModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
+        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
     }
     else if(foundWerk < foundHaus){
-        unit=gcnew Blockwerk(mRenderer->GetRedModel("Blockwerk"),Vector3(50.f, 50.f, 0.f));
-        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"),Vector3(50.f, 50.f, 0.f));
+        unit=gcnew Blockwerk(mRenderer->GetRedModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
+        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
     }
     else{
-        unit=gcnew Blockhuette(mRenderer->GetRedModel("Blockhaus"), Vector3(-25.f, 25.f, 0.f));
-        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"), Vector3(-25.f, 25.f, 0.f));
+        unit=gcnew Blockhuette(mRenderer->GetRedModel("Blockhaus"),mPositionHQ + Vector3(-25.f, 25.f, 0.f));
+        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"),mPositionHQ + Vector3(-25.f, 25.f, 0.f));
     }
 
-    mEvents->Add(gcnew AIUnitEvent(mSeconds+5, 3, unit,alpha));
+    mEvents->Add(gcnew AIUnitEvent(mSeconds+5, 3, unit, alpha));
 }
 
 HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
