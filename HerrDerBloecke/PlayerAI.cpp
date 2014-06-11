@@ -175,6 +175,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 
 
     IsBuildingSoldier=false;
+    mToDo=nullptr;
     for each(AIEvent^ aievent in mEvents)
     {
         if(aievent->AtTime > mSeconds)
@@ -220,7 +221,8 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         Unit^ u=uevent->Unit;
         PositionUnit(u, uevent->Alpha);
         BuildUnit(u,u->BuildTime(),uevent->Alpha);
-        mRenderer->Map->AddUnit(u);
+        if(u->GetType()->IsSubclassOf(Building::typeid))
+            mRenderer->Map->AddUnit(u);
         uevent->Status=HdB::EventStatus::CLOSED;
     }
     else if( AISoldierEvent^ sevent= dynamic_cast<AISoldierEvent^>(mToDo))
