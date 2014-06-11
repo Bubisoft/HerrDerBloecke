@@ -38,6 +38,10 @@ namespace HdB {
         */
         Unit^ GetRandomSoldier();
 
+        /** Returns a Building based on a simple logic
+        */
+        void CheckBuilding();
+
         /** Starts a attack with all soldiers on the given Unit without interrupting except isDefense is true
         */
         void Attack(Unit^ u, bool isDefense);
@@ -53,11 +57,13 @@ namespace HdB {
         Renderer^ mRenderer;
         Random^ mRandom;
         List<Unit^>^ mEnemyUnits;
+        List<Soldier^>^ mSoldiers;
         List<AIEvent^>^ mEvents;
         Vector3 mPositionHQ;
         Timer^ mTimer;
         Timer^ mEventTimer;
         UInt64 mSeconds;
+        AIEvent^ mToDo;
 
         //decision parameter
         bool CanBuildSoldier;

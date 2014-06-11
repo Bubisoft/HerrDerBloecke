@@ -58,18 +58,19 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
     Headquarters = u;
 
     IsBlue=false;
+    mToDo=nullptr;
 
     //TEMP
     mEvents=gcnew List<AIEvent^>();
     IsMissingBuilding=true;
     CanBuildSoldier=false;
+    mSoldiers=gcnew List<Soldier^>();
 
     static const Vector2 blockstattPos = Vector2(25.f, 25.f);
     ADD_BUILDING(5, 5,Blockhuette,"Blockhaus",Vector2(-25.f, -25.f));
     ADD_BUILDING(10, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
     ADD_BUILDING(15, 3, Blockwerk, "Blockwerk", Vector2(50.f, 50.f));
     ADD_BUILDING(20, 2, Blockstatt, "Blockstatt", blockstattPos);
-    //ADD_SOLDIER(30, 1, ZuseZ3, "ZuseZ3", blockstattPos + Vector2(25.f, -25.f));
 }
 
 int HdB::PlayerAI::CheckSoldiers()
@@ -104,6 +105,45 @@ void HdB::PlayerAI::MoveUnits(const Vector3% pos)
             s->MoveTo=pos;
 }
 
+void HdB::PlayerAI::CheckBuilding()
+{
+    Unit^ unit=nullptr;
+    Unit^ alpha = nullptr;
+    UInt16 foundFarm = 0, foundStatt = 0, foundHaus = 0, foundWerk = 0;
+    
+
+    for each (Unit^ u in Units) {
+        Type^ t=u->GetType();
+        if(t == Blockfarm::typeid)
+            foundFarm++;
+        else if(t == Blockstatt::typeid)
+            foundStatt++;
+        else if(t == Blockwerk::typeid)
+            foundWerk++;
+        else if(t == Blockhuette::typeid)
+            foundHaus++;
+    }
+
+    if(foundFarm < foundHaus*2){
+        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),Vector3(25.f, -25.f, 0.f));
+        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"),Vector3(25.f, -25.f, 0.f));
+    }
+    else if(foundStatt < foundWerk){
+        unit=gcnew Blockstatt(mRenderer->GetRedModel("Blockstatt"),Vector3(25.f, 25.f, 0.f));
+        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"),Vector3(25.f, 25.f, 0.f));
+    }
+    else if(foundWerk < foundHaus){
+        unit=gcnew Blockwerk(mRenderer->GetRedModel("Blockwerk"),Vector3(50.f, 50.f, 0.f));
+        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"),Vector3(50.f, 50.f, 0.f));
+    }
+    else{
+        unit=gcnew Blockhuette(mRenderer->GetRedModel("Blockhaus"), Vector3(-25.f, 25.f, 0.f));
+        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"), Vector3(-25.f, 25.f, 0.f));
+    }
+
+    mEvents->Add(gcnew AIUnitEvent(mSeconds+5, 3, unit,alpha));
+}
+
 HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
 {
     int i=mRandom->Next(20);
@@ -134,10 +174,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     mSeconds++;
 
 
-
-    // Define build schedule here, positions relative to the headquarters
     IsBuildingSoldier=false;
-    AIEvent^ todo=nullptr;
     for each(AIEvent^ aievent in mEvents)
     {
         if(aievent->AtTime > mSeconds)
@@ -164,21 +201,21 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
             }
         }
 
-        if(todo!=nullptr)
+        if(mToDo!=nullptr)
         {
-            if(aievent->Priority > todo->Priority)
-                todo=aievent;
+            if(aievent->Priority && aievent->CanProcess(Res) && (aievent->GetType()==AIUnitEvent::typeid) > mToDo->Priority)
+                mToDo=aievent;
         }
         else
-            todo=aievent;
+            mToDo=aievent;
            
     }
     
-    if(todo==nullptr)
+    if(mToDo==nullptr)
         return;
 
     //process the todo event
-    if(AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(todo))
+    if(AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(mToDo))
     {
         Unit^ u=uevent->Unit;
         PositionUnit(u, uevent->Alpha);
@@ -186,7 +223,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         mRenderer->Map->AddUnit(u);
         uevent->Status=HdB::EventStatus::CLOSED;
     }
-    else if( AISoldierEvent^ sevent= dynamic_cast<AISoldierEvent^>(todo))
+    else if( AISoldierEvent^ sevent= dynamic_cast<AISoldierEvent^>(mToDo))
     {
         if(sevent->Target!=nullptr)
             Attack(sevent->Target,sevent->IsDefense);
@@ -197,8 +234,12 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 
         sevent->Status=HdB::EventStatus::OPEN;
     }
-    if(todo->Status==HdB::EventStatus::CLOSED)
-        mEvents->Remove(todo);
+    
+    for each(AIEvent^ aievent in mEvents)
+    {
+        if(aievent->Status==HdB::EventStatus::CLOSED)
+            mEvents->Remove(aievent);
+    }
 }
 
 
@@ -269,21 +310,31 @@ void HdB::PlayerAI::CheckEvents(Object^ source, EventArgs^ e)
     Only do this if we are not waiting for a building except we are being attacked
     */
     if(!IsMissingBuilding || IsBeingAttacked)
-        if( (!IsBuildingSoldier) && CanBuildSoldier && (!CheckSoldiers()) &&  mSeconds >= 40)
+        if( (!IsBuildingSoldier) && CanBuildSoldier && (mSoldiers->Count > 0) &&  mSeconds >= 40)
         {
             for(int i=0; i < 5; ++i)    //TODO: ->positioning of built soldiers
             {
                 Unit^ u=GetRandomSoldier();
                 mEvents->Add(gcnew AIUnitEvent(mSeconds+i,2,u,nullptr));
-                
+                IsBuildingSoldier=true;
             }
-            IsBuildingSoldier=true;
+            
+        }
+
+        /** Check if we have to much Resources stored*/
+        if(mSeconds >= 70 && Res->GoldLoad() >= 0.7f && Res->BlockterieLoad() >= 0.7f && Res->FoodLoad() >= 0.7f)
+        {
+            //crazy building action here
+            CheckBuilding();
         }
 
     //check randomly for attack
     if(mRandom->Next(40) == 0)
-        if(CheckSoldiers())
+        if(mSoldiers->Count > 0)
         {
+            Unit^ target=mEnemyUnits[mRandom->Next(mEnemyUnits->Count)]; //determine random target
+            for each(Soldier^ s in mSoldiers)
+                mEvents->Add(gcnew AISoldierEvent(0, 5,s,target,s->AttackTarget, false));
         }
 }
 
@@ -330,6 +381,8 @@ void HdB::PlayerAI::OnNewUnit(Unit^ unit)
         IsBuildingStatt=false;
         CanBuildSoldier=true;
     }
+    else if(HdB::Soldier^ soldier=dynamic_cast<Soldier^>(unit))
+        mSoldiers->Add(soldier);
 }
 
 void HdB::PlayerAI::OnUnitDestroyed(Unit^ unit)
@@ -345,6 +398,8 @@ void HdB::PlayerAI::OnUnitDestroyed(Unit^ unit)
     } else if (HdB::Blockstatt^ s = dynamic_cast<Blockstatt^>(unit)) {
         CanBuildSoldier = false;
     }
+    else if(HdB::Soldier^ soldier=dynamic_cast<Soldier^>(unit))
+        mSoldiers->Remove(soldier);
 }
 
 void HdB::PlayerAI::Save(BinaryWriter^ bw)

@@ -1,4 +1,6 @@
 #pragma once
+#include"Resources.h"
+#include "Unit.h"
 using namespace System;
 using namespace SlimDX;
 
@@ -7,10 +9,11 @@ namespace HdB{
     ref class Soldier;
     enum EventStatus{NEW,OPEN,CLOSED};
 
-    ref class AIEvent
+    ref class AIEvent abstract
     {
     public:
         AIEvent(UInt64 attime, UInt16 priority): mAtTime(attime), mPriority(priority), mStatus(HdB::EventStatus::NEW) {}
+        virtual bool CanProcess(HdB::Resources^ res)=0;
     protected:
         UInt64 mAtTime;
         UInt16 mPriority; // higher value -> higher priority  
@@ -38,6 +41,7 @@ namespace HdB{
         bool mIsDefense;
     public:
         AISoldierEvent(UInt64 attime, UInt16 priority,Soldier^ soldier,Unit^ target, Unit^ oldtarget, bool isdefense): AIEvent(attime,priority), mSoldier(soldier), mTarget(target), mOldTarget(oldtarget), mIsDefense(isdefense) { }
+        virtual bool CanProcess(HdB::Resources^ res) override { return true; }
     public:
         property bool IsDefense{
             bool get() {return mIsDefense;}        
@@ -61,6 +65,14 @@ namespace HdB{
         Unit^ mAlpha;
     public:
         AIUnitEvent(UInt64 attime, UInt16 priority, Unit^ u, Unit^ alpha): AIEvent(attime, priority), mUnit(u), mAlpha(alpha) { }
+
+        virtual bool CanProcess(HdB::Resources^ res) override {
+            if(res->CheckAmount(mUnit->GetCosts()))
+                return true; 
+            else 
+                return false;
+        }
+
     public:
         property HdB::Unit^ Unit{
             HdB::Unit^ get() { return mUnit; }
