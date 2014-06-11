@@ -35,7 +35,7 @@ namespace HdB {
         void SetMovementKey(Keys key, bool pressed);
 
         /** Move the camera according to the arrow keys that are pressed. */
-        void MoveByKeys();
+        void MoveByKeys(float speedMultiplier);
 
         /** Defines the camera rotation speed. */
         property float Speed;

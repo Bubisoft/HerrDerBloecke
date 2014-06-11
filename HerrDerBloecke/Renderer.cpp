@@ -114,7 +114,7 @@ void HdB::Renderer::Draw()
     mDevice->Clear(ClearFlags::Target | ClearFlags::ZBuffer, Color4(0.f, 0.f, 0.f), 1.f, 0);
     mDevice->BeginScene();
 
-    Camera->MoveByKeys();
+    Camera->MoveByKeys(timeSinceLastFrame / 1000000.f);
     mDevice->SetTransform(TransformState::View, Camera->ViewMatrix());
     mDevice->SetTransform(TransformState::Projection, Camera->ProjectionMatrix());
 

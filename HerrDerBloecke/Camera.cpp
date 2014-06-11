@@ -3,6 +3,7 @@
 #define ZOOM_DISTANCE_MIN 5.f
 #define ZOOM_DISTANCE_MAX 100.f
 #define ZOOM_SPEED 0.05f
+#define KEYMOVE_SPEED 10.f
 
 HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)
 : mDevice(device), mPosition(pos), mLookAt(lookAt), mKeyDown(false), mKeyUp(false),
@@ -87,7 +88,7 @@ void HdB::Camera::SetMovementKey(Keys key, bool pressed)
         mKeyRight = pressed;
 }
 
-void HdB::Camera::MoveByKeys()
+void HdB::Camera::MoveByKeys(float speedMultiplier)
 {
     Vector3 dir = Vector3::Zero;
     Vector3 forward = Vector3::Subtract(mLookAt, mPosition);
@@ -105,5 +106,5 @@ void HdB::Camera::MoveByKeys()
         dir -= left;
 
     if (dir != Vector3::Zero)
-        Move(Vector3::Normalize(dir));
+        Move(Vector3::Normalize(dir) * speedMultiplier * KEYMOVE_SPEED);
 }
