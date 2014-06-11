@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIEvent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="HealthBar.cpp" />
@@ -164,6 +165,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIEvent.h" />
     <ClInclude Include="BuildingRessources.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Globals.h" />

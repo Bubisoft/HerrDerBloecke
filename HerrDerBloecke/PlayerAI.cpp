@@ -17,6 +17,15 @@
         BuildUnit(u, u->BuildTime(), nullptr); \
     }
 
+#define ADD_BUILDING(atTime, priority,UnitType, Model, pos) { \
+        Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
+        Unit^ ph = gcnew UnitType(mRenderer->GetAlphaModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
+        mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,ph)); }
+
+#define ADD_SOLDIER(atTime, priority,UnitType, Model, pos) { \
+        Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
+        mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,nullptr)); }
+
 HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ enemyUnits) : mRenderer(renderer), mPositionHQ(posHQ), mEnemyUnits(enemyUnits)
 {
     // Initialize AI schedule timer
@@ -51,19 +60,27 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
     IsBlue=false;
 
     //TEMP
-    mWaitFor=gcnew List<Type^>();
+    mEvents=gcnew List<AIEvent^>();
     IsMissingBuilding=true;
     CanBuildSoldier=false;
+
+    static const Vector2 blockstattPos = Vector2(25.f, 25.f);
+    ADD_BUILDING(5, 5,Blockhuette,"Blockhaus",Vector2(-25.f, -25.f));
+    ADD_BUILDING(10, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
+    ADD_BUILDING(15, 3, Blockwerk, "Blockwerk", Vector2(50.f, 50.f));
+    ADD_BUILDING(20, 2, Blockstatt, "Blockstatt", blockstattPos);
+    //ADD_SOLDIER(30, 1, ZuseZ3, "ZuseZ3", blockstattPos + Vector2(25.f, -25.f));
 }
 
-bool HdB::PlayerAI::CheckSoldiers()
+int HdB::PlayerAI::CheckSoldiers()
 {
+    int i=0;
     for each(Unit^ u in Units)
     {
         if(u->GetType()->IsSubclassOf(Soldier::typeid))
-            return true;
+            ++i;
     }
-    return false;
+    return i;
 }
 
 void HdB::PlayerAI::Attack(Unit^ target, bool isDefense)
@@ -74,30 +91,36 @@ void HdB::PlayerAI::Attack(Unit^ target, bool isDefense)
         {
             if(isDefense || s->AttackTarget == nullptr)
             {
-                s->StartAttack(target);
-                //s->MoveTo = target->Position;
+                mEvents->Add(gcnew AISoldierEvent(0, 4, s, target, s->AttackTarget, isDefense));
             }
         }
     }
 }
 
+void HdB::PlayerAI::MoveUnits(const Vector3% pos)
+{
+    for each(Unit^ u in Units)
+        if(Soldier^ s=dynamic_cast<Soldier^>(u))
+            s->MoveTo=pos;
+}
+
 HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
 {
-    int i=mRandom->Next(3);
+    int i=mRandom->Next(20);
     Unit^ unit;
 
-    if(i==0)
-        unit= gcnew ZuseZ3(mRenderer->GetRedModel("Zusez3"), mPositionHQ + Vector3(25.f, -25.f, 0.f));
-    else if(i==1)
-        unit= gcnew Wirth(mRenderer->GetRedModel("Wirth"), mPositionHQ + Vector3(25.f, -25.f, 0.f));
-    else if(i==2)
-        unit= gcnew Gates(mRenderer->GetRedModel("Gates"), mPositionHQ + Vector3(25.f, -25.f, 0.f));
+    if(i>=0 && i < 9)
+        unit= gcnew ZuseZ3(mRenderer->GetRedModel("Zusez3"), mPositionHQ + Vector3(40.f, -25.f, 0.f));
+    else if(i >= 9 && i < 15)
+        unit= gcnew Wirth(mRenderer->GetRedModel("Wirth"), mPositionHQ + Vector3(40.f, -25.f, 0.f));
+    else if(i >= 15 && i < 20)
+        unit= gcnew Gates(mRenderer->GetRedModel("Gates"), mPositionHQ + Vector3(40.f, -25.f, 0.f));
     else
-        unit= gcnew Turing(mRenderer->GetRedModel("Turing"), mPositionHQ + Vector3(25.f, -25.f, 0.f));
+        unit= gcnew Turing(mRenderer->GetRedModel("Turing"), mPositionHQ + Vector3(40.f, -25.f, 0.f));
 
     while(!mRenderer->Map->CanBuild(unit)) 
     {
-        unit->Position = unit->Position + Vector3(5,0,0);
+        unit->Position = unit->Position + Vector3(1,0,0);
         unit->MoveTo = unit->Position;
     }
     return unit;
@@ -109,19 +132,79 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         return;
 
     mSeconds++;
-    static const Vector2 blockstattPos = Vector2(25.f, 25.f);
+
+
 
     // Define build schedule here, positions relative to the headquarters
-    START_BUILDING(5, Blockhuette, "Blockhaus", Vector2(-25.f, -25.f));
-    START_BUILDING(10, Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
-    START_BUILDING(15, Blockwerk, "Blockwerk", Vector2(50.f, 50.f));
-    START_BUILDING(20, Blockstatt, "Blockstatt", blockstattPos);
-    START_SOLDIER(30, ZuseZ3, "ZuseZ3", blockstattPos + Vector2(25.f, -25.f));
+    IsBuildingSoldier=false;
+    AIEvent^ todo=nullptr;
+    for each(AIEvent^ aievent in mEvents)
+    {
+        if(aievent->AtTime > mSeconds)
+            continue;
+        //try to finish open events
+        if(aievent->Status==HdB::EventStatus::OPEN)
+        {
+            if(AISoldierEvent^ sevent=dynamic_cast<AISoldierEvent^>(aievent))
+                if(sevent->Target==nullptr && sevent->OldTarget!=nullptr && sevent->IsDefense) //continue attack on oldtarget wich was interrupted by defense call
+                { 
+                    sevent->Soldier->StartAttack(sevent->OldTarget);
+                    sevent->Status=HdB::EventStatus::CLOSED;
+                }
+                else
+                {
+                    //start next attack or pull back Soldiers
+                    MoveUnits(mPositionHQ + Vector3(10.f,-10.f,0.f));
+                }
+            else
+            {
+                AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(aievent);
+                if(uevent->Unit->GetType()->IsSubclassOf(Soldier::typeid))
+                    IsBuildingSoldier=true;
+            }
+        }
+
+        if(todo!=nullptr)
+        {
+            if(aievent->Priority > todo->Priority)
+                todo=aievent;
+        }
+        else
+            todo=aievent;
+           
+    }
+    
+    if(todo==nullptr)
+        return;
+
+    //process the todo event
+    if(AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(todo))
+    {
+        Unit^ u=uevent->Unit;
+        PositionUnit(u, uevent->Alpha);
+        BuildUnit(u,u->BuildTime(),uevent->Alpha);
+        mRenderer->Map->AddUnit(u);
+        uevent->Status=HdB::EventStatus::CLOSED;
+    }
+    else if( AISoldierEvent^ sevent= dynamic_cast<AISoldierEvent^>(todo))
+    {
+        if(sevent->Target!=nullptr)
+            Attack(sevent->Target,sevent->IsDefense);
+        else if(sevent->OldTarget!=nullptr)
+            Attack(sevent->OldTarget,false);
+        else
+            MoveUnits(mPositionHQ + Vector3(5.f, 5.f, 0.f));
+
+        sevent->Status=HdB::EventStatus::OPEN;
+    }
+    if(todo->Status==HdB::EventStatus::CLOSED)
+        mEvents->Remove(todo);
 }
 
 
 void HdB::PlayerAI::CheckMissingBuilding()
 {
+ 
     UInt16 foundFarm = 0, foundStatt = 0, foundHaus = 0, foundWerk = 0;
     Unit^ unit = nullptr;
     Unit^ alpha = nullptr;
@@ -139,48 +222,31 @@ void HdB::PlayerAI::CheckMissingBuilding()
     }
 
     if (!IsBuildingFarm && foundFarm < 2) {
-        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),mPositionHQ + Vector3(25.f, -25.f, 0.f));
-        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"), mPositionHQ + Vector3(25.f, -25.f, 0.f));
+        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),mPositionHQ + Vector3(25.f,-25.f,0.f));
+        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"),mPositionHQ + Vector3(25.f,-25.f,0.f));
         IsMissingBuilding=true;
-        if(Res->CheckAmount(unit->GetCosts()))
-            IsBuildingFarm=true;
+        IsBuildingFarm=true;
     } else if(!IsBuildingHaus && foundHaus < 1) {
-        unit=gcnew Blockhuette(mRenderer->GetRedModel("BLockhaus"),mPositionHQ + Vector3(-25.f, -25.f, 0.f));
-        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"), mPositionHQ + Vector3(-25.f, -25.f, 0.f));
+        unit=gcnew Blockhuette(mRenderer->GetRedModel("Blockhaus"),mPositionHQ + Vector3(-25.f, -25.f, 0.f));
+        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"),mPositionHQ + Vector3(-25.f, -25.f, 0.f));
         IsMissingBuilding=true;
-        if(Res->CheckAmount(unit->GetCosts()))
-            IsBuildingHaus=true;
+        IsBuildingHaus=true;
     } else if(!IsBuildingWerk && foundWerk < 1) {
         unit=gcnew Blockwerk(mRenderer->GetRedModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
-        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"), mPositionHQ + Vector3(50.f, 50.f, 0.f));
+        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
         IsMissingBuilding=true;
-        if(Res->CheckAmount(unit->GetCosts()))
-            IsBuildingWerk=true;
+        IsBuildingWerk=true;
     } else if(!IsBuildingStatt && foundStatt < 1) {
         unit=gcnew Blockstatt(mRenderer->GetRedModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
-        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"), mPositionHQ + Vector3(25.f, 25.f, 0.f));
+        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
         IsMissingBuilding=true;
-        if(Res->CheckAmount(unit->GetCosts()))
-            IsBuildingStatt=true;
-    } else {
+        IsBuildingStatt=true;
+    }
+    else {
         IsMissingBuilding=false;
         return;
     }
-
-    while (!mRenderer->Map->CanBuild(unit)) {
-        unit->Position = unit->Position + Vector3(5, 0, 0);
-        unit->MoveTo = unit->Position;
-    }
-
-    if (alpha) {
-        alpha->Position = unit->Position;
-        alpha->MoveTo = unit->MoveTo;
-    }
-
-    if (unit) {
-        BuildUnit(unit, unit->BuildTime(), alpha);
-        IsMissingBuilding = false;
-    }
+    mEvents->Add(gcnew AIUnitEvent(mSeconds + 5,5,unit,alpha));
 }
 
 void HdB::PlayerAI::CheckEvents(Object^ source, EventArgs^ e)
@@ -203,22 +269,22 @@ void HdB::PlayerAI::CheckEvents(Object^ source, EventArgs^ e)
     Only do this if we are not waiting for a building except we are being attacked
     */
     if(!IsMissingBuilding || IsBeingAttacked)
-        if(CanBuildSoldier && !CheckSoldiers() &&  mSeconds >= 30)
+        if( (!IsBuildingSoldier) && CanBuildSoldier && (!CheckSoldiers()) &&  mSeconds >= 40)
         {
             for(int i=0; i < 5; ++i)    //TODO: ->positioning of built soldiers
             {
                 Unit^ u=GetRandomSoldier();
-                if(Res->CheckAmount(u->GetCosts()))
-                {
-                    BuildUnit(u, u->BuildTime(), nullptr);
-                }
+                mEvents->Add(gcnew AIUnitEvent(mSeconds+i,2,u,nullptr));
+                
             }
+            IsBuildingSoldier=true;
         }
 
     //check randomly for attack
     if(mRandom->Next(40) == 0)
-        if(CheckSoldiers()) 
-            Attack(mEnemyUnits[mRandom->Next(mEnemyUnits->Count)], false);
+        if(CheckSoldiers())
+        {
+        }
 }
 
 HdB::Unit^ HdB::PlayerAI::IsAttacked()
@@ -299,4 +365,18 @@ void HdB::PlayerAI::Load(BinaryReader^ br,Renderer^ renderer)
     mPositionHQ.Y = br->ReadSingle();
     mPositionHQ.Z = br->ReadSingle();
     mSeconds = br->ReadUInt64();
+}
+
+void HdB::PlayerAI::PositionUnit(Unit^ unit, Unit^ placeholder)
+{
+    while(!mRenderer->Map->CanBuild(unit)) 
+    {
+        unit->Position = unit->Position + Vector3(5,0,0);
+        unit->MoveTo = unit->Position;
+    }
+    if(placeholder!=nullptr)
+    {
+        placeholder->Position=unit->Position;
+        placeholder->MoveTo=unit->MoveTo;
+    }
 }

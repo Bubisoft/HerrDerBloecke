@@ -1,9 +1,12 @@
 #pragma once
 #include "Player.h"
-
+#include "AIEvent.h"
 using namespace SlimDX;
 
 namespace HdB {
+
+
+
     ref class PlayerAI : public Player
     {
     public:
@@ -23,8 +26,10 @@ namespace HdB {
 
         /** Returns true if the AI has at least one soldier
         */
-        bool CheckSoldiers();
+        int CheckSoldiers();
 
+        /** Checks for missing buildings and tries to rebuild them 
+        */
         void CheckMissingBuilding();
 
         Unit^ IsAttacked();
@@ -37,14 +42,18 @@ namespace HdB {
         */
         void Attack(Unit^ u, bool isDefense);
 
+        /** Moves all Soldiers to the passed position
+        */
+        void MoveUnits(const Vector3% pos);
+
         void OnNewUnit(Unit^ unit);
 
-        
+        void PositionUnit(Unit^ unit, Unit^ placeholder);
 
         Renderer^ mRenderer;
         Random^ mRandom;
         List<Unit^>^ mEnemyUnits;
-        List<Type^>^ mWaitFor;
+        List<AIEvent^>^ mEvents;
         Vector3 mPositionHQ;
         Timer^ mTimer;
         Timer^ mEventTimer;
@@ -60,5 +69,6 @@ namespace HdB {
         bool IsBuildingWerk;
         bool IsBuildingStatt;
         bool IsBuildingHaus;
+        bool IsBuildingSoldier;
     };
 }
