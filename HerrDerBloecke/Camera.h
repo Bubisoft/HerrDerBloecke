@@ -2,6 +2,7 @@
 
 using namespace SlimDX;
 using namespace SlimDX::Direct3D9;
+using namespace System::Windows::Forms;
 
 namespace HdB {
     ref class Camera
@@ -30,6 +31,12 @@ namespace HdB {
         /** Zoom the Camera. */
         void Zoom(const int% delta);
 
+        /** Register when movement keys are pressed or released. */
+        void SetMovementKey(Keys key, bool pressed);
+
+        /** Move the camera according to the arrow keys that are pressed. */
+        void MoveByKeys();
+
         /** Defines the camera rotation speed. */
         property float Speed;
 
@@ -41,5 +48,10 @@ namespace HdB {
         Device^ mDevice;
         Vector3 mPosition;
         Vector3 mLookAt;
+
+        bool mKeyUp;
+        bool mKeyDown;
+        bool mKeyLeft;
+        bool mKeyRight;
     };
 }

@@ -137,6 +137,7 @@ namespace HdB {
         AudioSystem^ mAudioSystem;
         Point mMousePos;
         bool mMouseMoved;
+        Vector3 mMoveCam; // Set by movement keys
         Options^ mOptions;
         MainMenu^ mMainMenu;
     private: System::Windows::Forms::Button^  btnMenu;
@@ -171,15 +172,15 @@ namespace HdB {
             this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
             this->ToolTipLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
             this->resourcesTimer = (gcnew System::Windows::Forms::Timer(this->components));
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->BeginInit();
             this->statusStrip1->SuspendLayout();
             this->SuspendLayout();
             // 
             // mRenderFrame
             // 
-            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-                | System::Windows::Forms::AnchorStyles::Left) 
-                | System::Windows::Forms::AnchorStyles::Right));
+            this->mRenderFrame->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+                        | System::Windows::Forms::AnchorStyles::Left)
+                        | System::Windows::Forms::AnchorStyles::Right));
             this->mRenderFrame->Location = System::Drawing::Point(12, 43);
             this->mRenderFrame->Name = L"mRenderFrame";
             this->mRenderFrame->Size = System::Drawing::Size(760, 419);
@@ -189,6 +190,9 @@ namespace HdB {
             this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
             this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
+            this->mRenderFrame->PreviewKeyDown += gcnew System::Windows::Forms::PreviewKeyDownEventHandler(this, &MainWindow::mRenderFrame_PreviewKeyDown);
+            this->mRenderFrame->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::mRenderFrame_KeyDown);
+            this->mRenderFrame->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::mRenderFrame_KeyUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
             // 
             // btnMenu
@@ -205,7 +209,7 @@ namespace HdB {
             // lblResGold
             // 
             this->lblResGold->AutoSize = true;
-            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResGold->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->lblResGold->Location = System::Drawing::Point(210, 9);
             this->lblResGold->Name = L"lblResGold";
@@ -217,7 +221,7 @@ namespace HdB {
             // lblResBlockterie
             // 
             this->lblResBlockterie->AutoSize = true;
-            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResBlockterie->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->lblResBlockterie->Location = System::Drawing::Point(304, 9);
             this->lblResBlockterie->Name = L"lblResBlockterie";
@@ -229,7 +233,7 @@ namespace HdB {
             // lblResNahrung
             // 
             this->lblResNahrung->AutoSize = true;
-            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+            this->lblResNahrung->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->lblResNahrung->Location = System::Drawing::Point(435, 9);
             this->lblResNahrung->Name = L"lblResNahrung";
@@ -255,7 +259,7 @@ namespace HdB {
             // 
             // statusStrip1
             // 
-            this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->ToolTipLabel});
+            this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->ToolTipLabel });
             this->statusStrip1->Location = System::Drawing::Point(0, 539);
             this->statusStrip1->Name = L"statusStrip1";
             this->statusStrip1->Size = System::Drawing::Size(784, 22);
@@ -294,7 +298,7 @@ namespace HdB {
             this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::MainWindow_KeyDown);
             this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainWindow::MainWindow_KeyPress);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mRenderFrame))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->EndInit();
             this->statusStrip1->ResumeLayout(false);
             this->statusStrip1->PerformLayout();
             this->ResumeLayout(false);
@@ -436,9 +440,25 @@ namespace HdB {
             if(mRenderFrame->Focused)
                 mRenderer->Camera->Zoom(e->Delta);
         }
-    private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+    private: System::Void mRenderFrame_MouseEnter(System::Object^  sender, System::EventArgs^ e) {
             mRenderFrame->Focus();
         }
+    private: System::Void mRenderFrame_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^ e) {
+            switch (e->KeyCode) {
+            case Keys::Down:
+            case Keys::Up:
+            case Keys::Left:
+            case Keys::Right:
+                e->IsInputKey = true;
+                break;
+            }
+        }
+    private: System::Void mRenderFrame_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^ e) {
+        mRenderer->Camera->SetMovementKey(e->KeyCode, true);
+    }
+    private: System::Void mRenderFrame_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^ e) {
+        mRenderer->Camera->SetMovementKey(e->KeyCode, false);
+    }
 
     // btnMenu Events
     private: System::Void btnMenu_Click(Object^  sender, EventArgs^  e) {

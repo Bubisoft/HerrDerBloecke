@@ -5,7 +5,8 @@
 #define ZOOM_SPEED 0.05f
 
 HdB::Camera::Camera(Device^ device, const Vector3% pos, const Vector3% lookAt)
-: mDevice(device), mPosition(pos), mLookAt(lookAt)
+: mDevice(device), mPosition(pos), mLookAt(lookAt), mKeyDown(false), mKeyUp(false),
+  mKeyLeft(false), mKeyRight(false)
 {
     Speed = 0.005f;
 }
@@ -72,4 +73,37 @@ void HdB::Camera::Zoom(const int% delta)
         mPosition = mLookAt + v * (1 - ZOOM_SPEED);
     if(delta < 0 && v.Length() < ZOOM_DISTANCE_MAX)
         mPosition = mLookAt + v * (1 + ZOOM_SPEED);
+}
+
+void HdB::Camera::SetMovementKey(Keys key, bool pressed)
+{
+    if (key == Keys::Up)
+        mKeyUp = pressed;
+    else if (key == Keys::Down)
+        mKeyDown = pressed;
+    else if (key == Keys::Left)
+        mKeyLeft = pressed;
+    else if (key == Keys::Right)
+        mKeyRight = pressed;
+}
+
+void HdB::Camera::MoveByKeys()
+{
+    Vector3 dir = Vector3::Zero;
+    Vector3 forward = Vector3::Subtract(mLookAt, mPosition);
+    forward.Z = 0.f;
+    forward.Normalize();
+    Vector3 left = Vector3::Cross(Vector3::UnitZ, forward);
+
+    if (mKeyUp)
+        dir += forward;
+    if (mKeyDown)
+        dir -= forward;
+    if (mKeyLeft)
+        dir += left;
+    if (mKeyRight)
+        dir -= left;
+
+    if (dir != Vector3::Zero)
+        Move(Vector3::Normalize(dir));
 }
