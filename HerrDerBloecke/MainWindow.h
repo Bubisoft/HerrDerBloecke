@@ -471,9 +471,13 @@ namespace HdB {
             if (mPlayer->Units->Contains(u)) {
                 mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
+                if(u->GetType() == Blockstatt::typeid)
+                    mPlayer->NumBlochstatt--;
             } else if (mComputerPlayer->Units->Contains(u)) {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
+                if(u->GetType() == Blockstatt::typeid)
+                    mComputerPlayer->NumBlochstatt--;
             }
 
             // Win or Lose checl
@@ -531,6 +535,8 @@ namespace HdB {
                      else
                         mPlayer->AddBlockterieUnit(-1);
                  }
+                 if(u->GetType() == Blockstatt::typeid)
+                     mPlayer->NumBlochstatt--;
                  mRenderer->SelectedUnits->Clear();
                  mRenderer->Map->RemoveUnit(u);
                  u->Despawn();

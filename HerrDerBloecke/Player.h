@@ -31,6 +31,11 @@ namespace HdB {
         }
         property Unit^ Headquarters;
 
+        property int NumBlochstatt {
+            int get() { return mNumBlockstatt; }
+            void set(int num) { mNumBlockstatt = num; }
+        }
+
         void AddGoldUnit(UInt16 value);
         void AddBlockterieUnit(UInt16 value);
         void AddFoodUnit(UInt16 value);
@@ -50,6 +55,7 @@ namespace HdB {
         UInt16 mGoldUnits;
         UInt16 mBlockterieUnits;
         UInt16 mFoodUnits;
+        UInt16 mNumBlockstatt;
 
         List<Unit^>^ mUnits;
         List<BuildTask^>^ mBuildTasks;

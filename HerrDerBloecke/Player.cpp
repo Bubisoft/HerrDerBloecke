@@ -22,6 +22,7 @@ HdB::Player::Player()
     mBuildTimer->Tick += gcnew EventHandler(this, &Player::BuildTimerCallback);
     mBuildTimer->Enabled = true;
 
+    mNumBlockstatt = 0;
     mBlockterieUnits=0;
     mGoldUnits=0;
     mFoodUnits=0;
@@ -46,20 +47,22 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
 
 void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 {
-    bool soldierFound = false;
+    int soldiersFound = 0;
 
     // Runs every second and decrements remaining time
     for (int i = 0; i < mBuildTasks->Count; i++) {
-        // Only build one soldier at the same time, skip others
+        // Only build as many soldier as you have Blockstätte at the same time, skip others
         if (mBuildTasks[i]->unit->GetType()->IsSubclassOf(Soldier::typeid)) {
-            if (soldierFound)
+            if (soldiersFound>=mNumBlockstatt)
                 continue;
-            soldierFound = true;
+            soldiersFound++;
         }
 
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
+            if (mBuildTasks[i]->unit->GetType() == Blockstatt::typeid)
+                mNumBlockstatt++;
             mUnits->Add(mBuildTasks[i]->unit);
             mBuildTasks[i]->unit->Spawn();
             UnitBuilt(mBuildTasks[i]->unit);
