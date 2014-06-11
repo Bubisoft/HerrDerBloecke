@@ -235,7 +235,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         sevent->Status=HdB::EventStatus::OPEN;
     }
     
-    for each(AIEvent^ aievent in mEvents)
+    for each(AIEvent^ aievent in mEvents->ToArray())
     {
         if(aievent->Status==HdB::EventStatus::CLOSED)
             mEvents->Remove(aievent);
