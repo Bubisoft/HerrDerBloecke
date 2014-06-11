@@ -68,6 +68,12 @@ namespace HdB {
     {
     public:
         Building(HdB::Model^ model, const Vector3% pos);
+        property float BuildProgress {
+            float get() { return mProgress; }
+            void set(float f) { mProgress = f; }
+        }
+    private:
+        float mProgress;
     };
 
     ref class Soldier abstract : Unit

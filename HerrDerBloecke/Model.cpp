@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include "Map.h"
 
+#define NEGATIVE_BUILD_START -10
+
 using namespace System::IO;
 using namespace System::Diagnostics;
 using namespace System::Globalization;
@@ -119,6 +121,16 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                         u->LookAt = u->Position + mov;
                     }
                 }
+            }
+            else if (Building^ b = dynamic_cast<Building^>(u)){
+                if(b->BuildProgress < 1) {
+                    float prog = b->BuildProgress;
+                    float z = NEGATIVE_BUILD_START*prog;
+                    Vector3 pos = b->Position;
+                    b->Position = Vector3(pos.X, pos.Y, z);
+                }
+                else
+                    b->Position = Vector3(b->Position.X, b->Position.Y, 0);
             }
             dev->SetTransform(TransformState::World, u->GetTransform());
             dev->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,

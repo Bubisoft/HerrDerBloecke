@@ -41,6 +41,7 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
     task->placeholder = placeholder;
     if (placeholder)
         placeholder->Spawn();
+    unit->Spawn();
     mBuildTasks->Add(task);
     Res->Pay(unit->GetCosts());
 }
@@ -58,13 +59,22 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
             soldiersFound++;
         }
 
+        Building^ b = dynamic_cast<Building^>(mBuildTasks[i]->unit);
+        if(b)
+            if(b->BuildTime() != 0) {
+                float prog = (float)mBuildTasks[i]->seconds/b->BuildTime();
+                b->BuildProgress = prog;
+            }
+
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
             if (mBuildTasks[i]->unit->GetType() == Blockstatt::typeid)
                 mNumBlockstatt++;
+            if(b)
+                b->BuildProgress = 1.f;
             mUnits->Add(mBuildTasks[i]->unit);
-            mBuildTasks[i]->unit->Spawn();
+            //mBuildTasks[i]->unit->Spawn();
             UnitBuilt(mBuildTasks[i]->unit);
             mBuildTasks->Remove(mBuildTasks[i]);
         }

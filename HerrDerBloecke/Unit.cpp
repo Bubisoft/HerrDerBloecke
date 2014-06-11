@@ -163,7 +163,6 @@ void HdB::Soldier::AttackCallback(Object^ sender, EventArgs^ e)
     }
 }
 
-DEFAULT_CONSTRUCTOR(Building, Unit);
 DEFAULT_CONSTRUCTOR(ProductionBuilding, Building);
 
 // Soldier types
@@ -188,4 +187,10 @@ void HdB::Blockhuette::Save(BinaryWriter^ br)
 {
     Unit::Save(br);
     br->Write(Enabled);
+}
+
+HdB::Building::Building(HdB::Model^ model, const Vector3% pos)
+    : Unit(model, pos)
+{
+    mProgress = 1.f;
 }
