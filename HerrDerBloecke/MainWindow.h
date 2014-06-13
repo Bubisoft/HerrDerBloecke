@@ -44,15 +44,15 @@ namespace HdB {
                 return;
             }
 
-            GameType game;
+            mGame = GameType::kExit;
             if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
-                game = mMainMenu->game;
-                if(game == GameType::kExit)
+                mGame = mMainMenu->game;
+                if(mGame == GameType::kExit)
                 {
                     Close();
                     return;
                 }
-                if(game == GameType::kLoadGame)
+                if(mGame == GameType::kLoadGame)
                 {
                     LoadSave^ load = gcnew LoadSave();
                     load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
@@ -76,14 +76,14 @@ namespace HdB {
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
 
-            if(game == GameType::kNewGame || game==GameType::kCPUGame)
+            if(mGame == GameType::kNewGame || mGame==GameType::kCPUGame)
             {
                 mPlayer = gcnew Player();
                 mPlayerScore=gcnew Score(mPlayer);
             }
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
 
-            if(game == GameType::kCPUGame) {
+            if(mGame == GameType::kCPUGame) {
                 mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f), mPlayer->Units);
                 mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
                 mComputerScore = gcnew Score(mComputerPlayer);
@@ -140,6 +140,7 @@ namespace HdB {
         Vector3 mMoveCam; // Set by movement keys
         Options^ mOptions;
         MainMenu^ mMainMenu;
+        GameType mGame;
     private: System::Windows::Forms::Button^  btnMenu;
     private: System::Windows::Forms::Label^  lblResGold;
     private: System::Windows::Forms::Label^  lblResBlockterie;
@@ -410,6 +411,8 @@ namespace HdB {
                             mNavi->BlockwerkView(u);
                         else if (u->GetType() == Blockfarm::typeid)
                             mNavi->BlockfarmView(u);
+                        else if (u->GetType() == Hauptgebaeude::typeid)
+                            mNavi->HauptgebaeudeView(u);
                         else if (u->GetType()->IsSubclassOf(Soldier::typeid))
                             mNavi->UnitView(u);
                     } else {
@@ -476,7 +479,8 @@ namespace HdB {
             // Stop Attackers
             List<Unit^>^ allunits = gcnew List<Unit^>();
             allunits->AddRange(mPlayer->Units);
-            allunits->AddRange(mComputerPlayer->Units);
+            if(mGame == GameType::kCPUGame)
+                allunits->AddRange(mComputerPlayer->Units);
             for each (Unit^ un in allunits) {
                 if (Soldier^ s = dynamic_cast<Soldier^>(un))
                     if (s->AttackTarget == u)
@@ -489,11 +493,12 @@ namespace HdB {
             mRenderer->Map->RemoveUnit(u);
             u->Despawn();
             if (mPlayer->Units->Contains(u)) {
-                mComputerScore->ExtraPoints += u->Points();
+                if(mGame == GameType::kCPUGame)
+                    mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
                     mPlayer->NumBlochstatt--;
-            } else if (mComputerPlayer->Units->Contains(u)) {
+            } else if (mGame == GameType::kCPUGame && mComputerPlayer->Units->Contains(u)) {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
@@ -502,14 +507,21 @@ namespace HdB {
 
             // Win or Lose checl
             if (u->GetType() == Hauptgebaeude::typeid) {
-                if (u == mComputerPlayer->Headquarters)
+                if (mGame == GameType::kCPUGame && u == mComputerPlayer->Headquarters)
                     MessageBox::Show("Sie haben gewonnen!");
                 else
                     MessageBox::Show("Sie haben verloren!");
                 Graph^ g = gcnew Graph();
                 g->PlayerPoints = mPlayerScore->Log;
-                g->EnemiePoints = mComputerScore->Log;
-                g->Show();
+                if(mGame == GameType::kCPUGame)
+                    g->EnemiePoints = mComputerScore->Log;
+                else
+                    g->EnemiePoints = gcnew List<UInt32>();
+                g->ShowDialog(this);
+                this->Hide();
+
+                Close(); //We have to stop here, otherwise we could just continue playing if we loose (which I think isn't intentional)
+                return;
             }
         }
 
@@ -543,6 +555,10 @@ namespace HdB {
 
              System::Void mNavi_TearOffEvent(Unit^ u)
              {
+                 if(u->GetType() == Hauptgebaeude::typeid) {
+                     mUnit_UnitDestroyed(u);
+                     return;
+                 }
                  if(ProductionBuilding^ b=dynamic_cast<ProductionBuilding^>(u))
                  {
                      if(b->GetProductionType()==ProductionType::eGold)
@@ -634,7 +650,10 @@ private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Window
 private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
              Graph^ g = gcnew Graph();
              g->PlayerPoints = mPlayerScore->Log;
-             g->EnemiePoints = mComputerScore->Log;
+             if(mGame == GameType::kCPUGame)
+                g->EnemiePoints = mComputerScore->Log;
+             else
+                g->EnemiePoints = gcnew List<UInt32>();
              g->Show();
          }
 };

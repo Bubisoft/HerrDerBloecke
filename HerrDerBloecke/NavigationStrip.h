@@ -63,6 +63,10 @@ namespace HdB {
         */
         void ClearThumbnails();
 
+        /** Menu for Hauptgebaeude
+        */
+        void HauptgebaeudeView(Unit^ u);
+
         /** Switches to the Blockhaus View (switching gold production)
         */
         void BlockhausView(Unit^ u);

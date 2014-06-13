@@ -46,6 +46,7 @@ namespace HdB {
 		Graph(void)
 		{
 			InitializeComponent();
+
 			//
 			//TODO: Konstruktorcode hier hinzufügen.
 			//
@@ -135,7 +136,7 @@ namespace HdB {
                  
                  e->Graphics->Clear(this->BackColor);
                  
-                 if (mPointsPlayer->Count == 0 || mPointsEnemie->Count==0)
+                 if (mPointsPlayer->Count == 0 && mPointsEnemie->Count==0)
                  {
                      String^ s="Es liegen noch keine Daten vor !";
                      System::Drawing::Font^ f=gcnew System::Drawing::Font("Arial",10);
@@ -155,7 +156,7 @@ namespace HdB {
                      if(mPointsPlayer[x] > max)
                          max=mPointsPlayer[x];
 
-                     if(mPointsEnemie[x] > max)
+                     if(mPointsEnemie->Count-1 >= x && mPointsEnemie[x] > max)
                          max=mPointsEnemie[x];
                  }
 

@@ -257,6 +257,15 @@ void HdB::NavigationStrip::BuildingMenuView()
 
 }
 
+void HdB::NavigationStrip::HauptgebaeudeView(Unit^ u)
+{
+    ClearThumbnails();
+    Unfocus();
+    mFocusedUnit=u;
+    this->AddPictureBox("tearoff",nullptr,gcnew EventHandler(this,&HdB::NavigationStrip::TearOffCall), nullptr);
+    Resize();
+}
+
 void HdB::NavigationStrip::BlockfarmView(Unit^ u)
 {
     ClearThumbnails();
