@@ -203,7 +203,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         }
     }
 
-    //check randomly for attack
+    //check randomly for attack  // have TODO this again !!!
     if(mRandom->Next(40) == 0)
         if(mSoldiers->Count > 0)
         {
@@ -216,7 +216,6 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     //process 
     IsBuildingSoldier=false;
     IsWaitingForBuilding=false;
-    IsBuilding=false;
     mToDo=nullptr;
     for each(AIEvent^ aievent in mEvents)
     {
@@ -365,6 +364,8 @@ void HdB::PlayerAI::OnNewUnit(Unit^ unit)
 {
     if (unit->GetType()->IsSubclassOf(Soldier::typeid))
         mRenderer->Map->AddUnit(unit);
+    else
+        IsBuilding=false;
 
     if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit))
     {
