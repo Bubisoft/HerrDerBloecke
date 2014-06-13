@@ -12,7 +12,6 @@ ref struct HdB::BuildTask
 };
 
 HdB::Player::Player()
-    : mBlockterieUnits(0), mFoodUnits(0), mGoldUnits(0)
 {
     Res = gcnew Resources(100,300,80); //setting up start resources
     mUnits = gcnew List<Unit^>();
@@ -22,11 +21,11 @@ HdB::Player::Player()
     mBuildTimer->Tick += gcnew EventHandler(this, &Player::BuildTimerCallback);
     mBuildTimer->Enabled = true;
 
-    mNumBlockstatt = 0;
-    mBlockterieUnits=0;
-    mGoldUnits=0;
-    mFoodUnits=0;
-    IsBlue=true;
+    NumBlockstatt = 0;
+    mBlockterieUnits = 0;
+    mGoldUnits = 0;
+    mFoodUnits = 0;
+    IsBlue = true;
 }
 void HdB::Player::ProcessResources()
 {
@@ -58,7 +57,7 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
     for (int i = 0; i < mBuildTasks->Count; i++) {
         // Only build as many soldiers as you have Blockstätte at the same time, skip others
         if (mBuildTasks[i]->unit->GetType()->IsSubclassOf(Soldier::typeid)) {
-            if (soldiersFound>=mNumBlockstatt)
+            if (soldiersFound >= NumBlockstatt)
                 continue;
             soldiersFound++;
         }
@@ -74,7 +73,7 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
             if (mBuildTasks[i]->unit->GetType() == Blockstatt::typeid)
-                mNumBlockstatt++;
+                NumBlockstatt++;
             if (b)
                 b->BuildProgress = 1.f;
             mUnits->Add(mBuildTasks[i]->unit);

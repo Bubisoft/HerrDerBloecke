@@ -500,12 +500,12 @@ namespace HdB {
                     mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
-                    mPlayer->NumBlochstatt--;
+                    mPlayer->NumBlockstatt--;
             } else if (mGame == GameType::kCPUGame && mComputerPlayer->Units->Contains(u)) {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
-                    mComputerPlayer->NumBlochstatt--;
+                    mComputerPlayer->NumBlockstatt--;
             }
 
             // Win or Lose checl
@@ -575,7 +575,7 @@ namespace HdB {
                         mPlayer->AddBlockterieUnit(-1);
                  }
                  if(u->GetType() == Blockstatt::typeid)
-                     mPlayer->NumBlochstatt--;
+                     mPlayer->NumBlockstatt--;
                  mRenderer->SelectedUnits->Clear();
                  mRenderer->Map->RemoveUnit(u);
                  u->Despawn();
