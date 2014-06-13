@@ -22,8 +22,6 @@ namespace HdB {
     private:
         void CheckSchedule(Object^ source, EventArgs^ e);
 
-        void CheckEvents(Object^ sourde, EventArgs^ e);
-
         /** Returns true if the AI has at least one soldier
         */
         int CheckSoldiers();
@@ -61,15 +59,16 @@ namespace HdB {
         List<AIEvent^>^ mEvents;
         Vector3 mPositionHQ;
         Timer^ mTimer;
-        Timer^ mEventTimer;
         UInt64 mSeconds;
         AIEvent^ mToDo;
 
         //decision parameter
         bool CanBuildSoldier;
         bool IsMissingBuilding;
-        bool IsWaitingForSoldier;
         bool IsBeingAttacked;
+        bool IsBuilding;
+        bool IsWaitingForBuilding;
+
 
         bool IsBuildingFarm;
         bool IsBuildingWerk;
