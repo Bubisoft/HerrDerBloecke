@@ -53,6 +53,7 @@ namespace HdB {
         virtual const UInt16 BuildTime() = 0;
         virtual const Costs GetCosts() = 0;
         virtual const Int32 Points() = 0;
+        virtual const String^ Description() = 0;
 
     protected:
         HdB::Model^ mModel;
@@ -115,6 +116,7 @@ namespace HdB {
     #define UNIT_BUILDTIME(x) virtual const UInt16 BuildTime() override { return x; }
     #define UNIT_COSTS(gold, blockt, food) virtual const Costs GetCosts() override { return Costs(gold, blockt, food); }
     #define UNIT_POINTS(x) virtual const Int32 Points() override { return x; }
+    #define UNIT_DESCRIPTION(x) virtual const String^ Description() override { return x; }
     #define SOLDIER_ATTACK(x) virtual const int Attack() override { return x; }
     #define SOLDIER_ATTACKSPEED(x) virtual const int AttackSpeed() override {return x; }
     #define SOLDIER_DEFENSE(x) virtual const int Defense() override { return x; }
@@ -134,6 +136,7 @@ namespace HdB {
         UNIT_BUILDTIME(5);
         UNIT_COSTS(5, 10, 10);
         UNIT_POINTS(5);
+        UNIT_DESCRIPTION("Der Allrounder: Billig mit moderater Stärke.");
 
         SOLDIER_ATTACK(20);
         SOLDIER_ATTACKSPEED(4);
@@ -151,6 +154,7 @@ namespace HdB {
         UNIT_BUILDTIME(7);
         UNIT_COSTS(15, 10, 5);
         UNIT_POINTS(5);
+        UNIT_DESCRIPTION("Schnelle und billige, aber nicht so starke Einheit.");
 
         SOLDIER_ATTACK(5);
         SOLDIER_ATTACKSPEED(1);
@@ -168,6 +172,7 @@ namespace HdB {
         UNIT_BUILDTIME(8);
         UNIT_COSTS(60, 20, 80);
         UNIT_POINTS(10);
+        UNIT_DESCRIPTION("Schnellere und stärkere, aber teurere Einheit.");
 
         SOLDIER_ATTACK(15);
         SOLDIER_ATTACKSPEED(2);
@@ -185,6 +190,7 @@ namespace HdB {
         UNIT_BUILDTIME(120);
         UNIT_COSTS(10000, 10000, 10000);
         UNIT_POINTS(100);
+        UNIT_DESCRIPTION("Extrem starke Einheit, aber langsam und sehr teuer.");
 
         SOLDIER_ATTACK(400);
         SOLDIER_ATTACKSPEED(20);
@@ -205,6 +211,7 @@ namespace HdB {
         UNIT_BUILDTIME(0);
         UNIT_COSTS(0, 0, 0);
         UNIT_POINTS(0);
+        UNIT_DESCRIPTION("Das Hauptgebäude. Wird es zerstört, verliert der Spieler.");
     };
 
     ref class Blockstatt : Building
@@ -216,6 +223,7 @@ namespace HdB {
         UNIT_BUILDTIME(8);
         UNIT_COSTS(3, 3, 3);
         UNIT_POINTS(5);
+        UNIT_DESCRIPTION("Gebäude zum Ausbilden von Soldaten.");
     };
 
     ref class Blockhuette : ProductionBuilding
@@ -230,6 +238,7 @@ namespace HdB {
         UNIT_BUILDTIME(10);
         UNIT_COSTS(3, 6, 8);
         UNIT_POINTS(5);
+        UNIT_DESCRIPTION("Produziert Goldbarren, verbraucht Kastenbrot.");
         PRODUCTION_TYPE(ProductionType::eGold);
     };
 
@@ -242,6 +251,7 @@ namespace HdB {
         UNIT_BUILDTIME(8);
         UNIT_COSTS(1, 2, 3);
         UNIT_POINTS(5);
+        UNIT_DESCRIPTION("Produziert Blockterie.");
         PRODUCTION_TYPE(ProductionType::eBlockterie);
     };
 
@@ -254,6 +264,7 @@ namespace HdB {
         UNIT_BUILDTIME(11);
         UNIT_COSTS(4, 5, 6);
         UNIT_POINTS(5);
+        UNIT_DESCRIPTION("Produziert Kastenbrot.");
         PRODUCTION_TYPE(ProductionType::eFood);
     };
 }

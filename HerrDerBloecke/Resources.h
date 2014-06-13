@@ -1,16 +1,15 @@
 #pragma once
 #include "ISaveable.h"
-namespace HdB {
 
+namespace HdB {
     value struct Costs {
         Costs(int gold, int blockterie, int food) : Gold(gold), Blockterie(blockterie), Food(food) { }
         int Gold;
         int Blockterie;
         int Food;
 
-        virtual System::String^ ToString()  override{
-         
-            return "Blockterie: " + Blockterie + " Gold: " + Gold + " Food: " + Food;
+        virtual System::String^ ToString()  override {
+            return "Goldbarren: " + Gold + ", Blockterie: " + Blockterie + ", Kastenbrot: " + Food;
         }
     };
 

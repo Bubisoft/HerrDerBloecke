@@ -215,9 +215,9 @@ namespace HdB {
                 static_cast<System::Byte>(0)));
             this->lblResGold->Location = System::Drawing::Point(210, 9);
             this->lblResGold->Name = L"lblResGold";
-            this->lblResGold->Size = System::Drawing::Size(61, 17);
+            this->lblResGold->Size = System::Drawing::Size(42, 17);
             this->lblResGold->TabIndex = 2;
-            this->lblResGold->Text = L"Gold: 0";
+            this->lblResGold->Text = L"Gold";
             this->lblResGold->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResGold_TextChanged);
             // 
             // lblResBlockterie
@@ -227,9 +227,9 @@ namespace HdB {
                 static_cast<System::Byte>(0)));
             this->lblResBlockterie->Location = System::Drawing::Point(304, 9);
             this->lblResBlockterie->Name = L"lblResBlockterie";
-            this->lblResBlockterie->Size = System::Drawing::Size(99, 17);
+            this->lblResBlockterie->Size = System::Drawing::Size(80, 17);
             this->lblResBlockterie->TabIndex = 3;
-            this->lblResBlockterie->Text = L"Blockterie: 0";
+            this->lblResBlockterie->Text = L"Blockterie";
             this->lblResBlockterie->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResBlockterie_TextChanged);
             // 
             // lblResNahrung
@@ -239,9 +239,9 @@ namespace HdB {
                 static_cast<System::Byte>(0)));
             this->lblResNahrung->Location = System::Drawing::Point(435, 9);
             this->lblResNahrung->Name = L"lblResNahrung";
-            this->lblResNahrung->Size = System::Drawing::Size(89, 17);
+            this->lblResNahrung->Size = System::Drawing::Size(87, 17);
             this->lblResNahrung->TabIndex = 4;
-            this->lblResNahrung->Text = L"Nahrung: 0";
+            this->lblResNahrung->Text = L"Kastenbrot";
             this->lblResNahrung->TextChanged += gcnew System::EventHandler(this, &MainWindow::lblResNahrung_TextChanged);
             // 
             // btnGraph
@@ -618,9 +618,9 @@ namespace HdB {
 
     // Updates the ressources labels
     private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-           lblResBlockterie->Text="Blockterie " + System::Convert::ToString(mPlayer->Res->Blockterie);
-           lblResNahrung->Text="Nahrung " + System::Convert::ToString(mPlayer->Res->Food);
-           lblResGold->Text="Gold " + System::Convert::ToString(mPlayer->Res->Gold);
+           lblResBlockterie->Text="Blockterie: " + System::Convert::ToString(mPlayer->Res->Blockterie);
+           lblResNahrung->Text="Kastenbrot: " + System::Convert::ToString(mPlayer->Res->Food);
+           lblResGold->Text="Goldbarren: " + System::Convert::ToString(mPlayer->Res->Gold);
          }
              // Replace the labels at the mid
 private: System::Void lblResBlockterie_TextChanged(System::Object^  sender, System::EventArgs^  e) {

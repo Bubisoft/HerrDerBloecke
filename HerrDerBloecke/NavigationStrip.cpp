@@ -113,7 +113,7 @@ void HdB::NavigationStrip::MousOver(Object^ sender, EventArgs^ e)
                             gcnew array<Object^> {nullptr,
                             Vector3::Zero}));
         Costs cost = unit->GetCosts();
-        mToolTip->Text=t->Text + " | " + cost.ToString() + " | " + unit->BuildTime() +" Sekunden";
+        mToolTip->Text = t->Text + " | " + cost.ToString() + " | Bauzeit: " + unit->BuildTime() + "s | " + unit->Description();
     }
     else if(t->Text=="tearoff")
         mToolTip->Text="Abriss";
