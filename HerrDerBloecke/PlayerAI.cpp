@@ -46,9 +46,12 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
     // Register callback for soldiers
     UnitBuilt += gcnew UnitEvent(this, &PlayerAI::OnNewUnit);
     UnitDestroyed +=gcnew UnitEvent(this, &PlayerAI::OnUnitDestroyed);
+
+    // Spawn Headquarters
     Unit^ u = gcnew Hauptgebaeude(mRenderer->GetRedModel("Hauptgebaeude"), mPositionHQ);
-    BuildUnit(u, 0, nullptr);
+    u->Spawn();
     mRenderer->Map->AddUnit(u);
+    Units->Add(u);
     Headquarters = u;
 
     IsBlue=false;

@@ -211,7 +211,6 @@ HdB::Model^ HdB::Renderer::GetBlueModel(String^ name)
     m = gcnew Model(name, this);
     m->SetTeamColor(Color4(0.f, 0.f, 1.f));
     mBlueDrawables->Add(m);
-
     return m;
 }
 
@@ -225,7 +224,6 @@ HdB::Model^ HdB::Renderer::GetRedModel(String^ name)
     m = gcnew Model(name, this);
     m->SetTeamColor(Color4(1.f, 0.f, 0.f));
     mRedDrawables->Add(m);
-
     return m;
 }
 
@@ -239,6 +237,7 @@ HdB::Model^ HdB::Renderer::GetAlphaModel(String^ name)
     }
     m = gcnew Model(name, this);
     m->SetAlpha(0.5f); //Hardcoded alpha
+    m->IsPlaceholder = true;
     mAlphaDrawables->Add(m);
     return m;
 }

@@ -178,7 +178,7 @@ DEFAULT_CONSTRUCTOR(Blockwerk, ProductionBuilding);
 DEFAULT_CONSTRUCTOR(Blockfarm, ProductionBuilding);
 
 HdB::Building::Building(HdB::Model^ model, const Vector3% pos)
-    : Unit(model, pos), mProgress(0.f)
+    : Unit(model, pos), mProgress(1.f)
 {
 }
 

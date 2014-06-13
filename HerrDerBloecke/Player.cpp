@@ -38,13 +38,15 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
     task->unit = unit;
     task->seconds = seconds;
     task->placeholder = placeholder;
-    if (placeholder) {
-        if (Building^ b = dynamic_cast<Building^>(placeholder))
-            b->BuildProgress = 1.f;
+    if (placeholder)
         placeholder->Spawn();
+
+    // Spawn building and let them grow
+    if (Building^ b = dynamic_cast<Building^>(unit)) {
+        b->BuildProgress = 0.f;
+        b->Spawn();
     }
-    if (unit->GetType()->IsSubclassOf(Building::typeid))
-        unit->Spawn();
+
     mBuildTasks->Add(task);
     Res->Pay(unit->GetCosts());
 }

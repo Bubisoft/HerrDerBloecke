@@ -102,10 +102,10 @@ namespace HdB {
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
 
             //Spawn Hauptgebäude
-            Hauptgebaeude^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
-            u->BuildProgress = 1.f;
-            mPlayer->BuildUnit(u, u->BuildTime(), nullptr);
+            Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
+            u->Spawn();
             mRenderer->Map->AddUnit(u);
+            mPlayer->Units->Add(u);
             mPlayer->Headquarters = u;
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);

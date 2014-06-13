@@ -47,6 +47,9 @@ namespace HdB {
             BoundingBox get() { return mBounds; }
         }
 
+        /** Is this model used for placeholder units? */
+        property bool IsPlaceholder;
+
         virtual String^ ToString() override { return Name; }
 
     private:

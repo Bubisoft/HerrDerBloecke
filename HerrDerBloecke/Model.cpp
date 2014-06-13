@@ -54,6 +54,7 @@ HdB::Model::Model(String^ name, Renderer^ renderer)
     mRenderer = renderer;
     mMeshes = gcnew List<Submesh^>();
     mInstances = gcnew List<Unit^>();
+    IsPlaceholder = false;
 
     LoadFromHBMFile(MODEL_PATH + name + ".HBM");
 }
@@ -80,6 +81,13 @@ void HdB::Model::RemoveInstance(Unit^ unit)
 void HdB::Model::Draw(long long timeSinceLastFrame)
 {
     Device^ dev = mRenderer->D3DDevice;
+
+    // Prevent Z-Flickering when growing models inside their placeholders
+    if (IsPlaceholder && dev->Capabilities->RasterCaps.HasFlag(RasterCaps::SlopeScaleDepthBias))
+        dev->SetRenderState(RenderState::SlopeScaleDepthBias, 1.f);
+    else
+        dev->SetRenderState(RenderState::SlopeScaleDepthBias, 0.f);
+
     for each (Submesh^ m in mMeshes) {
         dev->Material = m->material;
         dev->VertexFormat = Vertex::Format;
@@ -88,49 +96,52 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
         dev->SetTexture(0, m->texture);
 
         for each (Unit^ u in mInstances) {
-            if (u->GetType()->IsSubclassOf(Soldier::typeid) && u->Position != u->MoveTo)
-            {
-                // We have a soldier that wants to move
-                Soldier^ su = safe_cast<Soldier^>(u);
+            if (!IsPlaceholder) {
+                if (u->GetType()->IsSubclassOf(Soldier::typeid) && u->Position != u->MoveTo)
+                {
+                    // We have a soldier that wants to move
+                    Soldier^ su = safe_cast<Soldier^>(u);
 
-                // Can we move to our target location? If not move our target to the side.
-                Vector3 toTarget = Vector3::Subtract(u->MoveTo, u->Position);
-                Vector3 left = Vector3::Normalize(Vector3::Cross(Vector3::UnitZ, toTarget));
-                while (!mRenderer->Map->CanBuild(u, u->MoveTo) && mRenderer->Map->OnMap(u->MoveTo))
-                    u->MoveTo += left;
+                    // Can we move to our target location? If not move our target to the side.
+                    Vector3 toTarget = Vector3::Subtract(u->MoveTo, u->Position);
+                    Vector3 left = Vector3::Normalize(Vector3::Cross(Vector3::UnitZ, toTarget));
+                    while (!mRenderer->Map->CanBuild(u, u->MoveTo) && mRenderer->Map->OnMap(u->MoveTo))
+                        u->MoveTo += left;
 
-                if (su->IsInRange()) {
-                    // Unit is attacking and in range? -> Stop
-                    u->MoveTo = u->Position;
-                } else {
-                    // Calculate Movement
-                    Vector3 toNext = mRenderer->Map->NextMoveDirection(u, Map::GetFieldCoordinate(u->MoveTo));
-                    if (toNext != Vector3::Zero) {
-                        Vector3 mov = Vector3::Normalize(toNext);
-                        mov *= su->Speed() * timeSinceLastFrame / 10000000.f;
-                        if (mov.Length() > toNext.Length()) {
-                            u->Position += toNext;
-                            // Stop moving when we reach our destination field center
-                            if (Map::GetFieldCoordinate(u->Position) == Map::GetFieldCoordinate(u->MoveTo))
+                    if (su->IsInRange()) {
+                        // Unit is attacking and in range? -> Stop
+                        u->MoveTo = u->Position;
+                    } else {
+                        // Calculate Movement
+                        Vector3 toNext = mRenderer->Map->NextMoveDirection(u, Map::GetFieldCoordinate(u->MoveTo));
+                        if (toNext != Vector3::Zero) {
+                            Vector3 mov = Vector3::Normalize(toNext);
+                            mov *= su->Speed() * timeSinceLastFrame / 10000000.f;
+                            if (mov.Length() > toNext.Length()) {
+                                u->Position += toNext;
+                                // Stop moving when we reach our destination field center
+                                if (Map::GetFieldCoordinate(u->Position) == Map::GetFieldCoordinate(u->MoveTo))
+                                    u->MoveTo = u->Position;
+                            } else if (!mRenderer->Map->OnMap(u->Position + mov)) {
                                 u->MoveTo = u->Position;
-                        } else if (!mRenderer->Map->OnMap(u->Position + mov)) {
-                            u->MoveTo = u->Position;
-                        } else {
-                            u->Position += mov;
+                            } else {
+                                u->Position += mov;
+                            }
+                            u->LookAt = u->Position + mov;
                         }
-                        u->LookAt = u->Position + mov;
+                    }
+                } else if (Building^ b = dynamic_cast<Building^>(u)) {
+                    // Let buildings grow when they are being built
+                    if (b->BuildProgress < 1.f) {
+                        float offset = NEGATIVE_BUILD_START * (1.f - b->BuildProgress);
+                        Vector3 pos = b->Position;
+                        b->Position = Vector3(pos.X, pos.Y, offset);
+                    } else {
+                        b->Position = Vector3(b->Position.X, b->Position.Y, 0.f);
                     }
                 }
-            } else if (Building^ b = dynamic_cast<Building^>(u)) {
-                // Let buildings grow when they are being built
-                if (b->BuildProgress < 1.f) {
-                    float offset = NEGATIVE_BUILD_START * (1.f - b->BuildProgress);
-                    Vector3 pos = b->Position;
-                    b->Position = Vector3(pos.X, pos.Y, offset);
-                } else {
-                    b->Position = Vector3(b->Position.X, b->Position.Y, 0.f);
-                }
             }
+
             dev->SetTransform(TransformState::World, u->GetTransform());
             dev->DrawIndexedPrimitives(PrimitiveType::TriangleList, 0, 0,
                 m->numVertices, 0, m->numFaces);
