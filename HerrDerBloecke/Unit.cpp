@@ -177,6 +177,11 @@ DEFAULT_CONSTRUCTOR(Blockstatt, Building);
 DEFAULT_CONSTRUCTOR(Blockwerk, ProductionBuilding);
 DEFAULT_CONSTRUCTOR(Blockfarm, ProductionBuilding);
 
+HdB::Building::Building(HdB::Model^ model, const Vector3% pos)
+    : Unit(model, pos), mProgress(0.f)
+{
+}
+
 HdB::Blockhuette::Blockhuette(HdB::Model^ model, const Vector3% pos)
     : ProductionBuilding(model, pos)
 {
@@ -187,10 +192,4 @@ void HdB::Blockhuette::Save(BinaryWriter^ br)
 {
     Unit::Save(br);
     br->Write(Enabled);
-}
-
-HdB::Building::Building(HdB::Model^ model, const Vector3% pos)
-    : Unit(model, pos)
-{
-    mProgress = 1.f;
 }

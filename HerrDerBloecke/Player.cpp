@@ -39,9 +39,13 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
     task->unit = unit;
     task->seconds = seconds;
     task->placeholder = placeholder;
-    if (placeholder)
+    if (placeholder) {
+        if (Building^ b = dynamic_cast<Building^>(placeholder))
+            b->BuildProgress = 1.f;
         placeholder->Spawn();
-    unit->Spawn();
+    }
+    if (unit->GetType()->IsSubclassOf(Building::typeid))
+        unit->Spawn();
     mBuildTasks->Add(task);
     Res->Pay(unit->GetCosts());
 }
@@ -52,29 +56,30 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 
     // Runs every second and decrements remaining time
     for (int i = 0; i < mBuildTasks->Count; i++) {
-        // Only build as many soldier as you have Blockstätte at the same time, skip others
+        // Only build as many soldiers as you have Blockstätte at the same time, skip others
         if (mBuildTasks[i]->unit->GetType()->IsSubclassOf(Soldier::typeid)) {
             if (soldiersFound>=mNumBlockstatt)
                 continue;
             soldiersFound++;
         }
 
+        // Calculate BuildProgress as percent of BuildTime
         Building^ b = dynamic_cast<Building^>(mBuildTasks[i]->unit);
-        if(b)
-            if(b->BuildTime() != 0) {
-                float prog = (float)mBuildTasks[i]->seconds/b->BuildTime();
-                b->BuildProgress = prog;
-            }
+        if (b && b->BuildTime()) {
+            float prog = 1.f - (float)mBuildTasks[i]->seconds / b->BuildTime();
+            b->BuildProgress = prog;
+        }
 
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
             if (mBuildTasks[i]->unit->GetType() == Blockstatt::typeid)
                 mNumBlockstatt++;
-            if(b)
+            if (b)
                 b->BuildProgress = 1.f;
             mUnits->Add(mBuildTasks[i]->unit);
-            //mBuildTasks[i]->unit->Spawn();
+            if (!mBuildTasks[i]->unit->Spawned)
+                mBuildTasks[i]->unit->Spawn();
             UnitBuilt(mBuildTasks[i]->unit);
             mBuildTasks->Remove(mBuildTasks[i]);
         }
