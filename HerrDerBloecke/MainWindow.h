@@ -163,6 +163,7 @@ namespace HdB {
         void InitializeComponent(void)
         {
             this->components = (gcnew System::ComponentModel::Container());
+            System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainWindow::typeid));
             this->mRenderFrame = (gcnew System::Windows::Forms::PictureBox());
             this->btnMenu = (gcnew System::Windows::Forms::Button());
             this->lblResGold = (gcnew System::Windows::Forms::Label());
@@ -187,13 +188,13 @@ namespace HdB {
             this->mRenderFrame->Size = System::Drawing::Size(760, 419);
             this->mRenderFrame->TabIndex = 0;
             this->mRenderFrame->TabStop = false;
+            this->mRenderFrame->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::mRenderFrame_KeyUp);
+            this->mRenderFrame->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::mRenderFrame_KeyDown);
             this->mRenderFrame->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseDown);
             this->mRenderFrame->MouseEnter += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_MouseEnter);
             this->mRenderFrame->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseMove);
             this->mRenderFrame->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseUp);
             this->mRenderFrame->PreviewKeyDown += gcnew System::Windows::Forms::PreviewKeyDownEventHandler(this, &MainWindow::mRenderFrame_PreviewKeyDown);
-            this->mRenderFrame->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::mRenderFrame_KeyDown);
-            this->mRenderFrame->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::mRenderFrame_KeyUp);
             this->mRenderFrame->Resize += gcnew System::EventHandler(this, &MainWindow::mRenderFrame_Resize);
             // 
             // btnMenu
@@ -291,6 +292,7 @@ namespace HdB {
             this->Controls->Add(this->btnMenu);
             this->Controls->Add(this->mRenderFrame);
             this->DoubleBuffered = true;
+            this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
             this->KeyPreview = true;
             this->MinimumSize = System::Drawing::Size(640, 480);
             this->Name = L"MainWindow";
