@@ -38,7 +38,7 @@ namespace HdB {
 
     private: System::Windows::Forms::Label^  label2;
     private: System::Windows::Forms::Button^  saveButton;
-    private: System::Windows::Forms::Button^  loadButton;
+
 
 
     
@@ -82,10 +82,7 @@ namespace HdB {
 
     public:
         delegate void SaveClick();
-        delegate void LoadClick();
-
         event SaveClick^ SaveEvent;
-        event LoadClick^ LoadEvent;
 
     private: System::ComponentModel::Container ^components;
 
@@ -107,7 +104,6 @@ namespace HdB {
             this->tbSFXVolume = (gcnew System::Windows::Forms::TrackBar());
             this->label2 = (gcnew System::Windows::Forms::Label());
             this->saveButton = (gcnew System::Windows::Forms::Button());
-            this->loadButton = (gcnew System::Windows::Forms::Button());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->BeginInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->BeginInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->BeginInit();
@@ -219,23 +215,12 @@ namespace HdB {
             this->saveButton->UseVisualStyleBackColor = true;
             this->saveButton->Click += gcnew System::EventHandler(this, &Options::saveButton_Click);
             // 
-            // loadButton
-            // 
-            this->loadButton->Location = System::Drawing::Point(94, 254);
-            this->loadButton->Name = L"loadButton";
-            this->loadButton->Size = System::Drawing::Size(75, 23);
-            this->loadButton->TabIndex = 11;
-            this->loadButton->Text = L"Laden";
-            this->loadButton->UseVisualStyleBackColor = true;
-            this->loadButton->Click += gcnew System::EventHandler(this, &Options::loadButton_Click);
-            // 
             // Options
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(370, 289);
             this->ControlBox = false;
-            this->Controls->Add(this->loadButton);
             this->Controls->Add(this->saveButton);
             this->Controls->Add(this->label2);
             this->Controls->Add(this->tbSFXVolume);
@@ -263,9 +248,6 @@ namespace HdB {
         }
 private: System::Void saveButton_Click(System::Object^  sender, System::EventArgs^  e) {
              SaveEvent();            
-         }
-private: System::Void loadButton_Click(System::Object^  sender, System::EventArgs^  e) {
-             LoadEvent();
          }
 };
 }

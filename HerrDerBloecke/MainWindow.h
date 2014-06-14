@@ -46,11 +46,10 @@ namespace HdB {
             mGame = GameType::kExit;
             if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 mGame = mMainMenu->game;
-                if(mGame == GameType::kExit) {
+                if (mGame == GameType::kExit) {
                     Close();
                     return;
-                }
-                if(mGame == GameType::kLoadGame) {
+                } else if (mGame == GameType::kLoadGame) {
                     LoadSave^ load = gcnew LoadSave();
                     load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer);
                 }
@@ -66,7 +65,6 @@ namespace HdB {
             mMouseMoved = false;
             mOptions = gcnew Options();
             mOptions->SaveEvent+=gcnew Options::SaveClick(this, &MainWindow::SaveGame);
-            mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
 
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
@@ -613,17 +611,12 @@ namespace HdB {
                 mNotificationBox->SendMessage(unit->Model + " wird ausgebildet.");
             }
         }
-             
+
     // OptionsEvents
     private: System::Void SaveGame() {
             LoadSave^ save=gcnew LoadSave();
             save->SaveGame(mRenderer->Map,mPlayer,mComputerPlayer,mPlayerScore,mComputerScore);
         }
-    private: System::Void LoadGame() {
-            LoadSave^ load=gcnew LoadSave();
-            load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
-        }
-
 
     // Updates the ressources labels
     private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
