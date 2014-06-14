@@ -18,12 +18,12 @@ namespace HdB {
     private:
         List<UInt32>^ mPointsPlayer;
     private: System::Windows::Forms::CheckBox^  playerCheckBox;
-    private: System::Windows::Forms::CheckBox^  enemieCheckBox;
+    private: System::Windows::Forms::CheckBox^  enemyCheckBox;
     private: System::Windows::Forms::Timer^  refreshTimer;
 
 
 
-             List<UInt32>^ mPointsEnemie;
+             List<UInt32>^ mPointsEnemy;
     public:
         property List<UInt32>^ PlayerPoints
         {
@@ -33,11 +33,11 @@ namespace HdB {
             }
         };
 
-        property List<UInt32>^ EnemiePoints
+        property List<UInt32>^ EnemyPoints
         {
             void set(List<UInt32>^ _points)
             {
-                mPointsEnemie=_points;
+                mPointsEnemy=_points;
             }
         };
 
@@ -81,7 +81,7 @@ namespace HdB {
 		{
             this->components = (gcnew System::ComponentModel::Container());
             this->playerCheckBox = (gcnew System::Windows::Forms::CheckBox());
-            this->enemieCheckBox = (gcnew System::Windows::Forms::CheckBox());
+            this->enemyCheckBox = (gcnew System::Windows::Forms::CheckBox());
             this->refreshTimer = (gcnew System::Windows::Forms::Timer(this->components));
             this->SuspendLayout();
             // 
@@ -98,17 +98,17 @@ namespace HdB {
             this->playerCheckBox->UseVisualStyleBackColor = true;
             this->playerCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Graph::CheckedChanged);
             // 
-            // enemieCheckBox
+            // enemyCheckBox
             // 
-            this->enemieCheckBox->AutoSize = true;
-            this->enemieCheckBox->CheckAlign = System::Drawing::ContentAlignment::MiddleRight;
-            this->enemieCheckBox->Location = System::Drawing::Point(125, 12);
-            this->enemieCheckBox->Name = L"enemieCheckBox";
-            this->enemieCheckBox->Size = System::Drawing::Size(61, 17);
-            this->enemieCheckBox->TabIndex = 1;
-            this->enemieCheckBox->Text = L"Gegner";
-            this->enemieCheckBox->UseVisualStyleBackColor = true;
-            this->enemieCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Graph::CheckedChanged);
+            this->enemyCheckBox->AutoSize = true;
+            this->enemyCheckBox->CheckAlign = System::Drawing::ContentAlignment::MiddleRight;
+            this->enemyCheckBox->Location = System::Drawing::Point(125, 12);
+            this->enemyCheckBox->Name = L"enemyCheckBox";
+            this->enemyCheckBox->Size = System::Drawing::Size(61, 17);
+            this->enemyCheckBox->TabIndex = 1;
+            this->enemyCheckBox->Text = L"Gegner";
+            this->enemyCheckBox->UseVisualStyleBackColor = true;
+            this->enemyCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Graph::CheckedChanged);
             // 
             // refreshTimer
             // 
@@ -121,7 +121,7 @@ namespace HdB {
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(866, 571);
-            this->Controls->Add(this->enemieCheckBox);
+            this->Controls->Add(this->enemyCheckBox);
             this->Controls->Add(this->playerCheckBox);
             this->Name = L"Graph";
             this->Text = L"Graph";
@@ -136,7 +136,7 @@ namespace HdB {
                  
                  e->Graphics->Clear(this->BackColor);
                  
-                 if (mPointsPlayer->Count == 0 && mPointsEnemie->Count==0)
+                 if (mPointsPlayer->Count == 0 && mPointsEnemy->Count==0)
                  {
                      String^ s="Es liegen noch keine Daten vor !";
                      System::Drawing::Font^ f=gcnew System::Drawing::Font("Arial",10);
@@ -156,8 +156,8 @@ namespace HdB {
                      if(mPointsPlayer[x] > max)
                          max=mPointsPlayer[x];
 
-                     if(mPointsEnemie->Count-1 >= x && mPointsEnemie[x] > max)
-                         max=mPointsEnemie[x];
+                     if(mPointsEnemy->Count-1 >= x && mPointsEnemy[x] > max)
+                         max=mPointsEnemy[x];
                  }
 
                  float scale=(float)(this->ClientSize.Height-10) / (float)max;
@@ -180,9 +180,9 @@ namespace HdB {
                   i=0;
                   lastPoint= Point(0,this->ClientSize.Height);
 
-                  //drawing the enemies graph
-                  if(enemieCheckBox->Checked == true)
-                      for each(UInt32 u in mPointsEnemie)
+                  //drawing the enemy's graph
+                  if(enemyCheckBox->Checked == true)
+                      for each(UInt32 u in mPointsEnemy)
                       {
                          Point p=Point(i*delta,this->ClientSize.Height-(u*scale));
                          e->Graphics->DrawLine(gcnew Pen(Color::Red,2),lastPoint,p);

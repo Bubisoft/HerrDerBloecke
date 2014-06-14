@@ -299,7 +299,6 @@ namespace HdB {
             this->Name = L"MainWindow";
             this->Text = L"Herr der Blöcke";
             this->SizeChanged += gcnew System::EventHandler(this, &MainWindow::MainWindow_SizeChanged);
-            this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainWindow::MainWindow_KeyDown);
             this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainWindow::MainWindow_KeyPress);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->EndInit();
@@ -427,6 +426,7 @@ namespace HdB {
                     mMouseMoved = false;
                     return;
                 }
+                bool attack = false, move = false;
                 for each (Unit^ u in mRenderer->SelectedUnits) {
                     if (mPlayer->OwnUnit(u) && u->GetType()->IsSubclassOf(Soldier::typeid)) {
                         Soldier^ s = safe_cast<Soldier^>(u);
@@ -434,12 +434,19 @@ namespace HdB {
                         s->LookAt = targetLocation;
                         s->MoveTo = targetLocation;
                         Unit^ target = mRenderer->Map->CheckOccupation(targetLocation);
-                        if (target && !mPlayer->OwnUnit(target))
+                        if (target && !mPlayer->OwnUnit(target)) {
                             s->StartAttack(target);
-                        else
+                            attack = true;
+                        } else {
                             s->StopAttack();
+                            move = true;
+                        }
                     }
                 }
+                if (attack)
+                    mAudioSystem->PlaySFX("attack");
+                else if (move)
+                    mAudioSystem->PlaySFX("moving");
             }
         }
     private: System::Void mRenderFrame_MouseWheel(Object^ sender, MouseEventArgs^ e) {
@@ -495,17 +502,21 @@ namespace HdB {
 
             mRenderer->Map->RemoveUnit(u);
             u->Despawn();
+            mAudioSystem->PlaySFX("destroyed");
+
             if (mPlayer->Units->Contains(u)) {
                 if(mGame == GameType::kCPUGame)
                     mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
                     mPlayer->NumBlockstatt--;
+                mNotificationBox->SendMessage(u->Model + " verloren.");
             } else if (mGame == GameType::kCPUGame && mComputerPlayer->Units->Contains(u)) {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
                     mComputerPlayer->NumBlockstatt--;
+                mNotificationBox->SendMessage(u->Model + " des Gegners zerstört.");
             }
 
             // Win or Lose checl
@@ -517,13 +528,13 @@ namespace HdB {
                 Graph^ g = gcnew Graph();
                 g->PlayerPoints = mPlayerScore->Log;
                 if(mGame == GameType::kCPUGame)
-                    g->EnemiePoints = mComputerScore->Log;
+                    g->EnemyPoints = mComputerScore->Log;
                 else
-                    g->EnemiePoints = gcnew List<UInt32>();
+                    g->EnemyPoints = gcnew List<UInt32>();
                 g->ShowDialog(this);
                 this->Hide();
 
-                Close(); //We have to stop here, otherwise we could just continue playing if we loose (which I think isn't intentional)
+                Close();
                 return;
             }
         }
@@ -536,12 +547,11 @@ namespace HdB {
 
     // mPlayer Events
     private: System::Void mPlayer_UnitBuilt(Unit^ unit) {
-            mNotificationBox->SendMessage(unit->Model + " ausgebildet");
-            mAudioSystem->PlaySFX("test");
+            mNotificationBox->SendMessage(unit->Model + " erfolgreich ausgebildet.");
+            mAudioSystem->PlaySFX("unitbuilt");
             unit->UnitDestroyed+=gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
 
-            if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit))
-            {
+            if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit)) {
                 if(b->GetProductionType() == ProductionType::eBlockterie)
                     mPlayer->AddBlockterieUnit(1);
                 else if(b->GetProductionType() == ProductionType::eFood)
@@ -549,115 +559,112 @@ namespace HdB {
                 else
                     mPlayer->AddGoldUnit(1);
             }
-         }
+        }
+
     // mNavi Events
-    private: System::Void mNavi_GoldProductionSwitchedEvent(UInt16 value)
-             {
-                 mPlayer->AddGoldUnit(value);
-             }
+    private: System::Void mNavi_GoldProductionSwitchedEvent(UInt16 value) {
+            mPlayer->AddGoldUnit(value);
+        }
 
-             System::Void mNavi_TearOffEvent(Unit^ u)
-             {
-                 if(u->GetType() == Hauptgebaeude::typeid) {
-                     mUnit_UnitDestroyed(u);
-                     return;
-                 }
-                 if(ProductionBuilding^ b=dynamic_cast<ProductionBuilding^>(u))
-                 {
-                     if(b->GetProductionType()==ProductionType::eGold)
-                     {
-                        if(dynamic_cast<Blockhuette^>(b)->Enabled==true)
-                            mPlayer->AddGoldUnit(-1);
-                     }
-                     else if(b->GetProductionType()==ProductionType::eFood)
-                         mPlayer->AddFoodUnit(-1);
-                     else
-                        mPlayer->AddBlockterieUnit(-1);
-                 }
-                 if(u->GetType() == Blockstatt::typeid)
-                     mPlayer->NumBlockstatt--;
-                 mRenderer->SelectedUnits->Clear();
-                 mRenderer->Map->RemoveUnit(u);
-                 u->Despawn();
-             }
-
-             System::Void mNavi_UnitBuildEvent(Vector3 pos)
-             {
-                Type^ unittype = mNavi->GetModelType();
-                if(mNavi->GetModelString()) {
-                    Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
-                        gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),pos}));
-                    while(!mRenderer->Map->CanBuild(unit)) {
-                        unit->Position = unit->Position + Vector3(5,0,0);
-                        unit->MoveTo = unit->Position;
-                    }
-
-                    if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
-                        return;
-                    if (!mPlayer->CheckUnitSpace())
-                    {
-                        mNotificationBox->SendMessage("Sie Haben zu viele Einheiten!");
-                        return;
-                    }
-                    mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
-                    mRenderer->Map->AddUnit(unit);
+    private: System::Void mNavi_TearOffEvent(Unit^ u) {
+            if(u->GetType() == Hauptgebaeude::typeid) {
+                mUnit_UnitDestroyed(u);
+                return;
+            }
+            if(ProductionBuilding^ b=dynamic_cast<ProductionBuilding^>(u))
+            {
+                if(b->GetProductionType()==ProductionType::eGold)
+                {
+                if(dynamic_cast<Blockhuette^>(b)->Enabled==true)
+                    mPlayer->AddGoldUnit(-1);
                 }
-             }
+                else if(b->GetProductionType()==ProductionType::eFood)
+                    mPlayer->AddFoodUnit(-1);
+                else
+                mPlayer->AddBlockterieUnit(-1);
+            }
+            if(u->GetType() == Blockstatt::typeid)
+                mPlayer->NumBlockstatt--;
+            mRenderer->SelectedUnits->Clear();
+            mRenderer->Map->RemoveUnit(u);
+            u->Despawn();
+            mAudioSystem->PlaySFX("destroyed");
+        }
+
+    private: System::Void mNavi_UnitBuildEvent(Vector3 pos) {
+            Type^ unittype = mNavi->GetModelType();
+            if(mNavi->GetModelString()) {
+                Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
+                    gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),pos}));
+                while(!mRenderer->Map->CanBuild(unit)) {
+                    unit->Position = unit->Position + Vector3(5,0,0);
+                    unit->MoveTo = unit->Position;
+                }
+
+                if (!mPlayer->Res->CheckAmount(unit->GetCosts()))
+                    return;
+                if (!mPlayer->CheckUnitSpace())
+                {
+                    mNotificationBox->SendMessage("Sie Haben zu viele Einheiten!");
+                    return;
+                }
+                mPlayer->BuildUnit(unit, unit->BuildTime(), nullptr);
+                mRenderer->Map->AddUnit(unit);
+                mNotificationBox->SendMessage(unit->Model + " wird ausgebildet.");
+            }
+        }
              
-    //OptionsEvents
-    private: System::Void SaveGame()
-             {
-                 LoadSave^ save=gcnew LoadSave();
-                 save->SaveGame(mRenderer->Map,mPlayer,mComputerPlayer,mPlayerScore,mComputerScore);
-             }
-    private: System::Void LoadGame()
-             {
-                 LoadSave^ load=gcnew LoadSave();
-                 load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
-             }
+    // OptionsEvents
+    private: System::Void SaveGame() {
+            LoadSave^ save=gcnew LoadSave();
+            save->SaveGame(mRenderer->Map,mPlayer,mComputerPlayer,mPlayerScore,mComputerScore);
+        }
+    private: System::Void LoadGame() {
+            LoadSave^ load=gcnew LoadSave();
+            load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
+        }
 
 
     // Updates the ressources labels
     private: System::Void labelTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-           lblResBlockterie->Text="Blockterie: " + System::Convert::ToString(mPlayer->Res->Blockterie);
-           lblResNahrung->Text="Kastenbrot: " + System::Convert::ToString(mPlayer->Res->Food);
-           lblResGold->Text="Goldbarren: " + System::Convert::ToString(mPlayer->Res->Gold);
-         }
-             // Replace the labels at the mid
-private: System::Void lblResBlockterie_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-             lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
-		 }
-private: System::Void lblResGold_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
-		 }
-private: System::Void lblResNahrung_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
-		 }
-private: System::Void resourcesTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-                 mPlayer->ProcessResources();
-                 if(mComputerPlayer!=nullptr)
-                     mComputerPlayer->ProcessResources();
-         }
+            lblResBlockterie->Text="Blockterie: " + System::Convert::ToString(mPlayer->Res->Blockterie);
+            lblResNahrung->Text="Kastenbrot: " + System::Convert::ToString(mPlayer->Res->Food);
+            lblResGold->Text="Goldbarren: " + System::Convert::ToString(mPlayer->Res->Gold);
+        }
 
-private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
-             //pressing escape will get the Navi to lose its focused PictureBox
-             if(e->KeyChar == (char)Keys::Escape)
-             {
-                 bool openMenu=mNavi->Unfocus();
-                 mNavi->BuildingMenuView();
-             }
-         }
-private: System::Void MainWindow_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {             
-         }
+    // Replace the labels at the mid
+    private: System::Void lblResBlockterie_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+            lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
+        }
+    private: System::Void lblResGold_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+          lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
+        }
+    private: System::Void lblResNahrung_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+            lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
+        }
+    private: System::Void resourcesTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+            mPlayer->ProcessResources();
+            if(mComputerPlayer!=nullptr)
+                mComputerPlayer->ProcessResources();
+        }
 
-private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
-             Graph^ g = gcnew Graph();
-             g->PlayerPoints = mPlayerScore->Log;
-             if(mGame == GameType::kCPUGame)
-                g->EnemiePoints = mComputerScore->Log;
-             else
-                g->EnemiePoints = gcnew List<UInt32>();
-             g->Show();
-         }
+    private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+            //pressing escape will get the Navi to lose its focused PictureBox
+            if(e->KeyChar == (char)Keys::Escape)
+            {
+                bool openMenu=mNavi->Unfocus();
+                mNavi->BuildingMenuView();
+            }
+        }
+
+    private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
+            Graph^ g = gcnew Graph();
+            g->PlayerPoints = mPlayerScore->Log;
+            if(mGame == GameType::kCPUGame)
+                g->EnemyPoints = mComputerScore->Log;
+            else
+                g->EnemyPoints = gcnew List<UInt32>();
+            g->Show();
+        }
 };
 }
