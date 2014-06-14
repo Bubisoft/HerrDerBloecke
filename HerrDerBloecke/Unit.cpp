@@ -17,12 +17,16 @@ HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
 
 void HdB::Unit::Spawn()
 {
+    if (mSpawned)
+        return;
     mModel->AddInstance(this);
     mSpawned = true;
 }
 
 void HdB::Unit::Despawn()
 {
+    if (!mSpawned)
+        return;
     mModel->RemoveInstance(this);
     mSpawned = false;
 }

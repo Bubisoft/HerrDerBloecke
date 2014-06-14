@@ -49,9 +49,8 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
 
     // Spawn Headquarters
     Unit^ u = gcnew Hauptgebaeude(mRenderer->GetRedModel("Hauptgebaeude"), mPositionHQ);
-    u->Spawn();
+    BuildUnit(u, u->BuildTime(), nullptr);
     mRenderer->Map->AddUnit(u);
-    Units->Add(u);
     Headquarters = u;
 
     IsBlue=false;

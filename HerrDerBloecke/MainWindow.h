@@ -33,10 +33,9 @@ namespace HdB {
         {
             InitializeComponent();
             mMainMenu = gcnew MainMenu();
-            this->Hide();
+            Hide();
 
             mRenderer = gcnew Renderer();
-
             if (!mRenderer->Init(mRenderFrame)) {
                 MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
                     "ERROR", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -47,20 +46,16 @@ namespace HdB {
             mGame = GameType::kExit;
             if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
                 mGame = mMainMenu->game;
-                if(mGame == GameType::kExit)
-                {
+                if(mGame == GameType::kExit) {
                     Close();
                     return;
                 }
-                if(mGame == GameType::kLoadGame)
-                {
+                if(mGame == GameType::kLoadGame) {
                     LoadSave^ load = gcnew LoadSave();
-                    load->LoadGame(mRenderer->Map, mPlayer,mComputerPlayer,mPlayerScore,mComputerScore,mRenderer);
+                    load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer);
                 }
-                this->Show();
-            }
-            else
-            {
+                Show();
+            } else {
                 Close();
                 return;
             }
@@ -70,39 +65,37 @@ namespace HdB {
             mMousePos = this->MousePosition;
             mMouseMoved = false;
             mOptions = gcnew Options();
-            mOptions->SaveEvent+=gcnew Options::SaveClick(this,&MainWindow::SaveGame);
+            mOptions->SaveEvent+=gcnew Options::SaveClick(this, &MainWindow::SaveGame);
             mOptions->LoadEvent+=gcnew Options::LoadClick(this, &MainWindow::LoadGame);
 
             mAudioSystem = gcnew AudioSystem();
             mAudioSystem->Init(mRenderFrame);
+            mAudioSystem->PlayMusic("bgmusic", true);
 
-            if(mGame == GameType::kNewGame || mGame==GameType::kCPUGame)
-            {
+            if (mGame == GameType::kNewGame || mGame==GameType::kCPUGame) {
                 mPlayer = gcnew Player();
                 mPlayerScore=gcnew Score(mPlayer);
             }
             mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
 
-            if(mGame == GameType::kCPUGame) {
+            if (mGame == GameType::kCPUGame) {
                 mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f), mPlayer->Units);
                 mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
                 mComputerScore = gcnew Score(mComputerPlayer);
-            }
-            else
-            {
+            } else {
                 mComputerPlayer=nullptr;
                 mComputerScore=nullptr;
             }
 
-           // mPlayerScore = gcnew Score(mPlayer);
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
 
-            //Spawn Hauptgebäude
+            // Spawn Hauptgebäude
             Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
+            u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
             u->Spawn();
             mRenderer->Map->AddUnit(u);
             mPlayer->Units->Add(u);
@@ -519,20 +512,27 @@ namespace HdB {
                 mNotificationBox->SendMessage(u->Model + " des Gegners zerstört.");
             }
 
-            // Win or Lose checl
+            // Win or Lose check
             if (u->GetType() == Hauptgebaeude::typeid) {
-                if (mGame == GameType::kCPUGame && u == mComputerPlayer->Headquarters)
+                if (mGame == GameType::kCPUGame && u == mComputerPlayer->Headquarters) {
+                    mAudioSystem->Stop("bgmusic");
+                    mAudioSystem->PlayMusic("victory");
                     MessageBox::Show("Sie haben gewonnen!");
-                else
+                } else {
+                    mAudioSystem->Stop("bgmusic");
+                    mAudioSystem->PlayMusic("defeat");
                     MessageBox::Show("Sie haben verloren!");
+                }
+                mPlayerScore->Active = false;
+                mComputerScore->Active = false;
                 Graph^ g = gcnew Graph();
                 g->PlayerPoints = mPlayerScore->Log;
                 if(mGame == GameType::kCPUGame)
                     g->EnemyPoints = mComputerScore->Log;
                 else
                     g->EnemyPoints = gcnew List<UInt32>();
+                Hide();
                 g->ShowDialog(this);
-                this->Hide();
 
                 Close();
                 return;

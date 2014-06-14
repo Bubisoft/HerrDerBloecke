@@ -10,6 +10,11 @@ namespace HdB {
     ref class Score : ISaveable {
     public:
         Score(Player^ player);
+
+        property bool Active {
+            void set(bool active) { mLoggingTimer->Enabled = active; }
+            bool get() { return mLoggingTimer->Enabled; }
+        }
         property List<UInt32>^ Log {
             List<UInt32>^ get() { return mScoreLog; }
         }
