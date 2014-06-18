@@ -522,11 +522,12 @@ namespace HdB {
                     MessageBox::Show("Sie haben verloren!");
                 }
                 mPlayerScore->Active = false;
-                mComputerScore->Active = false;
                 Graph^ g = gcnew Graph();
                 g->PlayerPoints = mPlayerScore->Log;
-                if(mGame == GameType::kCPUGame)
+                if(mGame == GameType::kCPUGame) {
                     g->EnemyPoints = mComputerScore->Log;
+                    mComputerScore->Active = false;
+                }
                 else
                     g->EnemyPoints = gcnew List<UInt32>();
                 Hide();
@@ -585,6 +586,7 @@ namespace HdB {
                 mPlayer->NumBlockstatt--;
             mRenderer->SelectedUnits->Clear();
             mRenderer->Map->RemoveUnit(u);
+            mPlayer->Units->Remove(u);
             u->Despawn();
             mAudioSystem->PlaySFX("destroyed");
         }
@@ -657,7 +659,7 @@ namespace HdB {
                 g->EnemyPoints = mComputerScore->Log;
             else
                 g->EnemyPoints = gcnew List<UInt32>();
-            g->Show();
+            g->ShowDialog();
         }
 };
 }
