@@ -124,6 +124,7 @@ namespace HdB {
             this->Controls->Add(this->enemyCheckBox);
             this->Controls->Add(this->playerCheckBox);
             this->Name = L"Graph";
+            this->ShowIcon = false;
             this->Text = L"Graph";
             this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Graph::Graph_Paint);
             this->Resize += gcnew System::EventHandler(this, &Graph::Graph_Resize);

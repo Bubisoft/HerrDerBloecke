@@ -52,6 +52,10 @@ namespace HdB {
                 } else if (mGame == GameType::kLoadGame) {
                     LoadSave^ load = gcnew LoadSave();
                     load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer);
+                    for each (Unit^ u in mPlayer->Units)
+                        u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+                    for each (Unit^ u in mComputerPlayer->Units)
+                        mPlayerAI_UnitBuilt(u);
                 }
                 Show();
             } else {
@@ -81,8 +85,8 @@ namespace HdB {
                 mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
                 mComputerScore = gcnew Score(mComputerPlayer);
             } else {
-                mComputerPlayer=nullptr;
-                mComputerScore=nullptr;
+                mComputerPlayer = nullptr;
+                mComputerScore = nullptr;
             }
 
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
@@ -98,6 +102,8 @@ namespace HdB {
             mRenderer->Map->AddUnit(u);
             mPlayer->Units->Add(u);
             mPlayer->Headquarters = u;
+
+            Activate();
 
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
