@@ -406,7 +406,10 @@ namespace HdB {
                     // Only one unit selected
                     if (mRenderer->SelectedUnits->Count == 1) {
                         Unit^ u = mRenderer->SelectedUnits[0];
-                        if (!mPlayer->OwnUnit(u))
+                        Building^ b = dynamic_cast<Building^>(u);
+                        if (b && b->BuildProgress < 1.f)
+                            return;
+                        else if (!mPlayer->OwnUnit(u))
                             return;
                         else if (u->GetType() == Blockhuette::typeid)
                             mNavi->BlockhausView(u);
@@ -608,9 +611,11 @@ namespace HdB {
             if(mNavi->GetModelString()) {
                 Unit^ unit = safe_cast<Unit^>(Activator::CreateInstance(unittype,
                     gcnew array<Object^> {mRenderer->GetBlueModel(mNavi->GetModelString()),pos}));
+
                 while(!mRenderer->Map->CanBuild(unit)) {
-                    unit->Position = unit->Position + Vector3(5,0,0);
+                    unit->Position += Vector3::UnitX;
                     unit->MoveTo = unit->Position;
+                    unit->ResetLookAt();
                 }
 
                 if (!mPlayer->Res->CheckAmount(unit->GetCosts()))

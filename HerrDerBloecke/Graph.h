@@ -102,6 +102,8 @@ namespace HdB {
             // 
             this->enemyCheckBox->AutoSize = true;
             this->enemyCheckBox->CheckAlign = System::Drawing::ContentAlignment::MiddleRight;
+            this->enemyCheckBox->Checked = true;
+            this->enemyCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
             this->enemyCheckBox->Location = System::Drawing::Point(125, 12);
             this->enemyCheckBox->Name = L"enemyCheckBox";
             this->enemyCheckBox->Size = System::Drawing::Size(61, 17);

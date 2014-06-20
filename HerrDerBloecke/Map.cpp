@@ -27,7 +27,7 @@ void HdB::MapOccupation::Update(const Vector3% pos)
     Point mMinField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Minimum);
     Point mMaxField = Map::GetFieldCoordinate(pos + mUnit->Model->Bounds.Maximum);
     mArea = Rectangle(mMinField.X, mMinField.Y, mMaxField.X - mMinField.X, mMaxField.Y - mMinField.Y);
-    mArea.Inflate(1, 1);
+    mArea.Inflate(1, 1); // +1 for border
 }
 
 /*******
@@ -111,6 +111,7 @@ List<HdB::Unit^>^ HdB::Map::CheckOccupation(const Vector3% a, const Vector3% b)
     Point minField = GetFieldCoordinate(Vector3(Math::Min(a.X, b.X), Math::Min(a.Y, b.Y), 0.f));
     Point maxField = GetFieldCoordinate(Vector3(Math::Max(a.X, b.X), Math::Max(a.Y, b.Y), 0.f));
     Rectangle area(minField.X, minField.Y, maxField.X - minField.X, maxField.Y - minField.Y);
+    area.Inflate(2, 2); // +1 for border and +1 for path around (--> correct intersection)
     List<HdB::Unit^>^ units = gcnew List<HdB::Unit^>();
     for each (MapOccupation^ occ in mOccupations)
         if (occ->Area.IntersectsWith(area) || occ->Area.Contains(area))

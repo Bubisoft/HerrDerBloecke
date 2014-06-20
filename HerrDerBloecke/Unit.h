@@ -22,6 +22,7 @@ namespace HdB {
         Matrix GetTransform();
         virtual void Damage(int dmg);
         float PercentHP() { return (float)mHP / MaxHP(); }
+        void ResetLookAt() { LookAt = -Vector3::UnitY + Position; }
 
         // Properties
         property HdB::Model^ Model {

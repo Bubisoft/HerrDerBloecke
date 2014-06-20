@@ -138,11 +138,7 @@ HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
     else
         unit= gcnew Turing(mRenderer->GetRedModel("Turing"), mPositionHQ + Vector3(25.f, -40.f, 0.f));
 
-    while(!mRenderer->Map->CanBuild(unit)) 
-    {
-        unit->Position = unit->Position + Vector3(1,0,0);
-        unit->MoveTo = unit->Position;
-    }
+    PositionUnit(unit, nullptr);
     return unit;
 }
 
@@ -416,14 +412,16 @@ void HdB::PlayerAI::Load(BinaryReader^ br,Renderer^ renderer)
 
 void HdB::PlayerAI::PositionUnit(Unit^ unit, Unit^ placeholder)
 {
-    while(!mRenderer->Map->CanBuild(unit)) 
+    while (!mRenderer->Map->CanBuild(unit)) 
     {
-        unit->Position = unit->Position + Vector3(5,0,0);
+        unit->Position += Vector3::UnitX;
         unit->MoveTo = unit->Position;
+        unit->ResetLookAt();
     }
-    if(placeholder!=nullptr)
+    if (placeholder)
     {
-        placeholder->Position=unit->Position;
-        placeholder->MoveTo=unit->MoveTo;
+        placeholder->Position = unit->Position;
+        placeholder->MoveTo = unit->MoveTo;
+        placeholder->ResetLookAt();
     }
 }

@@ -10,9 +10,10 @@ HdB::Unit::Unit(HdB::Model^ model, const Vector3% pos)
     mModel = model;
     Position = pos;
     MoveTo = pos;
-    LookAt = -Vector3::UnitY + Position;
     mHP = MaxHP();
     mSpawned = false;
+
+    ResetLookAt();
 }
 
 void HdB::Unit::Spawn()
