@@ -84,6 +84,14 @@ void HdB::Map::Draw(long long timeSinceLastFrame)
 
 void HdB::Map::AddUnit(Unit^ unit)
 {
+    // Failsafe: Thou shalt not add a unit twice!
+    for each (MapOccupation^ occ in mOccupations) {
+        if (occ->Unit == unit) {
+            Debug::WriteLine("WARNING: You added a unit to the map twice: " + unit->Model);
+            return;
+        }
+    }
+
     mOccupations->Add(gcnew MapOccupation(unit));
 }
 

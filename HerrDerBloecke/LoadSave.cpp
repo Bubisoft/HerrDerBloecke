@@ -86,10 +86,4 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
     } catch (Exception^ e) {
         MessageBox::Show(e->Message->ToString());
     }
-
-    //add the Units to the map for collision detection
-    for each(Unit^ u in player->Units)
-        map->AddUnit(u);
-
-
 }

@@ -102,11 +102,10 @@ void HdB::Model::Draw(long long timeSinceLastFrame)
                     // We have a soldier that wants to move
                     Soldier^ su = safe_cast<Soldier^>(u);
 
-                    // Can we move to our target location? If not move our target to the side.
-                    Vector3 toTarget = Vector3::Subtract(u->MoveTo, u->Position);
-                    Vector3 left = Vector3::Normalize(Vector3::Cross(Vector3::UnitZ, toTarget));
+                    // Can we move to our target location? If not move our target nearer to us.
+                    Vector3 toTarget = Vector3::Normalize(Vector3::Subtract(u->MoveTo, u->Position));
                     while (!mRenderer->Map->CanBuild(u, u->MoveTo) && mRenderer->Map->OnMap(u->MoveTo))
-                        u->MoveTo += left;
+                        u->MoveTo += -toTarget;
 
                     if (su->IsInRange()) {
                         // Unit is attacking and in range? -> Stop
