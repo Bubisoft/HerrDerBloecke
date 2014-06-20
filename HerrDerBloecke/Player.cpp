@@ -23,7 +23,6 @@ HdB::Player::Player()
     mBuildTimer->Tick += gcnew EventHandler(this, &Player::BuildTimerCallback);
     mBuildTimer->Enabled = true;
 
-    NumBlockstatt = 0;
     mBlockterieUnits = 0;
     mGoldUnits = 0;
     mFoodUnits = 0;
@@ -55,13 +54,14 @@ void HdB::Player::BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder)
 
 void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
 {
-    int soldiersFound = 0;
+    UInt16 soldiersFound = 0;
+    UInt16 numBlockstatt = CountBlockstatt();
 
     // Runs every second and decrements remaining time
     for (int i = 0; i < mBuildTasks->Count; i++) {
         // Only build as many soldiers as you have Blockstätte at the same time, skip others
         if (mBuildTasks[i]->unit->GetType()->IsSubclassOf(Soldier::typeid)) {
-            if (soldiersFound >= NumBlockstatt)
+            if (soldiersFound >= numBlockstatt)
                 continue;
             soldiersFound++;
         }
@@ -76,13 +76,8 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
-            if (mBuildTasks[i]->unit->GetType() == Blockstatt::typeid)
-                NumBlockstatt++;
-            if (b)
-                b->BuildProgress = 1.f;
+            mBuildTasks[i]->unit->Spawn();
             mUnits->Add(mBuildTasks[i]->unit);
-            if (!mBuildTasks[i]->unit->Spawned)
-                mBuildTasks[i]->unit->Spawn();
             UnitBuilt(mBuildTasks[i]->unit);
             mBuildTasks->Remove(mBuildTasks[i]);
         }
@@ -147,21 +142,23 @@ void HdB::Player::Load(BinaryReader^ br,Renderer^ renderer)
 
 bool HdB::Player::CheckUnitSpace()
 {
-    int i = 0;
-    for each(Unit^ u in mUnits)
-        if(dynamic_cast<Soldier^>(u))
+    UInt16 i = 0;
+    for each (Unit^ u in mUnits)
+        if (u->GetType()->IsSubclassOf(Soldier::typeid))
             i++;
 
-    for each(BuildTask^ b in mBuildTasks)
-    {
-        Unit^ u = b->unit;
-        if(dynamic_cast<Soldier^>(u))
+    for each (BuildTask^ b in mBuildTasks)
+        if (b->unit->GetType()->IsSubclassOf(Soldier::typeid))
             i++;
-    }
 
-    if(i >= MAX_UNITS)
-        return false;
-
-    return true;
+    return i < MAX_UNITS;
 }
 
+UInt16 HdB::Player::CountBlockstatt()
+{
+    UInt16 count = 0;
+    for each (Unit^ u in mUnits)
+        if (u->GetType() == Blockstatt::typeid)
+            count++;
+    return count;
+}

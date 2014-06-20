@@ -19,6 +19,7 @@ namespace HdB {
 
         /** Start a BuildTask for a new unit */
         void BuildUnit(Unit^ unit, UInt16 seconds, Unit^ placeholder);
+
         event UnitEvent^ UnitBuilt;
         event UnitEvent^ UnitDestroyed;
 
@@ -30,7 +31,6 @@ namespace HdB {
             List<Unit^>^ get() { return mUnits; }
         }
         property Unit^ Headquarters;
-        property int NumBlockstatt;
 
         void AddGoldUnit(UInt16 value);
         void AddBlockterieUnit(UInt16 value);
@@ -38,15 +38,17 @@ namespace HdB {
         
         bool CheckUnitSpace();
 
+        UInt16 CountBlockstatt();
+
         /** Saves all Data of the Player*/
         virtual void Save(BinaryWriter^ bw);
 
-        virtual void Load(BinaryReader^ br,Renderer^ renderer);
+        virtual void Load(BinaryReader^ br, Renderer^ renderer);
 
         /** Returns true if the passed Unit ist one of the players */
         bool OwnUnit(Unit^ u);
 
-    private:
+    protected:
         // Workers on the resources
         UInt16 mGoldUnits;
         UInt16 mBlockterieUnits;
@@ -56,7 +58,6 @@ namespace HdB {
         List<BuildTask^>^ mBuildTasks;
         Timer^ mBuildTimer;
         void BuildTimerCallback(Object^ source, EventArgs^ e);
-    protected:
         bool IsBlue;
     };
 }

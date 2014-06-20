@@ -514,14 +514,10 @@ namespace HdB {
                 if (mComputerScore)
                     mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
-                if(u->GetType() == Blockstatt::typeid)
-                    mPlayer->NumBlockstatt--;
                 mNotificationBox->SendMessage(u->Model + " verloren.");
             } else if (mComputerPlayer && mComputerPlayer->Units->Contains(u)) {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
-                if(u->GetType() == Blockstatt::typeid)
-                    mComputerPlayer->NumBlockstatt--;
                 mNotificationBox->SendMessage(u->Model + " des Gegners zerstört.");
             }
 
@@ -597,8 +593,6 @@ namespace HdB {
                 else
                 mPlayer->AddBlockterieUnit(-1);
             }
-            if(u->GetType() == Blockstatt::typeid)
-                mPlayer->NumBlockstatt--;
             mRenderer->SelectedUnits->Clear();
             mRenderer->Map->RemoveUnit(u);
             mPlayer->Units->Remove(u);

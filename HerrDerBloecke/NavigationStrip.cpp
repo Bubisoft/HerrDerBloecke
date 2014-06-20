@@ -317,12 +317,9 @@ void HdB::NavigationStrip::TearOffCall(Object^  sender, EventArgs^  e)
 
 void HdB::NavigationStrip::BuildUnitCall(Object^  sender, EventArgs^  e)
 {
-    Vector3 pos = mFocusedUnit->Position;
-    //Vector3 vec = Vector3::Subtract(mFocusedUnit->Model->Bounds.Minimum, pos);
+    Vector3 pos = mFocusedUnit->Position + (mFocusedUnit->Model->Bounds.Minimum * 1.5);
 
-    pos += (mFocusedUnit->Model->Bounds.Minimum * 1.5);
-
-    if(mFocusedPb!=nullptr)
+    if (mFocusedPb)
         UnitBuildEvent(pos);
 }
 
