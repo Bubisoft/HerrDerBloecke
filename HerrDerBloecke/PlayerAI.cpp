@@ -66,6 +66,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
     static const Vector2 blockstattPos = Vector2(25.f, 25.f);
     ADD_BUILDING(5, 5,Blockhuette,"Blockhaus",Vector2(-25.f, -25.f));
     ADD_BUILDING(10, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
+    ADD_BUILDING(20, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
     ADD_BUILDING(15, 3, Blockwerk, "Blockwerk", Vector2(50.f, 50.f));
     ADD_BUILDING(20, 2, Blockstatt, "Blockstatt", blockstattPos);
 }
@@ -83,16 +84,7 @@ int HdB::PlayerAI::CheckSoldiers()
 
 void HdB::PlayerAI::Attack(Unit^ target, bool isDefense)
 {
-    for each(Unit^ u in Units) //start attack with all Soldiers
-    {
-        if(Soldier^ s= dynamic_cast<Soldier^>(u))
-        {
-            if(isDefense || s->AttackTarget == nullptr)
-            {
-                mEvents->Add(gcnew AISoldierEvent(0, 4, s, target, s->AttackTarget, isDefense));
-            }
-        }
-    }
+
 }
 
 void HdB::PlayerAI::MoveUnits(const Vector3% pos)
@@ -138,7 +130,7 @@ void HdB::PlayerAI::CheckBuilding()
         alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"),mPositionHQ + Vector3(-25.f, 25.f, 0.f));
     }
 
-    mEvents->Add(gcnew AIUnitEvent(mSeconds+5, 3, unit, alpha));
+    mEvents->Add(gcnew AIUnitEvent(mSeconds+30, 3, unit, alpha));
 }
 
 HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
@@ -189,12 +181,11 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         /*check for build/rebuild new Soldiers. 
         Only do this if we are not waiting for a building except we are being attacked
         */
-        //if(!IsMissingBuilding || IsBeingAttacked)
         if(CanBuildSoldier && (!IsBuildingSoldier) && (mSoldiers->Count < 5) &&  mSeconds >= 40)
         {
                 Unit^ u=GetRandomSoldier();
                 mEvents->Add(gcnew AIUnitEvent(mSeconds, 2, u, nullptr));           
-        }
+        } 
     
         if(mSeconds >= 70 && mSoldiers->Count >= 5)
         {
@@ -202,37 +193,52 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         }
     }
 
-    //check randomly for attack  // have TODO this again !!!
-    if(mRandom->Next(40) == 0)
+    //check randomly for attack 
+    if(!IsAttacking && mRandom->Next(40) == 0)
         if(mSoldiers->Count > 0)
         {
             Unit^ target=mEnemyUnits[mRandom->Next(mEnemyUnits->Count)]; //determine random target
-            //for each(Soldier^ s in mSoldiers)
-            // mEvents->Add(gcnew AISoldierEvent(0, 4,s,target,s->AttackTarget, false));
+            for each(Soldier^ s in mSoldiers)
+                mEvents->Add(gcnew AISoldierEvent(0, 0,s,target,s->AttackTarget, false));
+
         }
     //#####################################################
 
     //process 
     IsBuildingSoldier=false;
+    IsAttacking=false;
     IsWaitingForBuilding=false;
     mToDo=nullptr;
-    for each(AIEvent^ aievent in mEvents)
+    for each(AIEvent^ aievent in mEvents->ToArray())
     {
+        //always process soldierevents
+        if(aievent->Status==EventStatus::NEW)
+        {
+            if(AISoldierEvent^ sevent= dynamic_cast<AISoldierEvent^>(aievent))
+            {
 
-        //try to finish open events
-        if(aievent->Status==HdB::EventStatus::OPEN)
+                    sevent->Soldier->StartAttack(sevent->Target);
+
+                    sevent->Status=HdB::EventStatus::OPEN;
+                    IsAttacking=true;
+            }
+        }
+        else if(aievent->Status==HdB::EventStatus::OPEN)
         {
             if(AISoldierEvent^ sevent=dynamic_cast<AISoldierEvent^>(aievent))
-                if(sevent->Target==nullptr && sevent->OldTarget!=nullptr && sevent->IsDefense) //continue attack on oldtarget wich was interrupted by defense call
+            {
+                if(sevent->Soldier->AttackTarget == nullptr && sevent->OldTarget != nullptr) //continue attack on oldtarget wich was interrupted by defense call
                 { 
                     sevent->Soldier->StartAttack(sevent->OldTarget);
-                    sevent->Status=HdB::EventStatus::CLOSED;
                 }
-                else if(sevent->OldTarget==nullptr)
+                else if(sevent->Soldier->AttackTarget==nullptr && sevent->OldTarget==nullptr)
                 {
                     //start next attack or pull back Soldiers
                     MoveUnits(mPositionHQ + Vector3(10.f,-10.f,0.f));
+                    mEvents->Remove(aievent);
                 }
+                IsAttacking=true;
+            }
         }
 
         if(AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(aievent)){
@@ -271,27 +277,16 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         Unit^ u=uevent->Unit;
         PositionUnit(u, uevent->Alpha);
         BuildUnit(u,u->BuildTime(),uevent->Alpha);
-        if(u->GetType()->IsSubclassOf(Building::typeid))
-            mRenderer->Map->AddUnit(u);
-        uevent->Status=HdB::EventStatus::CLOSED;
+        mRenderer->Map->AddUnit(u);
+        mEvents->Remove(mToDo);
     }
-    else if( AISoldierEvent^ sevent= dynamic_cast<AISoldierEvent^>(mToDo))
-    {
-        if(sevent->Target!=nullptr)
-            Attack(sevent->Target,sevent->IsDefense);
-        else if(sevent->OldTarget!=nullptr)
-            Attack(sevent->OldTarget,false);
-        else
-            MoveUnits(mPositionHQ + Vector3(5.f, 5.f, 0.f));
 
-        sevent->Status=HdB::EventStatus::OPEN;
-    }
-    
+    /*
     for each(AIEvent^ aievent in mEvents->ToArray())
     {
         if(aievent->Status==HdB::EventStatus::CLOSED)
             mEvents->Remove(aievent);
-    }
+    } */
 }
 
 
@@ -361,9 +356,7 @@ HdB::Unit^ HdB::PlayerAI::IsAttacked()
 
 void HdB::PlayerAI::OnNewUnit(Unit^ unit)
 {
-    if (unit->GetType()->IsSubclassOf(Soldier::typeid))
-        mRenderer->Map->AddUnit(unit);
-    else
+    if (!(unit->GetType()->IsSubclassOf(Soldier::typeid)))
         IsBuilding=false;
 
     if(HdB::ProductionBuilding^ b= dynamic_cast<ProductionBuilding^>(unit))

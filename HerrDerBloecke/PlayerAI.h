@@ -66,6 +66,7 @@ namespace HdB {
         bool CanBuildSoldier;
         bool IsMissingBuilding;
         bool IsBeingAttacked;
+        bool IsAttacking;
         bool IsBuilding;
         bool IsWaitingForBuilding;
 
