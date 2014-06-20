@@ -125,11 +125,11 @@ bool HdB::Soldier::IsInRange()
     if (!AttackTarget)
         return false;
 
-    Vector3 diff=Vector3::Subtract(AttackTarget->Position,Position);
-    if(diff.Length() <= Range())
-        return true;
-
-    return false;
+    Vector3 range = Range() * Vector3::Normalize(Vector3::UnitX + Vector3::UnitY);
+    Vector3 min = -range + AttackTarget->Position + AttackTarget->Model->Bounds.Minimum;
+    Vector3 max = range + AttackTarget->Position + AttackTarget->Model->Bounds.Maximum;
+    RectangleF r = RectangleF(min.X, min.Y, max.X - min.X, max.Y - min.Y);
+    return r.Contains(Position.X, Position.Y);
 }
 
 void HdB::Soldier::StopAttack()
