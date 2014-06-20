@@ -53,7 +53,7 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
     OpenFileDialog^ open=gcnew OpenFileDialog();
     open->Filter="HdB SaveGame (*.shb)|*.shb";
     open->FilterIndex=1;
-    open->Title="Load your Game";
+    open->Title="Spiel Laden...";
     open->InitialDirectory=System::Environment::SpecialFolder::MyDocuments.ToString();
 
     DialogResult result=open->ShowDialog();
@@ -65,28 +65,25 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
     enemy=nullptr;
     EnemyScore=nullptr;
 
-    try
-    {
-    FileStream^ fs = gcnew FileStream(open->FileName, FileMode::Open,FileAccess::Read);
-    BinaryReader^ br= gcnew BinaryReader(fs);
+    try {
+        FileStream^ fs = gcnew FileStream(open->FileName, FileMode::Open, FileAccess::Read);
+        BinaryReader^ br = gcnew BinaryReader(fs);
 
-    bool isMultiplayer=br->ReadBoolean();
+        bool isMultiplayer = br->ReadBoolean();
 
-    player->Load(br,renderer);
-    PlayerScore->Load(br,renderer);
-    if(isMultiplayer)
-    {
-        enemy=gcnew PlayerAI(renderer,Vector3(500.f,500.f,0.f), player->Units);
-        EnemyScore=gcnew Score(enemy);      
-        enemy->Load(br, renderer);
-        EnemyScore->Load(br,renderer);
-    }
-    //map->Load(br);
-    br->Close();
-    fs->Close();
-    }
-    catch(Exception^ e)
-    {
+        player->Load(br, renderer);
+        PlayerScore->Load(br, renderer);
+        if (isMultiplayer)
+        {
+            enemy = gcnew PlayerAI(renderer, player->Units);
+            EnemyScore = gcnew Score(enemy);
+            enemy->Load(br, renderer);
+            EnemyScore->Load(br, renderer);
+        }
+        //map->Load(br);
+        br->Close();
+        fs->Close();
+    } catch (Exception^ e) {
         MessageBox::Show(e->Message->ToString());
     }
 

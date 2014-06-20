@@ -35,6 +35,7 @@ namespace HdB {
             mMainMenu = gcnew MainMenu();
             Hide();
 
+            // Initialize Renderer, check graphics card
             mRenderer = gcnew Renderer();
             if (!mRenderer->Init(mRenderFrame)) {
                 MessageBox::Show(this, "Initialisierung fehlgeschlagen!\nGrafikkarte nicht unterstützt!",
@@ -43,26 +44,54 @@ namespace HdB {
                 return;
             }
 
-            mGame = GameType::kExit;
-            if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK) {
-                mGame = mMainMenu->game;
-                if (mGame == GameType::kExit) {
-                    Close();
-                    return;
-                } else if (mGame == GameType::kLoadGame) {
-                    LoadSave^ load = gcnew LoadSave();
-                    load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer);
-                    for each (Unit^ u in mPlayer->Units)
-                        u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
-                    for each (Unit^ u in mComputerPlayer->Units)
-                        mPlayerAI_UnitBuilt(u);
-                }
-                Show();
-            } else {
+            // Process Main Menu
+            mComputerPlayer = nullptr;
+            mComputerScore = nullptr;
+            GameType gameType = GameType::kExit;
+            if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK)
+                gameType = mMainMenu->game;
+
+            switch (gameType) {
+            case GameType::kExit:
                 Close();
                 return;
+            case GameType::kCPUGame:
+                mPlayer = gcnew Player();
+                mPlayerScore = gcnew Score(mPlayer);
+                mComputerPlayer = gcnew PlayerAI(mRenderer, mPlayer->Units);
+                mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
+                mComputerScore = gcnew Score(mComputerPlayer);
+                break;
+            case GameType::kNewGame:
+                mPlayer = gcnew Player();
+                mPlayerScore = gcnew Score(mPlayer);
+                break;
+            case GameType::kLoadGame:
+                LoadSave^ load = gcnew LoadSave();
+                load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer);
+                for each (Unit^ u in mPlayer->Units)
+                    u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+                if (mComputerPlayer)
+                    for each (Unit^ u in mComputerPlayer->Units)
+                        mPlayerAI_UnitBuilt(u);
+                break;
+            }
+            mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
+            Show();
+
+            // Start new players (if this is not a loaded game)
+            if (gameType != GameType::kLoadGame) {
+                if (mComputerPlayer)
+                    mComputerPlayer->NewGame(Vector3(500.f, 500.f, 0.f));
+                Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
+                u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
+                u->Spawn();
+                mRenderer->Map->AddUnit(u);
+                mPlayer->Units->Add(u);
+                mPlayer->Headquarters = u;
             }
 
+            // Initialize other components
             labelTimer->Enabled = true;
             resourcesTimer->Enabled = true;
             mMousePos = this->MousePosition;
@@ -74,37 +103,15 @@ namespace HdB {
             mAudioSystem->Init(mRenderFrame);
             mAudioSystem->PlayMusic("bgmusic", true);
 
-            if (mGame == GameType::kNewGame || mGame==GameType::kCPUGame) {
-                mPlayer = gcnew Player();
-                mPlayerScore=gcnew Score(mPlayer);
-            }
-            mPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayer_UnitBuilt);
-
-            if (mGame == GameType::kCPUGame) {
-                mComputerPlayer = gcnew PlayerAI(mRenderer, Vector3(500.f, 500.f, 0.f), mPlayer->Units);
-                mComputerPlayer->UnitBuilt += gcnew UnitEvent(this, &MainWindow::mPlayerAI_UnitBuilt);
-                mComputerScore = gcnew Score(mComputerPlayer);
-            } else {
-                mComputerPlayer = nullptr;
-                mComputerScore = nullptr;
-            }
-
             mNotificationBox = gcnew NotificationBox(this, this->Size.Width * 0.4f, btnMenu->Location.Y - 13);
             mNavi = gcnew NavigationStrip(this, ToolTipLabel,mRenderFrame->Location.X, mNotificationBox->_Location.Y);
             mNavi->ProductionSwitched+= gcnew GoldProductionEvent(this, &MainWindow::mNavi_GoldProductionSwitchedEvent);
             mNavi->TearOffEvent+=gcnew TearOff(this, &MainWindow::mNavi_TearOffEvent);
             mNavi->UnitBuildEvent+=gcnew BuildUnit(this, &MainWindow::mNavi_UnitBuildEvent);
 
-            // Spawn Hauptgebäude
-            Unit^ u = gcnew Hauptgebaeude(mRenderer->GetBlueModel("Hauptgebaeude"), Vector3::Zero);
-            u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
-            u->Spawn();
-            mRenderer->Map->AddUnit(u);
-            mPlayer->Units->Add(u);
-            mPlayer->Headquarters = u;
-
             Activate();
 
+            // Go into rendering loop in Renderer class
             MainLoop^ drawloop = gcnew MainLoop(mRenderer, &Renderer::Draw);
             MessagePump::Run(this, drawloop);
         }
@@ -138,7 +145,6 @@ namespace HdB {
         Vector3 mMoveCam; // Set by movement keys
         Options^ mOptions;
         MainMenu^ mMainMenu;
-        GameType mGame;
     private: System::Windows::Forms::Button^  btnMenu;
     private: System::Windows::Forms::Label^  lblResGold;
     private: System::Windows::Forms::Label^  lblResBlockterie;
@@ -486,7 +492,7 @@ namespace HdB {
             // Stop Attackers
             List<Unit^>^ allunits = gcnew List<Unit^>();
             allunits->AddRange(mPlayer->Units);
-            if(mGame == GameType::kCPUGame)
+            if (mComputerPlayer)
                 allunits->AddRange(mComputerPlayer->Units);
             for each (Unit^ un in allunits) {
                 if (Soldier^ s = dynamic_cast<Soldier^>(un))
@@ -502,13 +508,13 @@ namespace HdB {
             mAudioSystem->PlaySFX("destroyed");
 
             if (mPlayer->Units->Contains(u)) {
-                if(mGame == GameType::kCPUGame)
+                if (mComputerScore)
                     mComputerScore->ExtraPoints += u->Points();
                 mPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
                     mPlayer->NumBlockstatt--;
                 mNotificationBox->SendMessage(u->Model + " verloren.");
-            } else if (mGame == GameType::kCPUGame && mComputerPlayer->Units->Contains(u)) {
+            } else if (mComputerPlayer && mComputerPlayer->Units->Contains(u)) {
                 mPlayerScore->ExtraPoints += u->Points();
                 mComputerPlayer->Units->Remove(u);
                 if(u->GetType() == Blockstatt::typeid)
@@ -518,7 +524,7 @@ namespace HdB {
 
             // Win or Lose check
             if (u->GetType() == Hauptgebaeude::typeid) {
-                if (mGame == GameType::kCPUGame && u == mComputerPlayer->Headquarters) {
+                if (mComputerPlayer && u == mComputerPlayer->Headquarters) {
                     mAudioSystem->Stop("bgmusic");
                     mAudioSystem->PlayMusic("victory");
                     MessageBox::Show("Sie haben gewonnen!");
@@ -530,7 +536,7 @@ namespace HdB {
                 mPlayerScore->Active = false;
                 Graph^ g = gcnew Graph();
                 g->PlayerPoints = mPlayerScore->Log;
-                if(mGame == GameType::kCPUGame) {
+                if (mComputerPlayer) {
                     g->EnemyPoints = mComputerScore->Log;
                     mComputerScore->Active = false;
                 }
@@ -661,7 +667,7 @@ namespace HdB {
     private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {
             Graph^ g = gcnew Graph();
             g->PlayerPoints = mPlayerScore->Log;
-            if(mGame == GameType::kCPUGame)
+            if (mComputerPlayer)
                 g->EnemyPoints = mComputerScore->Log;
             else
                 g->EnemyPoints = gcnew List<UInt32>();

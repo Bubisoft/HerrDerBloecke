@@ -4,19 +4,6 @@
 #include "Unit.h"
 
 // Schedule macros
-#define START_BUILDING(atTime, UnitType, Model, pos) \
-    if (mSeconds == atTime) { \
-        Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
-        Unit^ ph = gcnew UnitType(mRenderer->GetAlphaModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
-        BuildUnit(u, u->BuildTime(), ph); \
-        mRenderer->Map->AddUnit(u); \
-    }
-#define START_SOLDIER(atTime, UnitType, Model, pos) \
-    if (mSeconds == atTime) { \
-        Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
-        BuildUnit(u, u->BuildTime(), nullptr); \
-    }
-
 #define ADD_BUILDING(atTime, priority,UnitType, Model, pos) { \
         Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
         Unit^ ph = gcnew UnitType(mRenderer->GetAlphaModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
@@ -26,7 +13,7 @@
         Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
         mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,nullptr)); }
 
-HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ enemyUnits) : mRenderer(renderer), mPositionHQ(posHQ), mEnemyUnits(enemyUnits)
+HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer(renderer), mEnemyUnits(enemyUnits)
 {
     // Initialize AI schedule timer
     mTimer = gcnew Timer();
@@ -34,7 +21,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
     mTimer->Tick += gcnew EventHandler(this, &PlayerAI::CheckSchedule);
     mTimer->Enabled = true;
 
-    //Initialize boolean parameter for letting him do his schedule
+    // Initialize boolean parameter for letting him do his schedule
     IsBuildingFarm=true;
     IsBuildingHaus=true;
     IsBuildingStatt=true;
@@ -47,22 +34,26 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ e
     UnitBuilt += gcnew UnitEvent(this, &PlayerAI::OnNewUnit);
     UnitDestroyed +=gcnew UnitEvent(this, &PlayerAI::OnUnitDestroyed);
 
-    // Spawn Headquarters
-    Unit^ u = gcnew Hauptgebaeude(mRenderer->GetRedModel("Hauptgebaeude"), mPositionHQ);
-    BuildUnit(u, u->BuildTime(), nullptr);
-    mRenderer->Map->AddUnit(u);
-    Headquarters = u;
-
     IsBlue=false;
     mToDo=nullptr;
 
-    //TEMP
     mEvents=gcnew List<AIEvent^>();
     IsMissingBuilding=true;
     IsBuilding=false;
     CanBuildSoldier=false;
     mSoldiers=gcnew List<Soldier^>();
+}
 
+void HdB::PlayerAI::NewGame(const Vector3% pos)
+{
+    // Spawn Headquarters
+    mPositionHQ = pos;
+    Unit^ u = gcnew Hauptgebaeude(mRenderer->GetRedModel("Hauptgebaeude"), mPositionHQ);
+    BuildUnit(u, u->BuildTime(), nullptr);
+    mRenderer->Map->AddUnit(u);
+    Headquarters = u;
+
+    // Initial schedule
     static const Vector2 blockstattPos = Vector2(25.f, 25.f);
     ADD_BUILDING(5, 5,Blockhuette,"Blockhaus",Vector2(-25.f, -25.f));
     ADD_BUILDING(10, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));

@@ -14,7 +14,11 @@ namespace HdB {
          *  manner. Initialize with Renderer so the AI can be completely self-
          *  contained.
          */
-        PlayerAI(Renderer^ renderer, const Vector3% posHQ, List<Unit^>^ enemyUnits);
+        PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits);
+        
+        /** Called if the AI is to start anew at the given position and not from a loaded game. */
+        void NewGame(const Vector3% pos);
+
         virtual void Save(BinaryWriter^ bw) override;
         virtual void Load(BinaryReader^ br,Renderer^ renderer)override;
 

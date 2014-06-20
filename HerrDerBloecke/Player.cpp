@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Resources.h"
 #include "Unit.h"
+#include "Renderer.h"
+#include "Map.h"
 
 #define MAX_UNITS 50
 
@@ -132,11 +134,14 @@ void HdB::Player::Load(BinaryReader^ br,Renderer^ renderer)
 
     int UnitCount=br->ReadInt32();
 
-    for(int i=0;i<UnitCount;++i)
+    for(int i = 0; i < UnitCount; ++i)
     {
-        Unit^ LoadedUnit=Unit::Load(br,renderer,IsBlue);
+        Unit^ LoadedUnit = Unit::Load(br, renderer, IsBlue);
         LoadedUnit->Spawn();
+        renderer->Map->AddUnit(LoadedUnit);
         mUnits->Add(LoadedUnit);
+        if (LoadedUnit->GetType() == Hauptgebaeude::typeid)
+            Headquarters = LoadedUnit;
     }
 }
 
