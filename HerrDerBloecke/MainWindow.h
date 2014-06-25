@@ -68,7 +68,10 @@ namespace HdB {
                 break;
             case GameType::kLoadGame:
                 LoadSave^ load = gcnew LoadSave();
-                load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer);
+                if (!load->LoadGame(mRenderer->Map, mPlayer, mComputerPlayer, mPlayerScore, mComputerScore, mRenderer)) {
+                    Close();
+                    return;
+                }
                 for each (Unit^ u in mPlayer->Units)
                     u->UnitDestroyed += gcnew UnitDestroyedEvent(this, &MainWindow::mUnit_UnitDestroyed);
                 if (mComputerPlayer)

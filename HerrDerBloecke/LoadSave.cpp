@@ -5,7 +5,7 @@ HdB::LoadSave::LoadSave(void)
 {
 }
 
-void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy,Score^ PlayerScore,Score^ EnemyScore)
+bool HdB::LoadSave::SaveGame(Map^ map, Player^ player, PlayerAI^ enemy, Score^ PlayerScore, Score^ EnemyScore)
 {
     SaveFileDialog^ save=gcnew SaveFileDialog();
     save->AddExtension=".shb";
@@ -16,20 +16,19 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy,Score^ Play
 
     DialogResult result=save->ShowDialog();
     if(result != DialogResult::OK)
-        return;
-    try
-    {
+        return false;
+
+    try {
         FileStream^ fs = gcnew FileStream(save->FileName, FileMode::Create,FileAccess::Write);
         BinaryWriter^ bw= gcnew BinaryWriter(fs);
-        if(enemy==nullptr)
+        if (!enemy)
             bw->Write(false); //singleplayergame
         else
             bw->Write(true); //multiplayergame
 
         player->Save(bw);
         PlayerScore->Save(bw);
-        if(enemy!=nullptr)
-        {
+        if (enemy) {
             enemy->Save(bw);
             EnemyScore->Save(bw);
         }
@@ -37,18 +36,16 @@ void HdB::LoadSave::SaveGame(Map^ map,Player^ player,PlayerAI^ enemy,Score^ Play
 
         bw->Close();
         fs->Close();
-    }
-    catch(Exception^ e)
-    {
+    } catch (Exception^ e) {
         MessageBox::Show(e->Message->ToString());
-        return;
+        return false;
     }
-
 
     MessageBox::Show("Spielstand wurde gespeichert!");
+    return true;
 }
 
-void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^% PlayerScore,Score^% EnemyScore,Renderer^% renderer)
+bool HdB::LoadSave::LoadGame(Map^% map, Player^% player, PlayerAI^% enemy, Score^% PlayerScore, Score^% EnemyScore, Renderer^% renderer)
 {
     OpenFileDialog^ open=gcnew OpenFileDialog();
     open->Filter="HdB SaveGame (*.shb)|*.shb";
@@ -57,8 +54,8 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
     open->InitialDirectory=System::Environment::SpecialFolder::MyDocuments.ToString();
 
     DialogResult result=open->ShowDialog();
-    if(result != DialogResult::OK)
-        return;
+    if (result != DialogResult::OK)
+        return false;
 
     player=gcnew Player();
     PlayerScore=gcnew Score(player);
@@ -85,5 +82,7 @@ void HdB::LoadSave::LoadGame(Map^% map, Player^% player,PlayerAI^% enemy,Score^%
         fs->Close();
     } catch (Exception^ e) {
         MessageBox::Show(e->Message->ToString());
+        return false;
     }
+    return true;
 }

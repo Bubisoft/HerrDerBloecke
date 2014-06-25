@@ -13,8 +13,8 @@ namespace HdB
     {
     public:
         LoadSave(void);
-        void SaveGame(Map^ map,Player^ player, PlayerAI^ enemy,Score^ PlayerScore,Score^ EnemyScore);
-        void LoadGame(Map^% map,Player^% player,PlayerAI^% enemy,Score^% PlayerScore,Score^% EnemyScore,Renderer^% renderer);
+        bool SaveGame(Map^ map, Player^ player, PlayerAI^ enemy, Score^ PlayerScore, Score^ EnemyScore);
+        bool LoadGame(Map^% map, Player^% player, PlayerAI^% enemy, Score^% PlayerScore, Score^% EnemyScore, Renderer^% renderer);
     };
 }
 

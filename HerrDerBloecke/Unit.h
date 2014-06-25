@@ -179,7 +179,7 @@ namespace HdB {
         SOLDIER_ATTACKSPEED(2);
         SOLDIER_DEFENSE(15);
         SOLDIER_SPEED(20);
-        SOLDIER_RANGE(5);
+        SOLDIER_RANGE(15);
     };
 
     ref class Turing : Soldier
