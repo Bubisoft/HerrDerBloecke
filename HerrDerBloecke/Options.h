@@ -238,7 +238,7 @@ namespace HdB {
             this->Name = L"Options";
             this->ShowIcon = false;
             this->ShowInTaskbar = false;
-            this->Text = L"Options";
+            this->Text = L"Optionen";
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->EndInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->EndInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbSFXVolume))->EndInit();
