@@ -13,6 +13,8 @@
         Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
         mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,nullptr)); }
 
+#define AGGRESSIVENESS 70 //default 70
+
 HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer(renderer), mEnemyUnits(enemyUnits)
 {
     // Initialize AI schedule timer
@@ -38,6 +40,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer
     mToDo=nullptr;
 
     mEvents=gcnew List<AIEvent^>();
+    mDefendingSoldier=gcnew List<Soldier^>();
     IsMissingBuilding=true;
     IsBuilding=false;
     CanBuildSoldier=false;
@@ -151,14 +154,8 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 
     //Check all Events #################################
     //check if something is being attacked to defend
-    Unit^ attacker=IsAttacked();
-    if( attacker != nullptr )
-    {
-        IsBeingAttacked=true;
-        Attack(attacker, true);
-    }
-    else
-        IsBeingAttacked=false;
+    IsAttacked();
+
 
     if(!IsBuilding)
     {
@@ -217,12 +214,25 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
                 if(sevent->Soldier->AttackTarget == nullptr && sevent->OldTarget != nullptr) //continue attack on oldtarget wich was interrupted by defense call
                 { 
                     sevent->Soldier->StartAttack(sevent->OldTarget);
+                    if(sevent->IsDefense==true)
+                        mDefendingSoldier->Remove(sevent->Soldier);
                 }
                 else if(sevent->Soldier->AttackTarget==nullptr && sevent->OldTarget==nullptr)
                 {
                     //start next attack or pull back Soldiers
-                    MoveUnits(mPositionHQ + Vector3(10.f,-10.f,0.f));
+                    if(sevent->IsDefense==true)
+                        mDefendingSoldier->Remove(sevent->Soldier);
+
+                    if(mRandom->Next(100) <= AGGRESSIVENESS) //default 70%
+                    {
+                        mEvents->Add(gcnew AISoldierEvent(0,2,sevent->Soldier,mEnemyUnits[mRandom->Next(mEnemyUnits->Count)],nullptr,false));
+                    }
+                    else
+                    {
+                        MoveUnits(mPositionHQ + Vector3(10.f,-10.f,0.f));
+                    }
                     mEvents->Remove(aievent);
+
                 }
                 IsAttacking=true;
             }
@@ -325,20 +335,39 @@ void HdB::PlayerAI::CheckMissingBuilding()
     IsBuilding=true;
 }
 
-
-HdB::Unit^ HdB::PlayerAI::IsAttacked()
+HdB::Soldier^ HdB::PlayerAI::GetDefender()
 {
-    for each(Unit^ u in Units)
-    {
-        for each(Unit^ a in mEnemyUnits)
-        {
-            if(Soldier^ s = dynamic_cast<Soldier^>(a))
-                if(s->AttackTarget == u)
-                    return s;
-        }
-    }
-    
+    for each(Soldier^ s in mSoldiers)
+        if(!mDefendingSoldier->Contains(s))
+            return s;
+
     return nullptr;
+}
+
+void HdB::PlayerAI::IsAttacked()
+{
+    IsBeingAttacked=false;
+    for each(Unit^ a in mEnemyUnits)
+    {
+        if(Soldier^ attacker = dynamic_cast<Soldier^>(a))
+            if(attacker->AttackTarget !=nullptr)
+            {
+                Soldier^ attacked=dynamic_cast<Soldier^>(attacker->AttackTarget);
+                if(!mDefendingSoldier->Contains(attacked) && attacked!=nullptr)
+                {
+                    //let soldiers defend theirselves
+                    mEvents->Add(gcnew AISoldierEvent(0,2,attacked,attacker,attacked->AttackTarget,true));
+                }
+                else
+                {
+                    Soldier^ defender=GetDefender();
+                    if(defender!=nullptr)
+                        mEvents->Add(gcnew AISoldierEvent(0,2,defender,attacker,defender->AttackTarget,true));
+                }
+                IsBeingAttacked=true;
+            }
+
+    }
 }
 
 void HdB::PlayerAI::OnNewUnit(Unit^ unit)

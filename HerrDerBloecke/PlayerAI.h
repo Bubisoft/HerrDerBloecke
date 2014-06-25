@@ -5,8 +5,6 @@ using namespace SlimDX;
 
 namespace HdB {
 
-
-
     ref class PlayerAI : public Player
     {
     public:
@@ -34,7 +32,12 @@ namespace HdB {
         */
         void CheckMissingBuilding();
 
-        Unit^ IsAttacked();
+        /** Returns a Soldier wich is not defending */
+        Soldier^ GetDefender();
+
+        /** Checks if we are being attacked and adds Events to defend
+        */
+        void IsAttacked();
 
         /** Returns a random subclass object of the Soldier class
         */
@@ -60,6 +63,7 @@ namespace HdB {
         Random^ mRandom;
         List<Unit^>^ mEnemyUnits;
         List<Soldier^>^ mSoldiers;
+        List<Soldier^>^ mDefendingSoldier;
         List<AIEvent^>^ mEvents;
         Vector3 mPositionHQ;
         Timer^ mTimer;
