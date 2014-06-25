@@ -76,6 +76,8 @@ void HdB::Player::BuildTimerCallback(Object^ source, EventArgs^ e)
         if (mBuildTasks[i]->seconds-- == 0) {
             if (mBuildTasks[i]->placeholder)
                 mBuildTasks[i]->placeholder->Despawn();
+            if (b)
+                b->BuildProgress = 1.f;
             mBuildTasks[i]->unit->Spawn();
             mUnits->Add(mBuildTasks[i]->unit);
             UnitBuilt(mBuildTasks[i]->unit);
