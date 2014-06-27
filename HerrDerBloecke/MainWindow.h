@@ -32,8 +32,15 @@ namespace HdB {
         MainWindow()
         {
             InitializeComponent();
-            mMainMenu = gcnew MainMenu();
             Hide();
+
+            // Simple check for model folder, show error if not found
+            if (!Directory::Exists(MODEL_PATH)) {
+                MessageBox::Show(this, "Spieldateien nicht gefunden!",
+                    "ERROR", MessageBoxButtons::OK, MessageBoxIcon::Error);
+                Close();
+                return;
+            }
 
             // Initialize Renderer, check graphics card
             mRenderer = gcnew Renderer();
@@ -48,6 +55,7 @@ namespace HdB {
             mComputerPlayer = nullptr;
             mComputerScore = nullptr;
             GameType gameType = GameType::kExit;
+            mMainMenu = gcnew MainMenu();
             if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK)
                 gameType = mMainMenu->game;
 
