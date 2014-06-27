@@ -444,7 +444,7 @@ namespace HdB {
                     return;
                 }
                 bool attack = false, move = false;
-                for each (Unit^ u in mRenderer->SelectedUnits) {
+                for each (Unit^ u in mRenderer->SelectedUnits->ToArray()) {
                     if (mPlayer->OwnUnit(u) && u->GetType()->IsSubclassOf(Soldier::typeid)) {
                         Soldier^ s = safe_cast<Soldier^>(u);
                         Vector3 targetLocation = mRenderer->Camera->Unproject2D(e->Location);
@@ -452,6 +452,9 @@ namespace HdB {
                         s->MoveTo = targetLocation;
                         Unit^ target = mRenderer->Map->CheckOccupation(targetLocation);
                         if (target && !mPlayer->OwnUnit(target)) {
+                            // Remove old target from selection
+                            if (s->IsInRange() && mRenderer->SelectedUnits->Contains(s->AttackTarget))
+                                mRenderer->SelectedUnits->Remove(s->AttackTarget);
                             s->StartAttack(target);
                             attack = true;
                         } else {
