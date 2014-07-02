@@ -33,7 +33,7 @@ namespace HdB {
         void CheckMissingBuilding();
 
         /** Returns a Soldier wich is not defending */
-        Soldier^ GetDefender();
+        Soldier^ GetDefender(Soldier^ attacker);
 
         /** Checks if we are being attacked and adds Events to defend
         */
@@ -68,6 +68,7 @@ namespace HdB {
         Vector3 mPositionHQ;
         Timer^ mTimer;
         UInt64 mSeconds;
+        UInt16 mCountSoldier;
         AIEvent^ mToDo;
 
         //decision parameter

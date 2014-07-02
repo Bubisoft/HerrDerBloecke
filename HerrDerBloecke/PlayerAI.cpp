@@ -14,7 +14,7 @@
         mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,nullptr)); }
 
 #define AGGRESSIVENESS 70 //default 70
-
+#define DEFENSEDISTANCE 130 //default 130
 HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer(renderer), mEnemyUnits(enemyUnits)
 {
     // Initialize AI schedule timer
@@ -156,25 +156,33 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     //check if something is being attacked to defend
     IsAttacked();
 
-
-    if(!IsBuilding)
+    if(IsBeingAttacked)
+    {
+        //build more Soldiers
+        if(mEnemyUnits->Count > mCountSoldier){
+            Unit^ u=GetRandomSoldier();
+            mEvents->Add(gcnew AIUnitEvent(0,5,u,nullptr));
+            mCountSoldier++;
+        }
+    }
+    else if(!IsBuilding)
     {
         //check rebuilding destroyed buildings
         CheckMissingBuilding();
 
-        /*check for build/rebuild new Soldiers. 
-        Only do this if we are not waiting for a building except we are being attacked
-        */
-        if(CanBuildSoldier && (!IsBuildingSoldier) && (mSoldiers->Count < 5) &&  mSeconds >= 40)
-        {
-                Unit^ u=GetRandomSoldier();
-                mEvents->Add(gcnew AIUnitEvent(mSeconds, 2, u, nullptr));           
-        } 
-    
         if(mSeconds >= 70 && mSoldiers->Count >= 5)
         {
             CheckBuilding();
         }
+
+        /*check for build/rebuild new Soldiers. 
+        */
+        if(!IsBuilding && CanBuildSoldier && (!IsBuildingSoldier) && (mCountSoldier <= 5) &&  mSeconds >= 40)
+        {
+                Unit^ u=GetRandomSoldier();
+                mEvents->Add(gcnew AIUnitEvent(mSeconds + 5, 2, u, nullptr));
+                mCountSoldier++;
+        } 
     }
 
     //check randomly for attack 
@@ -203,6 +211,9 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 
                     sevent->Soldier->StartAttack(sevent->Target);
 
+                    if(sevent->IsDefense)
+                        mDefendingSoldier->Add(sevent->Soldier);
+
                     sevent->Status=HdB::EventStatus::OPEN;
                     IsAttacking=true;
             }
@@ -217,7 +228,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
                     if(sevent->IsDefense==true)
                         mDefendingSoldier->Remove(sevent->Soldier);
                 }
-                else if(sevent->Soldier->AttackTarget==nullptr && sevent->OldTarget==nullptr)
+                else if(sevent->Soldier->AttackTarget==nullptr && sevent->OldTarget==nullptr) //attack was succesfull, pull back or start next attack
                 {
                     //start next attack or pull back Soldiers
                     if(sevent->IsDefense==true)
@@ -227,7 +238,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
                     {
                         mEvents->Add(gcnew AISoldierEvent(0,2,sevent->Soldier,mEnemyUnits[mRandom->Next(mEnemyUnits->Count)],nullptr,false));
                     }
-                    else
+                    else //pull back soldier
                     {
                         MoveUnits(mPositionHQ + Vector3(10.f,-10.f,0.f));
                     }
@@ -277,13 +288,6 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         mRenderer->Map->AddUnit(u);
         mEvents->Remove(mToDo);
     }
-
-    /*
-    for each(AIEvent^ aievent in mEvents->ToArray())
-    {
-        if(aievent->Status==HdB::EventStatus::CLOSED)
-            mEvents->Remove(aievent);
-    } */
 }
 
 
@@ -335,13 +339,22 @@ void HdB::PlayerAI::CheckMissingBuilding()
     IsBuilding=true;
 }
 
-HdB::Soldier^ HdB::PlayerAI::GetDefender()
+HdB::Soldier^ HdB::PlayerAI::GetDefender(Soldier^ attacker)
 {
+    Soldier^ defender=nullptr;
+    float olddistance=99999999;
     for each(Soldier^ s in mSoldiers)
         if(!mDefendingSoldier->Contains(s))
-            return s;
+        {
+            
+            if(Vector3::Distance(attacker->Position,s->Position) <= olddistance)
+            {
+                olddistance=Vector3::Distance(attacker->Position,s->Position);
+                defender=s;
+            }
+        }
 
-    return nullptr;
+    return defender;
 }
 
 void HdB::PlayerAI::IsAttacked()
@@ -350,17 +363,25 @@ void HdB::PlayerAI::IsAttacked()
     for each(Unit^ a in mEnemyUnits)
     {
         if(Soldier^ attacker = dynamic_cast<Soldier^>(a))
-            if(attacker->AttackTarget !=nullptr)
+            if((attacker->AttackTarget !=nullptr && Vector3::Distance(attacker->Position,mPositionHQ) < DEFENSEDISTANCE) || attacker->IsInRange())
             {
                 Soldier^ attacked=dynamic_cast<Soldier^>(attacker->AttackTarget);
                 if(!mDefendingSoldier->Contains(attacked) && attacked!=nullptr)
                 {
                     //let soldiers defend theirselves
                     mEvents->Add(gcnew AISoldierEvent(0,2,attacked,attacker,attacked->AttackTarget,true));
+                    Soldier^ s1=GetDefender(attacker);
+                    Soldier^ s2= GetDefender(attacker);
+
+                    if(s1 != nullptr)
+                        mEvents->Add(gcnew AISoldierEvent(0,2,s1,attacker,s1->AttackTarget,true));
+                    if(s2 != nullptr)
+                        mEvents->Add(gcnew AISoldierEvent(0,2,s2,attacker,s2->AttackTarget,true));
+                    
                 }
                 else
                 {
-                    Soldier^ defender=GetDefender();
+                    Soldier^ defender=GetDefender(attacker);
                     if(defender!=nullptr)
                         mEvents->Add(gcnew AISoldierEvent(0,2,defender,attacker,defender->AttackTarget,true));
                 }
@@ -415,8 +436,10 @@ void HdB::PlayerAI::OnUnitDestroyed(Unit^ unit)
     } else if (HdB::Blockstatt^ s = dynamic_cast<Blockstatt^>(unit)) {
         CanBuildSoldier = false;
     }
-    else if(HdB::Soldier^ soldier=dynamic_cast<Soldier^>(unit))
+    else if(HdB::Soldier^ soldier=dynamic_cast<Soldier^>(unit)){
         mSoldiers->Remove(soldier);
+        mCountSoldier--;
+    }
 }
 
 void HdB::PlayerAI::Save(BinaryWriter^ bw)
