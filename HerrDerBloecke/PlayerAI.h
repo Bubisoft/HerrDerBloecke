@@ -68,6 +68,7 @@ namespace HdB {
         Vector3 mPositionHQ;
         Timer^ mTimer;
         UInt64 mSeconds;
+        UInt16 mLevel;
         UInt16 mCountSoldier;
         AIEvent^ mToDo;
 

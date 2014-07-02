@@ -13,8 +13,11 @@
         Unit^ u = gcnew UnitType(mRenderer->GetRedModel(Model), mPositionHQ + Vector3(pos, 0.f)); \
         mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,nullptr)); }
 
-#define AGGRESSIVENESS 70 //default 70
-#define DEFENSEDISTANCE 130 //default 130
+#define ATTACKPROBABILITY 100 
+#define AGGRESSIVENESS 33 //probabilty for continuing attacks; default 25
+#define DEFENSEDISTANCE 130 //distance in wich is searched for an enemy attack; default 130
+#define DEFENDERDISTANCE 40 //distance in wich is searched for a defender; default 40 
+
 HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer(renderer), mEnemyUnits(enemyUnits)
 {
     // Initialize AI schedule timer
@@ -45,6 +48,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer
     IsBuilding=false;
     CanBuildSoldier=false;
     mSoldiers=gcnew List<Soldier^>();
+    mLevel=1;
 }
 
 void HdB::PlayerAI::NewGame(const Vector3% pos)
@@ -58,9 +62,9 @@ void HdB::PlayerAI::NewGame(const Vector3% pos)
 
     // Initial schedule
     static const Vector2 blockstattPos = Vector2(25.f, 25.f);
-    ADD_BUILDING(5, 5,Blockhuette,"Blockhaus",Vector2(-25.f, -25.f));
-    ADD_BUILDING(10, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
-    ADD_BUILDING(20, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
+    ADD_BUILDING(5, 5,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
+    ADD_BUILDING(10, 4,Blockhuette,"Blockhaus",Vector2(-25.f, -25.f)); 
+    ADD_BUILDING(15, 4,Blockfarm, "Kastenfarm", Vector2(25.f, -25.f));
     ADD_BUILDING(15, 3, Blockwerk, "Blockwerk", Vector2(50.f, 50.f));
     ADD_BUILDING(20, 2, Blockstatt, "Blockstatt", blockstattPos);
 }
@@ -125,6 +129,24 @@ void HdB::PlayerAI::CheckBuilding()
     }
 
     mEvents->Add(gcnew AIUnitEvent(mSeconds+30, 3, unit, alpha));
+
+    //check if we have to shutdown some blockhuetten to save food production
+    if(foundFarm < foundHaus*2 + 1)
+    {
+        for each(Unit^ u in mUnits)
+        {
+            if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
+                b->Enabled=false;
+        }
+    }
+    else
+    {
+        for each(Unit^ u in mUnits)
+        {
+            if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
+                b->Enabled=true;
+        }
+    }
 }
 
 HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
@@ -159,7 +181,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     if(IsBeingAttacked)
     {
         //build more Soldiers
-        if(mEnemyUnits->Count > mCountSoldier){
+        if(mEnemyUnits->Count+(mEnemyUnits->Count*(mLevel-2)/2) > mCountSoldier){
             Unit^ u=GetRandomSoldier();
             mEvents->Add(gcnew AIUnitEvent(0,5,u,nullptr));
             mCountSoldier++;
@@ -168,7 +190,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     else if(!IsBuilding)
     {
         //check rebuilding destroyed buildings
-        CheckMissingBuilding();
+        //CheckMissingBuilding();
 
         if(mSeconds >= 70 && mSoldiers->Count >= 5)
         {
@@ -186,7 +208,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     }
 
     //check randomly for attack 
-    if(!IsAttacking && mRandom->Next(40) == 0)
+    if(!IsAttacking && mRandom->Next((ATTACKPROBABILITY/mLevel)) == 0)
         if(mSoldiers->Count > 0)
         {
             Unit^ target=mEnemyUnits[mRandom->Next(mEnemyUnits->Count)]; //determine random target
@@ -234,7 +256,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
                     if(sevent->IsDefense==true)
                         mDefendingSoldier->Remove(sevent->Soldier);
 
-                    if(mRandom->Next(100) <= AGGRESSIVENESS) //default 70%
+                    if(mRandom->Next(100) <= AGGRESSIVENESS * mLevel - 10) //default 25%
                     {
                         mEvents->Add(gcnew AISoldierEvent(0,2,sevent->Soldier,mEnemyUnits[mRandom->Next(mEnemyUnits->Count)],nullptr,false));
                     }
@@ -346,8 +368,8 @@ HdB::Soldier^ HdB::PlayerAI::GetDefender(Soldier^ attacker)
     for each(Soldier^ s in mSoldiers)
         if(!mDefendingSoldier->Contains(s))
         {
-            
-            if(Vector3::Distance(attacker->Position,s->Position) <= olddistance)
+            float distance=Vector3::Distance(attacker->Position,s->Position); 
+            if(distance <= olddistance && distance < DEFENDERDISTANCE*mLevel)
             {
                 olddistance=Vector3::Distance(attacker->Position,s->Position);
                 defender=s;

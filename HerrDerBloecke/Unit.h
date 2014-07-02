@@ -222,7 +222,7 @@ namespace HdB {
 
         UNIT_MAXHP(1000);
         UNIT_BUILDTIME(8);
-        UNIT_COSTS(3, 3, 3);
+        UNIT_COSTS(25, 60, 15);
         UNIT_POINTS(5);
         UNIT_DESCRIPTION("Gebäude zum Ausbilden von Soldaten.");
     };
@@ -237,7 +237,7 @@ namespace HdB {
 
         UNIT_MAXHP(500);
         UNIT_BUILDTIME(10);
-        UNIT_COSTS(3, 6, 8);
+        UNIT_COSTS(10, 40, 40);
         UNIT_POINTS(5);
         UNIT_DESCRIPTION("Produziert Goldbarren, verbraucht Kastenbrot.");
         PRODUCTION_TYPE(ProductionType::eGold);
@@ -250,7 +250,7 @@ namespace HdB {
 
         UNIT_MAXHP(700);
         UNIT_BUILDTIME(8);
-        UNIT_COSTS(1, 2, 3);
+        UNIT_COSTS(30, 50, 20);
         UNIT_POINTS(5);
         UNIT_DESCRIPTION("Produziert Blockterie.");
         PRODUCTION_TYPE(ProductionType::eBlockterie);
@@ -263,7 +263,7 @@ namespace HdB {
 
         UNIT_MAXHP(400);
         UNIT_BUILDTIME(11);
-        UNIT_COSTS(4, 5, 6);
+        UNIT_COSTS(20, 30, 10);
         UNIT_POINTS(5);
         UNIT_DESCRIPTION("Produziert Kastenbrot.");
         PRODUCTION_TYPE(ProductionType::eFood);
