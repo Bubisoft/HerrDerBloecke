@@ -26,7 +26,7 @@ namespace HdB {
 		MainMenu(void)
 		{
 			InitializeComponent();
-            game = GameType::kExit;
+            Game = GameType::kExit;
 			//
 			//TODO: Add the constructor code here
 			//
@@ -43,14 +43,14 @@ namespace HdB {
 				delete components;
 			}
 		}
-    private: System::Windows::Forms::Label^  label1;
-    private: System::Windows::Forms::Button^  button1;
-    private: System::Windows::Forms::Button^  button2;
-    private: System::Windows::Forms::Button^  button3;
+    private: System::Windows::Forms::Label^  lblTitle;
+    private: System::Windows::Forms::Button^  btnNew;
+    private: System::Windows::Forms::Button^  btnCPU;
+    private: System::Windows::Forms::Button^  btnLoad;
+
     public: 
-        GameType game;
-    private: System::Windows::Forms::Button^  button4;
-    public: 
+        property GameType Game;
+    private: System::Windows::Forms::Button^  btnExit;
 
 	private:
 		/// <summary>
@@ -65,79 +65,79 @@ namespace HdB {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-            this->label1 = (gcnew System::Windows::Forms::Label());
-            this->button1 = (gcnew System::Windows::Forms::Button());
-            this->button2 = (gcnew System::Windows::Forms::Button());
-            this->button3 = (gcnew System::Windows::Forms::Button());
-            this->button4 = (gcnew System::Windows::Forms::Button());
+            this->lblTitle = (gcnew System::Windows::Forms::Label());
+            this->btnNew = (gcnew System::Windows::Forms::Button());
+            this->btnCPU = (gcnew System::Windows::Forms::Button());
+            this->btnLoad = (gcnew System::Windows::Forms::Button());
+            this->btnExit = (gcnew System::Windows::Forms::Button());
             this->SuspendLayout();
             // 
-            // label1
+            // lblTitle
             // 
-            this->label1->AutoSize = true;
-            this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 36, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+            this->lblTitle->AutoSize = true;
+            this->lblTitle->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 36, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label1->Location = System::Drawing::Point(70, 9);
-            this->label1->Name = L"label1";
-            this->label1->Size = System::Drawing::Size(274, 55);
-            this->label1->TabIndex = 0;
-            this->label1->Text = L"Hauptmenü";
-            this->label1->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            this->lblTitle->Location = System::Drawing::Point(70, 9);
+            this->lblTitle->Name = L"lblTitle";
+            this->lblTitle->Size = System::Drawing::Size(274, 55);
+            this->lblTitle->TabIndex = 0;
+            this->lblTitle->Text = L"Hauptmenü";
+            this->lblTitle->TextAlign = System::Drawing::ContentAlignment::TopCenter;
             // 
-            // button1
+            // btnNew
             // 
-            this->button1->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button1->Location = System::Drawing::Point(147, 77);
-            this->button1->Name = L"button1";
-            this->button1->Size = System::Drawing::Size(120, 45);
-            this->button1->TabIndex = 1;
-            this->button1->Text = L"Neues Spiel";
-            this->button1->UseVisualStyleBackColor = true;
-            this->button1->Click += gcnew System::EventHandler(this, &MainMenu::button1_Click);
+            this->btnNew->DialogResult = System::Windows::Forms::DialogResult::OK;
+            this->btnNew->Location = System::Drawing::Point(147, 77);
+            this->btnNew->Name = L"btnNew";
+            this->btnNew->Size = System::Drawing::Size(120, 45);
+            this->btnNew->TabIndex = 1;
+            this->btnNew->Text = L"Neues Spiel";
+            this->btnNew->UseVisualStyleBackColor = true;
+            this->btnNew->Click += gcnew System::EventHandler(this, &MainMenu::btnNew_Click);
             // 
-            // button2
+            // btnCPU
             // 
-            this->button2->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button2->Location = System::Drawing::Point(147, 128);
-            this->button2->Name = L"button2";
-            this->button2->Size = System::Drawing::Size(120, 45);
-            this->button2->TabIndex = 2;
-            this->button2->Text = L"Neues Spiel gegen CPU";
-            this->button2->UseVisualStyleBackColor = true;
-            this->button2->Click += gcnew System::EventHandler(this, &MainMenu::button2_Click);
+            this->btnCPU->DialogResult = System::Windows::Forms::DialogResult::OK;
+            this->btnCPU->Location = System::Drawing::Point(147, 128);
+            this->btnCPU->Name = L"btnCPU";
+            this->btnCPU->Size = System::Drawing::Size(120, 45);
+            this->btnCPU->TabIndex = 2;
+            this->btnCPU->Text = L"Neues Spiel gegen CPU";
+            this->btnCPU->UseVisualStyleBackColor = true;
+            this->btnCPU->Click += gcnew System::EventHandler(this, &MainMenu::btnCPU_Click);
             // 
-            // button3
+            // btnLoad
             // 
-            this->button3->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button3->Location = System::Drawing::Point(147, 179);
-            this->button3->Name = L"button3";
-            this->button3->Size = System::Drawing::Size(120, 45);
-            this->button3->TabIndex = 3;
-            this->button3->Text = L"Spiel Laden";
-            this->button3->UseVisualStyleBackColor = true;
-            this->button3->Click += gcnew System::EventHandler(this, &MainMenu::button3_Click);
+            this->btnLoad->DialogResult = System::Windows::Forms::DialogResult::OK;
+            this->btnLoad->Location = System::Drawing::Point(147, 179);
+            this->btnLoad->Name = L"btnLoad";
+            this->btnLoad->Size = System::Drawing::Size(120, 45);
+            this->btnLoad->TabIndex = 3;
+            this->btnLoad->Text = L"Spiel Laden";
+            this->btnLoad->UseVisualStyleBackColor = true;
+            this->btnLoad->Click += gcnew System::EventHandler(this, &MainMenu::btnLoad_Click);
             // 
-            // button4
+            // btnExit
             // 
-            this->button4->DialogResult = System::Windows::Forms::DialogResult::OK;
-            this->button4->Location = System::Drawing::Point(147, 230);
-            this->button4->Name = L"button4";
-            this->button4->Size = System::Drawing::Size(120, 45);
-            this->button4->TabIndex = 4;
-            this->button4->Text = L"Spiel verlassen";
-            this->button4->UseVisualStyleBackColor = true;
-            this->button4->Click += gcnew System::EventHandler(this, &MainMenu::button4_Click);
+            this->btnExit->DialogResult = System::Windows::Forms::DialogResult::OK;
+            this->btnExit->Location = System::Drawing::Point(147, 230);
+            this->btnExit->Name = L"btnExit";
+            this->btnExit->Size = System::Drawing::Size(120, 45);
+            this->btnExit->TabIndex = 4;
+            this->btnExit->Text = L"Spiel verlassen";
+            this->btnExit->UseVisualStyleBackColor = true;
+            this->btnExit->Click += gcnew System::EventHandler(this, &MainMenu::btnExit_Click);
             // 
             // MainMenu
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(414, 300);
-            this->Controls->Add(this->button4);
-            this->Controls->Add(this->button3);
-            this->Controls->Add(this->button2);
-            this->Controls->Add(this->button1);
-            this->Controls->Add(this->label1);
+            this->Controls->Add(this->btnExit);
+            this->Controls->Add(this->btnLoad);
+            this->Controls->Add(this->btnCPU);
+            this->Controls->Add(this->btnNew);
+            this->Controls->Add(this->lblTitle);
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
             this->Name = L"MainMenu";
             this->Text = L"Hauptmenü";
@@ -146,17 +146,17 @@ namespace HdB {
 
         }
 #pragma endregion
-    private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-                 game = GameType::kNewGame;
+    private: System::Void btnNew_Click(System::Object^  sender, System::EventArgs^  e) {
+                 Game = GameType::kNewGame;
              }
-private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-             game = GameType::kCPUGame;
+private: System::Void btnCPU_Click(System::Object^  sender, System::EventArgs^  e) {
+             Game = GameType::kCPUGame;
          }
-private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
-             game = GameType::kLoadGame;
+private: System::Void btnLoad_Click(System::Object^  sender, System::EventArgs^  e) {
+             Game = GameType::kLoadGame;
          }
-private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
-             game = GameType::kExit;
+private: System::Void btnExit_Click(System::Object^  sender, System::EventArgs^  e) {
+             Game = GameType::kExit;
          }
 };
 }

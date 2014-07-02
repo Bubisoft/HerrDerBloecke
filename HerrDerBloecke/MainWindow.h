@@ -57,7 +57,7 @@ namespace HdB {
             GameType gameType = GameType::kExit;
             mMainMenu = gcnew MainMenu();
             if (mMainMenu->ShowDialog(this) == System::Windows::Forms::DialogResult::OK)
-                gameType = mMainMenu->game;
+                gameType = mMainMenu->Game;
 
             switch (gameType) {
             case GameType::kExit:
