@@ -17,19 +17,21 @@ namespace HdB {
 
     private:
         List<UInt32>^ mPointsPlayer;
+        List<UInt32>^ mPointsEnemy;
     private: System::Windows::Forms::CheckBox^  playerCheckBox;
     private: System::Windows::Forms::CheckBox^  enemyCheckBox;
     private: System::Windows::Forms::Timer^  refreshTimer;
 
-
-
-             List<UInt32>^ mPointsEnemy;
     public:
         property List<UInt32>^ PlayerPoints
         {
             void set(List<UInt32>^ _points)
             {
                 mPointsPlayer=_points;
+            }
+            List<UInt32>^ get()
+            {
+                return mPointsPlayer;
             }
         };
 
@@ -38,6 +40,10 @@ namespace HdB {
             void set(List<UInt32>^ _points)
             {
                 mPointsEnemy=_points;
+            }
+            List<UInt32>^ get()
+            {
+                return mPointsEnemy;
             }
         };
 
@@ -116,7 +122,7 @@ namespace HdB {
             // 
             this->refreshTimer->Enabled = true;
             this->refreshTimer->Interval = 300;
-            this->refreshTimer->Tick += gcnew System::EventHandler(this, &Graph::timer1_Tick);
+            this->refreshTimer->Tick += gcnew System::EventHandler(this, &Graph::refreshTimer_Tick);
             // 
             // Graph
             // 
@@ -205,10 +211,10 @@ namespace HdB {
                  Invalidate();
              }
     private: System::Void CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-                 this->Invalidate();
+                 Invalidate();
              }
-private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
-             Invalidate();
-         }
+private: System::Void refreshTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+                 Invalidate();
+             }
 };
 }

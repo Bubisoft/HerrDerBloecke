@@ -32,17 +32,10 @@ namespace HdB {
     private: System::Windows::Forms::Label^  lblSpeed1;
     private: System::Windows::Forms::Label^  lblSpeed10th;
     private: System::Windows::Forms::TrackBar^  tbMusicVolume;
-
-    private: System::Windows::Forms::Label^  label1;
+    private: System::Windows::Forms::Label^  lblMusicVolume;
     private: System::Windows::Forms::TrackBar^  tbSFXVolume;
-
-    private: System::Windows::Forms::Label^  label2;
+    private: System::Windows::Forms::Label^  lblSFXVolume;
     private: System::Windows::Forms::Button^  saveButton;
-
-
-
-    
-
 
     public:
         property int CameraSpeed
@@ -100,9 +93,9 @@ namespace HdB {
             this->lblSpeed1 = (gcnew System::Windows::Forms::Label());
             this->lblSpeed10th = (gcnew System::Windows::Forms::Label());
             this->tbMusicVolume = (gcnew System::Windows::Forms::TrackBar());
-            this->label1 = (gcnew System::Windows::Forms::Label());
+            this->lblMusicVolume = (gcnew System::Windows::Forms::Label());
             this->tbSFXVolume = (gcnew System::Windows::Forms::TrackBar());
-            this->label2 = (gcnew System::Windows::Forms::Label());
+            this->lblSFXVolume = (gcnew System::Windows::Forms::Label());
             this->saveButton = (gcnew System::Windows::Forms::Button());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbCamSpeed))->BeginInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->tbMusicVolume))->BeginInit();
@@ -176,14 +169,14 @@ namespace HdB {
             this->tbMusicVolume->TabIndex = 6;
             this->tbMusicVolume->Value = 100;
             // 
-            // label1
+            // lblMusicVolume
             // 
-            this->label1->AutoSize = true;
-            this->label1->Location = System::Drawing::Point(65, 97);
-            this->label1->Name = L"label1";
-            this->label1->Size = System::Drawing::Size(81, 13);
-            this->label1->TabIndex = 7;
-            this->label1->Text = L"Musiklautstärke";
+            this->lblMusicVolume->AutoSize = true;
+            this->lblMusicVolume->Location = System::Drawing::Point(65, 97);
+            this->lblMusicVolume->Name = L"lblMusicVolume";
+            this->lblMusicVolume->Size = System::Drawing::Size(81, 13);
+            this->lblMusicVolume->TabIndex = 7;
+            this->lblMusicVolume->Text = L"Musiklautstärke";
             // 
             // tbSFXVolume
             // 
@@ -196,14 +189,14 @@ namespace HdB {
             this->tbSFXVolume->TabIndex = 8;
             this->tbSFXVolume->Value = 50;
             // 
-            // label2
+            // lblSFXVolume
             // 
-            this->label2->AutoSize = true;
-            this->label2->Location = System::Drawing::Point(68, 166);
-            this->label2->Name = L"label2";
-            this->label2->Size = System::Drawing::Size(81, 13);
-            this->label2->TabIndex = 9;
-            this->label2->Text = L"Effektlautstärke";
+            this->lblSFXVolume->AutoSize = true;
+            this->lblSFXVolume->Location = System::Drawing::Point(68, 166);
+            this->lblSFXVolume->Name = L"lblSFXVolume";
+            this->lblSFXVolume->Size = System::Drawing::Size(81, 13);
+            this->lblSFXVolume->TabIndex = 9;
+            this->lblSFXVolume->Text = L"Effektlautstärke";
             // 
             // saveButton
             // 
@@ -222,9 +215,9 @@ namespace HdB {
             this->ClientSize = System::Drawing::Size(370, 289);
             this->ControlBox = false;
             this->Controls->Add(this->saveButton);
-            this->Controls->Add(this->label2);
+            this->Controls->Add(this->lblSFXVolume);
             this->Controls->Add(this->tbSFXVolume);
-            this->Controls->Add(this->label1);
+            this->Controls->Add(this->lblMusicVolume);
             this->Controls->Add(this->tbMusicVolume);
             this->Controls->Add(this->lblSpeed10th);
             this->Controls->Add(this->lblSpeed1);
@@ -247,7 +240,7 @@ namespace HdB {
 
         }
 private: System::Void saveButton_Click(System::Object^  sender, System::EventArgs^  e) {
-             SaveEvent();            
+             SaveEvent();
          }
 };
 }
