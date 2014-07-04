@@ -47,10 +47,6 @@ namespace HdB {
         */
         void CheckBuilding();
 
-        /** Starts a attack with all soldiers on the given Unit without interrupting except isDefense is true
-        */
-        void Attack(Unit^ u, bool isDefense);
-
         /** Moves all Soldiers to the passed position
         */
         void MoveUnits(const Vector3% pos);

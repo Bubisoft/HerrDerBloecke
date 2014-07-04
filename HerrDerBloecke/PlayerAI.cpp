@@ -14,9 +14,10 @@
         mEvents->Add(gcnew AIUnitEvent(atTime,priority,u,nullptr)); }
 
 #define ATTACKPROBABILITY 100 
-#define AGGRESSIVENESS 33 //probabilty for continuing attacks; default 25
-#define DEFENSEDISTANCE 130 //distance in wich is searched for an enemy attack; default 130
-#define DEFENDERDISTANCE 40 //distance in wich is searched for a defender; default 40 
+#define AGGRESSIVENESS 33 //probabilty for continuing attacks
+#define DEFENSEDISTANCE 130 //distance in wich is searched for an enemy attack
+#define DEFENDERDISTANCE 40 //distance in wich is searched for a defender
+#define DIFFICULTY 1 //only chose between 1,2,3,4 !!!
 
 HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer(renderer), mEnemyUnits(enemyUnits)
 {
@@ -48,7 +49,7 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer
     IsBuilding=false;
     CanBuildSoldier=false;
     mSoldiers=gcnew List<Soldier^>();
-    mLevel=1;
+    mLevel=DIFFICULTY;
 }
 
 void HdB::PlayerAI::NewGame(const Vector3% pos)
@@ -78,11 +79,6 @@ int HdB::PlayerAI::CheckSoldiers()
             ++i;
     }
     return i;
-}
-
-void HdB::PlayerAI::Attack(Unit^ target, bool isDefense)
-{
-
 }
 
 void HdB::PlayerAI::MoveUnits(const Vector3% pos)
@@ -181,7 +177,12 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     if(IsBeingAttacked)
     {
         //build more Soldiers
-        if(mEnemyUnits->Count+(mEnemyUnits->Count*(mLevel-2)/2) > mCountSoldier){
+        int enemySoldier=0;
+        for each(Unit^ u in mEnemyUnits)
+            if(u->GetType()->IsSubclassOf(Soldier::typeid))
+                ++enemySoldier;
+
+        if(enemySoldier+(enemySoldier*(mLevel-2)/2) > mCountSoldier){
             Unit^ u=GetRandomSoldier();
             mEvents->Add(gcnew AIUnitEvent(0,5,u,nullptr));
             mCountSoldier++;
@@ -189,15 +190,14 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     }
     else if(!IsBuilding)
     {
-        //check rebuilding destroyed buildings
-        //CheckMissingBuilding();
 
         if(mSeconds >= 70 && mSoldiers->Count >= 5)
         {
+            //check if we have to build something
             CheckBuilding();
         }
 
-        /*check for build/rebuild new Soldiers. 
+        /*check for build/rebuild new Soldiers.
         */
         if(!IsBuilding && CanBuildSoldier && (!IsBuildingSoldier) && (mCountSoldier <= 5) &&  mSeconds >= 40)
         {
@@ -218,7 +218,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         }
     //#####################################################
 
-    //process 
+    //process events
     IsBuildingSoldier=false;
     IsAttacking=false;
     IsWaitingForBuilding=false;
@@ -252,11 +252,10 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
                 }
                 else if(sevent->Soldier->AttackTarget==nullptr && sevent->OldTarget==nullptr) //attack was succesfull, pull back or start next attack
                 {
-                    //start next attack or pull back Soldiers
                     if(sevent->IsDefense==true)
                         mDefendingSoldier->Remove(sevent->Soldier);
 
-                    if(mRandom->Next(100) <= AGGRESSIVENESS * mLevel - 10) //default 25%
+                    if(mRandom->Next(100) <= AGGRESSIVENESS * mLevel - 10) //start next attack
                     {
                         mEvents->Add(gcnew AISoldierEvent(0,2,sevent->Soldier,mEnemyUnits[mRandom->Next(mEnemyUnits->Count)],nullptr,false));
                     }
@@ -271,7 +270,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
             }
         }
 
-        if(AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(aievent)){
+        if(AIUnitEvent^ uevent=dynamic_cast<AIUnitEvent^>(aievent)){ //check if we want to build soldiers
                 if(uevent->Unit->GetType()->IsSubclassOf(Soldier::typeid))
                     IsBuildingSoldier=true;
                 else
@@ -285,7 +284,7 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         {
             if(AIUnitEvent^ ubuildingevent=dynamic_cast<AIUnitEvent^>(aievent))
             {
-                if(ubuildingevent->Unit->GetType()->IsSubclassOf(Building::typeid) && !ubuildingevent->CanProcess(Res)) //wait for ressources
+                if(ubuildingevent->Unit->GetType()->IsSubclassOf(Building::typeid) && !ubuildingevent->CanProcess(Res)) //wait for ressources for a building
                     IsWaitingForBuilding=true;
             }
             if(IsWaitingForBuilding)
@@ -390,7 +389,7 @@ void HdB::PlayerAI::IsAttacked()
                 Soldier^ attacked=dynamic_cast<Soldier^>(attacker->AttackTarget);
                 if(!mDefendingSoldier->Contains(attacked) && attacked!=nullptr)
                 {
-                    //let soldiers defend theirselves
+                    //let soldiers defend theirselves and try to pull two others
                     mEvents->Add(gcnew AISoldierEvent(0,2,attacked,attacker,attacked->AttackTarget,true));
                     Soldier^ s1=GetDefender(attacker);
                     Soldier^ s2= GetDefender(attacker);
@@ -403,6 +402,7 @@ void HdB::PlayerAI::IsAttacked()
                 }
                 else
                 {
+                    //pull one defender every tick
                     Soldier^ defender=GetDefender(attacker);
                     if(defender!=nullptr)
                         mEvents->Add(gcnew AISoldierEvent(0,2,defender,attacker,defender->AttackTarget,true));
@@ -459,8 +459,13 @@ void HdB::PlayerAI::OnUnitDestroyed(Unit^ unit)
         CanBuildSoldier = false;
     }
     else if(HdB::Soldier^ soldier=dynamic_cast<Soldier^>(unit)){
+        soldier->StopAttack();
         mSoldiers->Remove(soldier);
         mCountSoldier--;
+        for each(AIEvent^ aievent in mEvents->ToArray())
+            if(AISoldierEvent^ sevent = dynamic_cast<AISoldierEvent^>(aievent))
+                if(sevent->Soldier == soldier)
+                    mEvents->Remove(aievent);
     }
 }
 
@@ -491,6 +496,12 @@ void HdB::PlayerAI::PositionUnit(Unit^ unit, Unit^ placeholder)
         unit->Position += Vector3::UnitX;
         unit->MoveTo = unit->Position;
         unit->ResetLookAt();
+
+        if(!mRenderer->Map->OnMap(unit->Position))
+        {
+            unit->Position=placeholder->Position;
+            unit->Position+=Vector3::UnitY;
+        }
     }
     if (placeholder)
     {

@@ -189,7 +189,7 @@ namespace HdB {
 
         UNIT_MAXHP(400);
         UNIT_BUILDTIME(120);
-        UNIT_COSTS(10000, 10000, 10000);
+        UNIT_COSTS(5000, 5000, 5000);
         UNIT_POINTS(100);
         UNIT_DESCRIPTION("Extrem starke Einheit, aber langsam und sehr teuer.");
 
