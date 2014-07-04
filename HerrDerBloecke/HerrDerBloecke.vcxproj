@@ -152,7 +152,6 @@
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="Sound.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
@@ -193,7 +192,6 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="Timer.h" />
     <ClInclude Include="Options.h">
       <FileType>CppForm</FileType>
     </ClInclude>
