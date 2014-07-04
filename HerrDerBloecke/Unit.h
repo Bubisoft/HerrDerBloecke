@@ -195,8 +195,8 @@ namespace HdB {
 
         SOLDIER_ATTACK(400);
         SOLDIER_ATTACKSPEED(20);
-        SOLDIER_DEFENSE(100);
-        SOLDIER_SPEED(5);
+        SOLDIER_DEFENSE(10);
+        SOLDIER_SPEED(17);
         SOLDIER_RANGE(50);
     };
 

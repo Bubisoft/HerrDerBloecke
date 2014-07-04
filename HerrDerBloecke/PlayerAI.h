@@ -35,6 +35,9 @@ namespace HdB {
         /** Returns a Soldier wich is not defending */
         Soldier^ GetDefender(Soldier^ attacker);
 
+        /** Checks if the given Soldier is in the distance to defend */
+        bool IsInDistance(Soldier^ defender, Soldier^ attacker);
+
         /** Checks if we are being attacked and adds Events to defend
         */
         void IsAttacked();
@@ -42,6 +45,9 @@ namespace HdB {
         /** Returns a random subclass object of the Soldier class
         */
         Unit^ GetRandomSoldier();
+
+        /** Checks if we should shutdown our houses to save food production */
+        void CheckHausShutdown();
 
         /** Returns a Building based on a simple logic
         */

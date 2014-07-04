@@ -88,6 +88,41 @@ void HdB::PlayerAI::MoveUnits(const Vector3% pos)
             s->MoveTo=pos;
 }
 
+void HdB::PlayerAI::CheckHausShutdown()
+{
+    UInt16 foundFarm = 0, foundStatt = 0, foundHaus = 0, foundWerk = 0;
+
+    for each (Unit^ u in Units) {
+        Type^ t=u->GetType();
+        if(t == Blockfarm::typeid)
+            foundFarm++;
+        else if(t == Blockstatt::typeid)
+            foundStatt++;
+        else if(t == Blockwerk::typeid)
+            foundWerk++;
+        else if(t == Blockhuette::typeid)
+            foundHaus++;
+    }
+
+    //check if we have to shutdown some blockhuetten to save food production
+    if(foundFarm < foundHaus*2 + 1)
+    {
+        for each(Unit^ u in mUnits)
+        {
+            if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
+                b->Enabled=false;
+        }
+    }
+    else
+    {
+        for each(Unit^ u in mUnits)
+        {
+            if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
+                b->Enabled=true;
+        }
+    }
+}
+
 void HdB::PlayerAI::CheckBuilding()
 {
     Unit^ unit=nullptr;
@@ -126,23 +161,7 @@ void HdB::PlayerAI::CheckBuilding()
 
     mEvents->Add(gcnew AIUnitEvent(mSeconds+30, 3, unit, alpha));
 
-    //check if we have to shutdown some blockhuetten to save food production
-    if(foundFarm < foundHaus*2 + 1)
-    {
-        for each(Unit^ u in mUnits)
-        {
-            if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
-                b->Enabled=false;
-        }
-    }
-    else
-    {
-        for each(Unit^ u in mUnits)
-        {
-            if(Blockhuette^ b=dynamic_cast<Blockhuette^>(u))
-                b->Enabled=true;
-        }
-    }
+
 }
 
 HdB::Unit^ HdB::PlayerAI::GetRandomSoldier()
@@ -173,6 +192,8 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
     //Check all Events #################################
     //check if something is being attacked to defend
     IsAttacked();
+
+    CheckHausShutdown();
 
     if(IsBeingAttacked)
     {
@@ -232,10 +253,6 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
             {
 
                     sevent->Soldier->StartAttack(sevent->Target);
-
-                    if(sevent->IsDefense)
-                        mDefendingSoldier->Add(sevent->Soldier);
-
                     sevent->Status=HdB::EventStatus::OPEN;
                     IsAttacking=true;
             }
@@ -279,22 +296,20 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
         
         if(aievent->AtTime > mSeconds)
             continue;
-
-        if(mToDo!=nullptr)
-        {
-            if(AIUnitEvent^ ubuildingevent=dynamic_cast<AIUnitEvent^>(aievent))
-            {
-                if(ubuildingevent->Unit->GetType()->IsSubclassOf(Building::typeid) && !ubuildingevent->CanProcess(Res)) //wait for ressources for a building
-                    IsWaitingForBuilding=true;
-            }
-            if(IsWaitingForBuilding)
-                mToDo=nullptr;
-            else if(aievent->CanProcess(Res) && (aievent->Priority > mToDo->Priority))
-                mToDo=aievent;
-        }
-        else if(aievent->CanProcess(Res))
+        if(mToDo==nullptr)
             mToDo=aievent;
-           
+
+        if(AIUnitEvent^ ubuildingevent=dynamic_cast<AIUnitEvent^>(aievent))
+        {
+            if(ubuildingevent->Unit->GetType()->IsSubclassOf(Building::typeid) && !ubuildingevent->CanProcess(Res)) //wait for ressources for a building
+                IsWaitingForBuilding=true;
+        }
+        if(IsWaitingForBuilding)
+        {
+            mToDo=aievent;
+        }
+        else if(aievent->CanProcess(Res) && (aievent->Priority > mToDo->Priority))
+            mToDo=aievent;           
     }
     
     if(mToDo==nullptr)
@@ -359,7 +374,14 @@ void HdB::PlayerAI::CheckMissingBuilding()
     mEvents->Add(gcnew AIUnitEvent(mSeconds + 5,5,unit,alpha));
     IsBuilding=true;
 }
+bool HdB::PlayerAI::IsInDistance(Soldier^ defender,Soldier^ attacker)
+{
+    float distance=Vector3::Distance(attacker->Position,defender->Position); 
+    if(distance < DEFENDERDISTANCE*mLevel)
+        return true;
 
+    return false;
+}
 HdB::Soldier^ HdB::PlayerAI::GetDefender(Soldier^ attacker)
 {
     Soldier^ defender=nullptr;
@@ -368,7 +390,7 @@ HdB::Soldier^ HdB::PlayerAI::GetDefender(Soldier^ attacker)
         if(!mDefendingSoldier->Contains(s))
         {
             float distance=Vector3::Distance(attacker->Position,s->Position); 
-            if(distance <= olddistance && distance < DEFENDERDISTANCE*mLevel)
+            if(distance <= olddistance)
             {
                 olddistance=Vector3::Distance(attacker->Position,s->Position);
                 defender=s;
@@ -391,21 +413,27 @@ void HdB::PlayerAI::IsAttacked()
                 {
                     //let soldiers defend theirselves and try to pull two others
                     mEvents->Add(gcnew AISoldierEvent(0,2,attacked,attacker,attacked->AttackTarget,true));
-                    Soldier^ s1=GetDefender(attacker);
-                    Soldier^ s2= GetDefender(attacker);
+                    Soldier^ defender1=GetDefender(attacker);
+                    Soldier^ defender2= GetDefender(attacker);
 
-                    if(s1 != nullptr)
-                        mEvents->Add(gcnew AISoldierEvent(0,2,s1,attacker,s1->AttackTarget,true));
-                    if(s2 != nullptr)
-                        mEvents->Add(gcnew AISoldierEvent(0,2,s2,attacker,s2->AttackTarget,true));
+                    if(defender1 != nullptr && IsInDistance(defender1, attacker)){
+                        mEvents->Add(gcnew AISoldierEvent(0,2,defender1,attacker,defender1->AttackTarget,true));
+                        mDefendingSoldier->Add(defender1);
+                    }
+                    if(defender2 != nullptr && IsInDistance(defender2, attacker)){
+                        mEvents->Add(gcnew AISoldierEvent(0,2,defender2,attacker,defender2->AttackTarget,true));
+                        mDefendingSoldier->Add(defender2);
+                    }
                     
                 }
                 else
                 {
                     //pull one defender every tick
                     Soldier^ defender=GetDefender(attacker);
-                    if(defender!=nullptr)
+                    if(defender!=nullptr){
                         mEvents->Add(gcnew AISoldierEvent(0,2,defender,attacker,defender->AttackTarget,true));
+                        mDefendingSoldier->Add(defender);
+                    }
                 }
                 IsBeingAttacked=true;
             }
@@ -501,6 +529,7 @@ void HdB::PlayerAI::PositionUnit(Unit^ unit, Unit^ placeholder)
         {
             unit->Position=placeholder->Position;
             unit->Position+=Vector3::UnitY;
+            placeholder->Position+=Vector3::UnitY;
         }
     }
     if (placeholder)
