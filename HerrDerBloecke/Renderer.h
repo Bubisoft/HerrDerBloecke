@@ -73,7 +73,6 @@ namespace HdB {
         List<IDrawable^>^ mBlueDrawables;
         List<IDrawable^>^ mRedDrawables;
         List<IDrawable^>^ mAlphaDrawables;
-        List<IDrawable^>^ mFonts;
         HdB::Camera^ mCamera;
         HdB::Map^ mMap;
         HealthBar^ mHealthBar;

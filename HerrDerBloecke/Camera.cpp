@@ -45,13 +45,10 @@ Vector3 HdB::Camera::Unproject2D(System::Drawing::Point pos)
 
 void HdB::Camera::Move(const Vector3% change)
 {
-    int x,y;
-    x = mLookAt.X + change.X;
-    y = mLookAt.Y + change.Y;
-    
-    if(x > -FIELDS_X/2 && x < FIELDS_X/2 && y > -FIELDS_Y/2 && y < FIELDS_Y/2) {
+    Vector3 res = mLookAt + change;
+    if (res.X > -FIELDS_X / 2 && res.X < FIELDS_X / 2 && res.Y > -FIELDS_Y / 2 && res.Y < FIELDS_Y / 2) {
         mPosition += change;
-        mLookAt += change;
+        mLookAt = res;
     }
 }
 
