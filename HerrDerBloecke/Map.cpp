@@ -8,9 +8,6 @@
 using namespace System::IO;
 using namespace System::Diagnostics;
 
-#define FIELDS_X 2049
-#define FIELDS_Y 2049
-#define DIFFERENT_FIELDS 3
 /*****************
  * MapOccupation *
  *****************/

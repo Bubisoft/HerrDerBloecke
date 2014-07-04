@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Globals.h"
 
 #define ZOOM_DISTANCE_MIN 5.f
 #define ZOOM_DISTANCE_MAX 100.f
@@ -44,8 +45,14 @@ Vector3 HdB::Camera::Unproject2D(System::Drawing::Point pos)
 
 void HdB::Camera::Move(const Vector3% change)
 {
-    mPosition += change;
-    mLookAt += change;
+    int x,y;
+    x = mLookAt.X + change.X;
+    y = mLookAt.Y + change.Y;
+    
+    if(x > -FIELDS_X/2 && x < FIELDS_X/2 && y > -FIELDS_Y/2 && y < FIELDS_Y/2) {
+        mPosition += change;
+        mLookAt += change;
+    }
 }
 
 void HdB::Camera::Rotate(const Vector2% change)
