@@ -18,29 +18,9 @@ HdB::NavigationStrip::NavigationStrip(Control^ target,ToolStripStatusLabel^ tool
     mTitle->Text="Navigation";
     mTitle->Anchor=( AnchorStyles::Bottom | AnchorStyles::Left );
     target->Controls->Add(mTitle);
-    mTitle->Location=Point(x + SPACE + BTN_WIDHT,y);
+    mTitle->Location=Point(x + SPACE ,y);
 
     mPBNavi = gcnew List<NavigationThumb^>();
-
-    /*
-    //left navigation button
-    mBtnLeft=gcnew Button;
-    mBtnLeft->Location=Point(Location.X,Location.Y + mTitle->Height);
-    mBtnLeft->Size=Size(BTN_WIDHT, BTN_HEIGHT);
-    mBtnLeft->Text="<";
-    mBtnLeft->Anchor=( AnchorStyles::Bottom | AnchorStyles::Left );
-    mBtnLeft->Click+=gcnew System::EventHandler(this, &NavigationStrip::Scroll);
-    target->Controls->Add(mBtnLeft);
-
-    //right navigation button
-    mBtnRight=gcnew Button;
-    mBtnRight->Location=Point(Location.X + BTN_WIDHT + SPACE + (PB_WIDTH + SPACE) * mNumPB, Location.Y + mTitle->Height);
-    mBtnRight->Size=Size(BTN_WIDHT, BTN_HEIGHT);
-    mBtnRight->Text=">";
-    mBtnRight->Anchor=( AnchorStyles::Bottom | AnchorStyles::Left );
-    mBtnRight->Click+=gcnew System::EventHandler(this, &NavigationStrip::Scroll);
-    target->Controls->Add(mBtnRight);
-    */
 
     //initialising the PictureBoxes
     BuildingMenuView();
@@ -53,35 +33,8 @@ HdB::NavigationStrip::~NavigationStrip()
     delete mTitle;
     delete mToolTip;
     delete mFocusedPb;
-    delete mBtnLeft;
-    delete mBtnRight;
 }
 
-void HdB::NavigationStrip::Scroll(Object^  sender, EventArgs^  e)
-{
-    Image^ temp1=mPBNavi[0]->BackgroundImage;
-    Image^ temp2;
-    if(sender == mBtnRight)
-    {
-        temp2=mPBNavi[0]->BackgroundImage;
-        for(int i=NUM_PB-1;i>=0;i--)
-        {
-            temp1=mPBNavi[i]->BackgroundImage;
-            mPBNavi[i]->BackgroundImage=temp2;
-            temp2=temp1;
-        }
-    }
-    else
-    {
-        for each(NavigationThumb^ PB in mPBNavi)
-        {
-            temp1=PB->BackgroundImage;
-            PB->BackgroundImage=temp2;
-            temp2=temp1;
-        }
-        mPBNavi[0]->BackgroundImage=temp2;
-    }
-}
 
 void HdB::NavigationStrip::ChangeFocus(Object^ sender, EventArgs^ e)
 {
@@ -160,14 +113,7 @@ void HdB::NavigationStrip::Resize()
             ++z;
     }
     mTitle->Location=Point((mParent->Size.Width*0.4/2-Location.X)-mTitle->Size.Width/2 + Location.X,mTitle->Location.Y);
-        //mBtnLeft->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
-        //mBtnRight->Size=Size(((mParent->Size.Width*0.4) - mNumPB*mPBNavi[0]->Size.Width - SPACE*6 - Location.X)/2,mPBNavi[0]->Size.Height);
-        //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y);
 
-        //mBtnLeft->Size=Size(BTN_WIDHT,BTN_HEIGHT);
-        //mBtnRight->Size=Size(BTN_WIDHT,BTN_HEIGHT);
-        //mBtnRight->Location=Point(mPBNavi[mNumPB-1]->Location.X + mPBNavi[mNumPB-1]->Size.Width + SPACE,mBtnRight->Location.Y); 
-    
 }
 
 String^ HdB::NavigationStrip::GetModelString()

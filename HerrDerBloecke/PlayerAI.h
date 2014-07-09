@@ -28,9 +28,6 @@ namespace HdB {
         */
         int CheckSoldiers();
 
-        /** Checks for missing buildings and tries to rebuild them 
-        */
-        void CheckMissingBuilding();
 
         /** Returns a Soldier wich is not defending */
         Soldier^ GetDefender(Soldier^ attacker);

@@ -12,8 +12,6 @@ namespace HdB {
 
     #define PB_WIDTH 60     //max picturebox width
     #define PB_HEIGHT 60    //max Picturebox height
-    #define BTN_WIDHT 0     //max button width 30
-    #define BTN_HEIGHT 0    //max Button heigth 60
     #define SPACE 6         //space between the Pictureboxes and buttons
     #define NUM_PB 4        //number of picturboxes
 
@@ -34,10 +32,6 @@ namespace HdB {
         NavigationStrip(Control^ target,ToolStripStatusLabel^ ToolTip,int x, int y);
         ~NavigationStrip();
 
-        /** Scrolls in the Navigation (PictureBoxes) when clicking one of the two buttons
-        */
-        void Scroll(Object^  sender, EventArgs^  e);
-
         /** Sets the focus a the clicked PictureBox (blue frame)(CLickEvent)
         */
         void ChangeFocus(Object^ sender, EventArgs^ e);
@@ -45,6 +39,7 @@ namespace HdB {
         /** Shows the "tooltip) on MousOver */
         void MousOver(Object^ sender, EventArgs^ e);
 
+        /** Hides the tooltip on leave*/
         void MouseLeave(Object^ sender, EventArgs^ e);
 
 		/** Unfocus the PictureBoxes, returns true if something was focused
@@ -107,6 +102,7 @@ namespace HdB {
 
         event TearOff^ TearOffEvent;
         event BuildUnit^ UnitBuildEvent;
+
     private:
         Point Location;
 		Control^ mParent;			
@@ -114,8 +110,6 @@ namespace HdB {
         List<NavigationThumb^>^ mPBNavi;
         Label^ mTitle;           //titlelabel over the strip
         NavigationThumb^ mFocusedPb;    //currently focused picturbox
-        Button^ mBtnLeft;       //button at the left of the navigation
-        Button^ mBtnRight;      //button at the right of the navigation
         Unit^ mFocusedUnit;
                                                            //Reihenfolge  3            2          4               1
     static array<String^>^ initBuildings = gcnew array<String^> {"Blockhaus", "Blockstatt", "Blockwerk", "Kastenfarm"};

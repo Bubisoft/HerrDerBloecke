@@ -327,53 +327,6 @@ void HdB::PlayerAI::CheckSchedule(Object^ source, EventArgs^ e)
 }
 
 
-void HdB::PlayerAI::CheckMissingBuilding()
-{
- 
-    UInt16 foundFarm = 0, foundStatt = 0, foundHaus = 0, foundWerk = 0;
-    Unit^ unit = nullptr;
-    Unit^ alpha = nullptr;
-
-    for each (Unit^ u in Units) {
-        Type^ t=u->GetType();
-        if(t == Blockfarm::typeid)
-            foundFarm++;
-        else if(t == Blockstatt::typeid)
-            foundStatt++;
-        else if(t == Blockwerk::typeid)
-            foundWerk++;
-        else if(t == Blockhuette::typeid)
-            foundHaus++;
-    }
-
-    if (!IsBuildingFarm && foundFarm < 2) {
-        unit=gcnew Blockfarm(mRenderer->GetRedModel("Kastenfarm"),mPositionHQ + Vector3(25.f,-25.f,0.f));
-        alpha=gcnew Blockfarm(mRenderer->GetAlphaModel("Kastenfarm"),mPositionHQ + Vector3(25.f,-25.f,0.f));
-        IsMissingBuilding=true;
-        IsBuildingFarm=true;
-    } else if(!IsBuildingHaus && foundHaus < 1) {
-        unit=gcnew Blockhuette(mRenderer->GetRedModel("Blockhaus"),mPositionHQ + Vector3(-25.f, -25.f, 0.f));
-        alpha=gcnew Blockhuette(mRenderer->GetAlphaModel("Blockhaus"),mPositionHQ + Vector3(-25.f, -25.f, 0.f));
-        IsMissingBuilding=true;
-        IsBuildingHaus=true;
-    } else if(!IsBuildingWerk && foundWerk < 1) {
-        unit=gcnew Blockwerk(mRenderer->GetRedModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
-        alpha=gcnew Blockwerk(mRenderer->GetAlphaModel("Blockwerk"),mPositionHQ + Vector3(50.f, 50.f, 0.f));
-        IsMissingBuilding=true;
-        IsBuildingWerk=true;
-    } else if(!IsBuildingStatt && foundStatt < 1) {
-        unit=gcnew Blockstatt(mRenderer->GetRedModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
-        alpha=gcnew Blockstatt(mRenderer->GetAlphaModel("Blockstatt"),mPositionHQ + Vector3(25.f, 25.f, 0.f));
-        IsMissingBuilding=true;
-        IsBuildingStatt=true;
-    }
-    else {
-        IsMissingBuilding=false;
-        return;
-    }
-    mEvents->Add(gcnew AIUnitEvent(mSeconds + 5,5,unit,alpha));
-    IsBuilding=true;
-}
 bool HdB::PlayerAI::IsInDistance(Soldier^ defender,Soldier^ attacker)
 {
     float distance=Vector3::Distance(attacker->Position,defender->Position); 
@@ -382,6 +335,7 @@ bool HdB::PlayerAI::IsInDistance(Soldier^ defender,Soldier^ attacker)
 
     return false;
 }
+
 HdB::Soldier^ HdB::PlayerAI::GetDefender(Soldier^ attacker)
 {
     Soldier^ defender=nullptr;
