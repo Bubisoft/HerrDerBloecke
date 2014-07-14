@@ -82,8 +82,6 @@ namespace HdB {
         /** Convert a map field coordinate to the vector pointing at its center. */
         static Vector3 GetFieldCenter(Point field);
 
-        /** Saves the map with the passed StreamWriter*/
-        //virtual void Save(BinaryWriter^ bw);
     private:
         Vector3 NextMoveDirection(Unit^ unit, Point endField, size_t it);
         Renderer^ mRenderer;

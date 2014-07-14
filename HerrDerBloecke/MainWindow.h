@@ -153,7 +153,6 @@ namespace HdB {
         AudioSystem^ mAudioSystem;
         Point mMousePos;
         bool mMouseMoved;
-        Vector3 mMoveCam; // Set by movement keys
         Options^ mOptions;
         MainMenu^ mMainMenu;
     private: System::Windows::Forms::Button^  btnMenu;
@@ -163,7 +162,7 @@ namespace HdB {
 
 
     private: System::Windows::Forms::Timer^  labelTimer;
-    private: System::Windows::Forms::StatusStrip^  statusStrip1;
+    private: System::Windows::Forms::StatusStrip^  statusStrip;
     private: System::Windows::Forms::Timer^  resourcesTimer;
     private: System::Windows::Forms::ToolStripStatusLabel^  ToolTipLabel;
 
@@ -186,11 +185,11 @@ namespace HdB {
             this->lblResNahrung = (gcnew System::Windows::Forms::Label());
             this->btnGraph = (gcnew System::Windows::Forms::Button());
             this->labelTimer = (gcnew System::Windows::Forms::Timer(this->components));
-            this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
+            this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
             this->ToolTipLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
             this->resourcesTimer = (gcnew System::Windows::Forms::Timer(this->components));
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->BeginInit();
-            this->statusStrip1->SuspendLayout();
+            this->statusStrip->SuspendLayout();
             this->SuspendLayout();
             // 
             // mRenderFrame
@@ -276,12 +275,12 @@ namespace HdB {
             // 
             // statusStrip1
             // 
-            this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->ToolTipLabel });
-            this->statusStrip1->Location = System::Drawing::Point(0, 539);
-            this->statusStrip1->Name = L"statusStrip1";
-            this->statusStrip1->Size = System::Drawing::Size(784, 22);
-            this->statusStrip1->TabIndex = 8;
-            this->statusStrip1->Text = L"statusStrip1";
+            this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->ToolTipLabel });
+            this->statusStrip->Location = System::Drawing::Point(0, 539);
+            this->statusStrip->Name = L"statusStrip";
+            this->statusStrip->Size = System::Drawing::Size(784, 22);
+            this->statusStrip->TabIndex = 8;
+            this->statusStrip->Text = L"statusStrip";
             // 
             // ToolTipLabel
             // 
@@ -299,7 +298,7 @@ namespace HdB {
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->BackColor = System::Drawing::SystemColors::Menu;
             this->ClientSize = System::Drawing::Size(784, 561);
-            this->Controls->Add(this->statusStrip1);
+            this->Controls->Add(this->statusStrip);
             this->Controls->Add(this->btnGraph);
             this->Controls->Add(this->lblResNahrung);
             this->Controls->Add(this->lblResBlockterie);
@@ -316,8 +315,8 @@ namespace HdB {
             this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainWindow::MainWindow_KeyPress);
             this->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &MainWindow::mRenderFrame_MouseWheel);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mRenderFrame))->EndInit();
-            this->statusStrip1->ResumeLayout(false);
-            this->statusStrip1->PerformLayout();
+            this->statusStrip->ResumeLayout(false);
+            this->statusStrip->PerformLayout();
             this->ResumeLayout(false);
             this->PerformLayout();
 
@@ -326,12 +325,21 @@ namespace HdB {
 
     // MainWindow Events
     private: System::Void MainWindow_SizeChanged(Object^  sender, EventArgs^  e) {
-             lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
-             lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
-             lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
-             mNavi->Resize();
-             mNotificationBox->Resize(this);
-         }
+            lblResGold->Location = Point(this->Width / 2 - lblResGold->Width / 2 - 150, 11);
+            lblResBlockterie->Location = Point(this->Width / 2 - lblResBlockterie->Width / 2 , 11);
+            lblResNahrung->Location = Point(this->Width / 2 - lblResNahrung->Width / 2 + 150, 11);
+            mNavi->Resize();
+            mNotificationBox->Resize(this);
+        }
+
+    private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+            //pressing escape will get the Navi to lose its focused PictureBox
+            if (e->KeyChar == (char)Keys::Escape)
+            {
+                bool openMenu = mNavi->Unfocus();
+                mNavi->BuildingMenuView();
+            }
+        }
 
     // mRenderFrame Events
     private: System::Void mRenderFrame_Resize(Object^  sender, EventArgs^  e) {
@@ -666,15 +674,6 @@ namespace HdB {
             mPlayer->ProcessResources();
             if(mComputerPlayer!=nullptr)
                 mComputerPlayer->ProcessResources();
-        }
-
-    private: System::Void MainWindow_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
-            //pressing escape will get the Navi to lose its focused PictureBox
-            if(e->KeyChar == (char)Keys::Escape)
-            {
-                bool openMenu=mNavi->Unfocus();
-                mNavi->BuildingMenuView();
-            }
         }
 
     private: System::Void btnGraph_Click(System::Object^  sender, System::EventArgs^  e) {

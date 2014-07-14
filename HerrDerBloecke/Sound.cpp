@@ -40,7 +40,7 @@ void HdB::Sound::Volume::set(int volume) {
     if(volume == 0)
         mBuffer->Volume = (int)SlimDX::DirectSound::Volume::Minimum;
     else
-        mBuffer->Volume = int(Math::Log(volume/100.f, Math::Exp(1))*1000.f);
+        mBuffer->Volume = int(Math::Log(volume / 100.f, Math::Exp(1)) * 1000.f);
 }
 
 int HdB::Sound::Volume::get()
@@ -50,7 +50,7 @@ int HdB::Sound::Volume::get()
     if(mBuffer->Volume == (int)SlimDX::DirectSound::Volume::Minimum)
         r = 0;
     else
-        r = 100*Math::Exp(mBuffer->Volume/1000.f);
+        r = 100.f * Math::Exp(mBuffer->Volume / 1000.f);
 
     return r;
 }
