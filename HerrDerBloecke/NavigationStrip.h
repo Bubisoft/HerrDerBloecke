@@ -34,8 +34,8 @@ namespace HdB {
         /** Sets the focus a the clicked PictureBox (blue frame)(CLickEvent) */
         void ChangeFocus(Object^ sender, EventArgs^ e);
 
-        /** Shows the "tooltip) on MousOver */
-        void MousOver(Object^ sender, EventArgs^ e);
+        /** Shows the tooltip on MousOver */
+        void MouseOver(Object^ sender, EventArgs^ e);
 
         /** Hides the tooltip on leave*/
         void MouseLeave(Object^ sender, EventArgs^ e);
