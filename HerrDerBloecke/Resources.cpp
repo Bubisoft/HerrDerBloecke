@@ -55,13 +55,6 @@ bool HdB::Resources::CheckAmount(Costs costs)
     return false;
 }
 
-void HdB::Resources::ExpandCapacity(int Gold, int Blockterie, int Food)
-{
-    mGoldCapacity+=Gold;
-    mBlockterieCapacity+=Blockterie;
-    mFood+=Food;
-}
-
 void HdB::Resources::Save(BinaryWriter^ bw)
 {
     bw->Write(mGold);

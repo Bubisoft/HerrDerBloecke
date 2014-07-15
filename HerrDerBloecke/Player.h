@@ -14,6 +14,8 @@ namespace HdB {
     public:
         Player();
 
+        ~Player();
+
         /** let the Player get new resources */
         void ProcessResources();
 

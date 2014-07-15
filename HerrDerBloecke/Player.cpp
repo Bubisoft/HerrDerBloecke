@@ -28,6 +28,12 @@ HdB::Player::Player()
     mFoodUnits = 0;
     IsBlue = true;
 }
+
+HdB::Player::~Player()
+{
+
+}
+
 void HdB::Player::ProcessResources()
 {
     Res->AddResources(mGoldUnits, mBlockterieUnits, mFoodUnits);

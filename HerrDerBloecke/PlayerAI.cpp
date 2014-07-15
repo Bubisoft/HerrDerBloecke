@@ -27,12 +27,6 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer
     mTimer->Tick += gcnew EventHandler(this, &PlayerAI::CheckSchedule);
     mTimer->Enabled = true;
 
-    // Initialize boolean parameter for letting him do his schedule
-    IsBuildingFarm=true;
-    IsBuildingHaus=true;
-    IsBuildingStatt=true;
-    IsBuildingWerk=true;
-
     // Initialize Randomobject
     mRandom=gcnew Random((int)DateTime::Now.Ticks);
 
@@ -45,7 +39,6 @@ HdB::PlayerAI::PlayerAI(Renderer^ renderer, List<Unit^>^ enemyUnits) : mRenderer
 
     mEvents=gcnew List<AIEvent^>();
     mDefendingSoldier=gcnew List<Soldier^>();
-    IsMissingBuilding=true;
     IsBuilding=false;
     CanBuildSoldier=false;
     mSoldiers=gcnew List<Soldier^>();
@@ -70,16 +63,6 @@ void HdB::PlayerAI::NewGame(const Vector3% pos)
     ADD_BUILDING(20, 2, Blockstatt, "Blockstatt", blockstattPos);
 }
 
-int HdB::PlayerAI::CheckSoldiers()
-{
-    int i=0;
-    for each(Unit^ u in Units)
-    {
-        if(u->GetType()->IsSubclassOf(Soldier::typeid))
-            ++i;
-    }
-    return i;
-}
 
 void HdB::PlayerAI::MoveUnits(const Vector3% pos)
 {
@@ -404,23 +387,19 @@ void HdB::PlayerAI::OnNewUnit(Unit^ unit)
     {
         if(b->GetProductionType() == ProductionType::eBlockterie)
         {
-            IsBuildingWerk=false;
             AddBlockterieUnit(1);
         }
         else if(b->GetProductionType() == ProductionType::eFood)
         {
-            IsBuildingFarm=false;
             AddFoodUnit(1);
         }
         else
         {
-            IsBuildingHaus=false;
             AddGoldUnit(1);
         }
     }
     else if(HdB::Blockstatt^ s=dynamic_cast<Blockstatt^>(unit))
     {
-        IsBuildingStatt=false;
         CanBuildSoldier=true;
     }
     else if(HdB::Soldier^ soldier=dynamic_cast<Soldier^>(unit))

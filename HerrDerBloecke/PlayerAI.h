@@ -24,11 +24,6 @@ namespace HdB {
     private:
         void CheckSchedule(Object^ source, EventArgs^ e);
 
-        /** Returns true if the AI has at least one soldier
-        */
-        int CheckSoldiers();
-
-
         /** Returns a Soldier wich is not defending */
         Soldier^ GetDefender(Soldier^ attacker);
 
@@ -73,17 +68,12 @@ namespace HdB {
 
         //decision parameter
         bool CanBuildSoldier;
-        bool IsMissingBuilding;
         bool IsBeingAttacked;
         bool IsAttacking;
         bool IsBuilding;
         bool IsWaitingForBuilding;
 
 
-        bool IsBuildingFarm;
-        bool IsBuildingWerk;
-        bool IsBuildingStatt;
-        bool IsBuildingHaus;
         bool IsBuildingSoldier;
     };
 }

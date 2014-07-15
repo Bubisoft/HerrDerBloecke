@@ -135,7 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AIEvent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="HealthBar.cpp" />

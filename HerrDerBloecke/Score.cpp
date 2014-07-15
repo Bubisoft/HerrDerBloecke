@@ -6,7 +6,7 @@ HdB::Score::Score(Player^ player) : mPlayer(player)
 {
     mScoreLog = gcnew List<UInt32>();
     mLoggingTimer = gcnew Timer();
-    mLoggingTimer->Interval = 3000; // Log every 30 seconds
+    mLoggingTimer->Interval = 3000; // Log every 3 seconds
     mLoggingTimer->Tick += gcnew EventHandler(this, &Score::MakeLogEntry);
     mLoggingTimer->Enabled = true;
     ExtraPoints=0;
