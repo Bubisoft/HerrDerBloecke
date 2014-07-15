@@ -8,22 +8,20 @@ namespace HdB{
     using namespace System::Windows::Forms;
     using namespace System::Drawing;
 
-    ref class NotificationBox:TextBox
+    ref class NotificationBox : TextBox
     {
     public:
-        NotificationBox(Control^ target,int x,int y);
+        NotificationBox(Control^ target, int x, int y);
         ~NotificationBox();
 
-        void SendMessage(String^ msg);  //appends the message to the textbox
+        void SendMessage(String^ msg);  // Appends the message to the textbox
 
-		void BoxGotFocus(Object^ sender,EventArgs^ e);
+        void BoxGotFocus(Object^ sender, EventArgs^ e);
 
         void Resize(Control^ hwnd);
 
-    public:
-        /**Location of the label above the TextBox
-        */
-        Point _Location;
+        /** Location of the label above the TextBox */
+        property Point BoxLocation;
     private:
         Label^ mTitle;
     };

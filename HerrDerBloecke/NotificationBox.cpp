@@ -4,11 +4,11 @@ using namespace HdB;
 NotificationBox::NotificationBox(Control^ target,int x,int y)
 {
 	Parent=target;
-    _Location=Point(x,y);
+    BoxLocation = Point(x, y);
 
     //init label
     mTitle=gcnew Label();
-    mTitle->Location=_Location;
+    mTitle->Location = BoxLocation;
     mTitle->Text="Benachrichtigungen";
     mTitle->AutoSize=true;
     mTitle->Anchor=AnchorStyles::Bottom;
@@ -16,18 +16,18 @@ NotificationBox::NotificationBox(Control^ target,int x,int y)
 
     //setting up the Box
     this->Enabled=true;    //disabling the box to avoid getting focused
-	this->UseWaitCursor=false;
-	this->Cursor=Cursors::Arrow;
+    this->UseWaitCursor=false;
+    this->Cursor=Cursors::Arrow;
     this->ForeColor=Color::Black;
     this->BorderStyle=System::Windows::Forms::BorderStyle::FixedSingle;
     this->ReadOnly=true;
     this->BackColor=this->Parent->BackColor;
-    this->Location=Point(_Location.X,_Location.Y+mTitle->Height);
+    this->Location = Point(BoxLocation.X, BoxLocation.Y + mTitle->Height);
     this->Multiline=true;
     this->ScrollBars=System::Windows::Forms::ScrollBars::Vertical;
-    this->Size=System::Drawing::Size(target->Size.Width*0.4,60);
+    this->Size=System::Drawing::Size(target->Size.Width * 0.4f, 60);
     this->Anchor=AnchorStyles::Bottom;
-	this->GotFocus +=gcnew System::EventHandler(this,&NotificationBox::BoxGotFocus);
+    this->GotFocus +=gcnew System::EventHandler(this,&NotificationBox::BoxGotFocus);
     target->Controls->Add(this);
 }
 HdB::NotificationBox::~NotificationBox()
@@ -37,7 +37,7 @@ HdB::NotificationBox::~NotificationBox()
 void NotificationBox::Resize(Control^ hwnd)
 {
     this->Location=Point(hwnd->Width*0.4,this->Location.Y);
-    this->Size=System::Drawing::Size(hwnd->Width*0.4,this->Size.Height);
+    this->Size=System::Drawing::Size(hwnd->Width * 0.4f,this->Size.Height);
     mTitle->Location=Point(hwnd->Width*0.4,mTitle->Location.Y);
 }
 
@@ -48,11 +48,10 @@ void NotificationBox::SendMessage(String^ msg)
 }
 
 
-/** We need this to hide the caret when the box is getting the focus
-*/
+/** We need this to hide the caret when the box is getting the focus */
 void NotificationBox::BoxGotFocus(Object^ sender,EventArgs^ e)
 {
-	this->mTitle->Focus();
+    this->mTitle->Focus();
 }
 
 
